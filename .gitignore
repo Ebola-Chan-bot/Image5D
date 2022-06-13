@@ -30,3 +30,11 @@
 *.exe
 *.out
 *.app
+/.vs/Image5D
+/Image5D/x64/Debug
+/Mex工具/x64
+/OirReaderMex/x64
+/OmeBigTiff5D/x64
+/packages
+/resources/project
+/x64

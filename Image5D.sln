@@ -1,0 +1,68 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32519.111
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OirReaderMex", "OirReaderMex\OirReaderMex.vcxproj", "{80FC74ED-7BCD-4981-9A0F-385C796FD507}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "共享库", "共享库\共享库.vcxitems", "{CE34ECFC-745B-4402-98C3-ADE489CA73A3}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "OmeBigTiff5D", "OmeBigTiff5D\OmeBigTiff5D.vcxproj", "{73943C39-6509-4B79-9EA2-D42D977F0249}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Mex工具", "Mex工具\Mex工具.vcxproj", "{CE6CE462-A955-46A7-BB11-895054EF51EA}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Image5D", "Image5D\Image5D.vcxproj", "{72A300AA-0D89-4028-A043-9B448939BD78}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|x64 = Debug|x64
+		Debug|x86 = Debug|x86
+		Release|x64 = Release|x64
+		Release|x86 = Release|x86
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{80FC74ED-7BCD-4981-9A0F-385C796FD507}.Debug|x64.ActiveCfg = Debug|x64
+		{80FC74ED-7BCD-4981-9A0F-385C796FD507}.Debug|x64.Build.0 = Debug|x64
+		{80FC74ED-7BCD-4981-9A0F-385C796FD507}.Debug|x86.ActiveCfg = Debug|Win32
+		{80FC74ED-7BCD-4981-9A0F-385C796FD507}.Debug|x86.Build.0 = Debug|Win32
+		{80FC74ED-7BCD-4981-9A0F-385C796FD507}.Release|x64.ActiveCfg = Release|x64
+		{80FC74ED-7BCD-4981-9A0F-385C796FD507}.Release|x64.Build.0 = Release|x64
+		{80FC74ED-7BCD-4981-9A0F-385C796FD507}.Release|x86.ActiveCfg = Release|Win32
+		{80FC74ED-7BCD-4981-9A0F-385C796FD507}.Release|x86.Build.0 = Release|Win32
+		{73943C39-6509-4B79-9EA2-D42D977F0249}.Debug|x64.ActiveCfg = Debug|x64
+		{73943C39-6509-4B79-9EA2-D42D977F0249}.Debug|x64.Build.0 = Debug|x64
+		{73943C39-6509-4B79-9EA2-D42D977F0249}.Debug|x86.ActiveCfg = Debug|Win32
+		{73943C39-6509-4B79-9EA2-D42D977F0249}.Debug|x86.Build.0 = Debug|Win32
+		{73943C39-6509-4B79-9EA2-D42D977F0249}.Release|x64.ActiveCfg = Release|x64
+		{73943C39-6509-4B79-9EA2-D42D977F0249}.Release|x64.Build.0 = Release|x64
+		{73943C39-6509-4B79-9EA2-D42D977F0249}.Release|x86.ActiveCfg = Release|Win32
+		{73943C39-6509-4B79-9EA2-D42D977F0249}.Release|x86.Build.0 = Release|Win32
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Debug|x64.ActiveCfg = Debug|x64
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Debug|x64.Build.0 = Debug|x64
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Debug|x86.ActiveCfg = Debug|Win32
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Debug|x86.Build.0 = Debug|Win32
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Release|x64.ActiveCfg = Release|x64
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Release|x64.Build.0 = Release|x64
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Release|x86.ActiveCfg = Release|Win32
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Release|x86.Build.0 = Release|Win32
+		{72A300AA-0D89-4028-A043-9B448939BD78}.Debug|x64.ActiveCfg = Debug|x64
+		{72A300AA-0D89-4028-A043-9B448939BD78}.Debug|x64.Build.0 = Debug|x64
+		{72A300AA-0D89-4028-A043-9B448939BD78}.Debug|x86.ActiveCfg = Debug|Win32
+		{72A300AA-0D89-4028-A043-9B448939BD78}.Debug|x86.Build.0 = Debug|Win32
+		{72A300AA-0D89-4028-A043-9B448939BD78}.Release|x64.ActiveCfg = Release|x64
+		{72A300AA-0D89-4028-A043-9B448939BD78}.Release|x64.Build.0 = Release|x64
+		{72A300AA-0D89-4028-A043-9B448939BD78}.Release|x86.ActiveCfg = Release|Win32
+		{72A300AA-0D89-4028-A043-9B448939BD78}.Release|x86.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C47B016F-2568-4DFE-B4A5-5A56CC7233F2}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		共享库\共享库.vcxitems*{73943c39-6509-4b79-9ea2-d42d977f0249}*SharedItemsImports = 4
+		共享库\共享库.vcxitems*{80fc74ed-7bcd-4981-9a0f-385c796fd507}*SharedItemsImports = 4
+		共享库\共享库.vcxitems*{ce34ecfc-745b-4402-98c3-ade489ca73a3}*SharedItemsImports = 9
+	EndGlobalSection
+EndGlobal
