@@ -13,6 +13,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Mex工具", "Mex工具\Mex�
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Image5D", "Image5D\Image5D.vcxproj", "{72A300AA-0D89-4028-A043-9B448939BD78}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "内存优化库", "内存优化库\内存优化库.vcxitems", "{293957FA-2ECA-49BF-BDE5-C3A1994730C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -61,8 +63,13 @@ Global
 		SolutionGuid = {C47B016F-2568-4DFE-B4A5-5A56CC7233F2}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		内存优化库\内存优化库.vcxitems*{293957fa-2eca-49bf-bde5-c3a1994730c3}*SharedItemsImports = 9
+		内存优化库\内存优化库.vcxitems*{72a300aa-0d89-4028-a043-9b448939bd78}*SharedItemsImports = 4
 		共享库\共享库.vcxitems*{73943c39-6509-4b79-9ea2-d42d977f0249}*SharedItemsImports = 4
+		内存优化库\内存优化库.vcxitems*{73943c39-6509-4b79-9ea2-d42d977f0249}*SharedItemsImports = 4
 		共享库\共享库.vcxitems*{80fc74ed-7bcd-4981-9a0f-385c796fd507}*SharedItemsImports = 4
+		内存优化库\内存优化库.vcxitems*{80fc74ed-7bcd-4981-9a0f-385c796fd507}*SharedItemsImports = 4
 		共享库\共享库.vcxitems*{ce34ecfc-745b-4402-98c3-ade489ca73a3}*SharedItemsImports = 9
+		内存优化库\内存优化库.vcxitems*{ce6ce462-a955-46a7-bb11-895054ef51ea}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal

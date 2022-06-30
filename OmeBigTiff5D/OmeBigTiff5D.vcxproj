@@ -57,6 +57,7 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
     <Import Project="..\共享库\共享库.vcxitems" Label="Shared" />
+    <Import Project="..\内存优化库\内存优化库.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -74,12 +75,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.mexw64</TargetExt>
     <ExternalIncludePath>$(SolutionDir)Mex工具\include;$(ExternalIncludePath);$(SolutionDir)Image5D\include</ExternalIncludePath>
-    <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)+Image5D\private;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)+Image5D\private\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.mexw64</TargetExt>
     <ExternalIncludePath>$(SolutionDir)Mex工具\include;$(ExternalIncludePath);$(SolutionDir)Image5D\include</ExternalIncludePath>
-    <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(SolutionDir)+Image5D\private;$(LibraryPath)</LibraryPath>
+    <OutDir>$(SolutionDir)+Image5D\private\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -163,7 +166,9 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="IFD5D.h" />
+    <ClInclude Include="OmeXml基本解析.h" />
     <ClInclude Include="Ome属性读入器.h" />
+    <ClInclude Include="OME概念定义.h" />
     <ClInclude Include="Tiff属性读入器.h" />
     <ClInclude Include="Tiff概念定义.h" />
     <ClInclude Include="OmeBigTiff5D.h" />
@@ -183,13 +188,9 @@
     <ClCompile Include="OmeBigTiff5D.cpp" />
     <ClCompile Include="OmeTiff读入器.cpp" />
     <ClCompile Include="IOmeTiff读写器.cpp" />
+    <ClCompile Include="OmeXml基本解析.cpp" />
     <ClCompile Include="Tiff属性读入器.cpp" />
     <ClCompile Include="Tiff读入器.cpp" />
-    <ClInclude Include="字符串常量.h">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
-      <FileType>CppHeader</FileType>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Image5D\Image5D.vcxproj">
@@ -208,6 +209,7 @@
   <ItemGroup>
     <Xml Include="TiffData模板.xml" />
     <Xml Include="XML模板.xml" />
+    <Xml Include="头文件依赖树.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

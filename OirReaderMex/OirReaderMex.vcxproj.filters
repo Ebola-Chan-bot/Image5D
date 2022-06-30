@@ -18,6 +18,18 @@
     <ClInclude Include="Oir读入器.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="Oir索引.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="哈希.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="文件控制块.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="分配粒度.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="MexFunction.cpp">
@@ -27,6 +39,18 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="..\OmeBigTiff5D\dllmain.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="Oir索引.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="哈希.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="文件控制块.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="分配粒度.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

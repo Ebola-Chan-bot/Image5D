@@ -1,33 +1,34 @@
 #pragma once
-#include "Image5D.h"
+#include <vector>
+#include <string>
+#include <memory>
+#include "Oir索引.h"
+#include "文件控制块.h"
+#include "内存优化库.h"
+using namespace std;
+using 文件列表类 = vector<unique_ptr<const 文件控制块>>;
+using 块指针类 = unique_ptr<const UINT16* [],free删除器>;
 class Oir读入器
 {
-	const UINT8 文件数目;
-	const HANDLE* const 文件句柄;
-	const HANDLE* const 映射句柄;
-	const LPVOID* const 映射指针;
-	const UINT8 每帧分块数;
-	const UINT32* const 每块像素数;
-	const UINT16*const* const 块指针;
-
-	const UINT8 SizeBC;
-	const UINT8 SizeZBC;
-	const UINT32 SizeYX;
-	const UINT32 SizeCYX;
-	Oir读入器(UINT8 文件数目, const HANDLE* 文件句柄, const HANDLE* 映射句柄, const LPVOID* 映射指针, UINT8 每帧分块数, const UINT32* 每块像素数, UINT16 SizeX, UINT16 SizeY, UINT8 SizeC, UINT8 SizeZ, UINT16 SizeT, float 系列间隔, const float* const* 通道颜色, const char* const* 设备名称, const char* 图像属性, const UINT16* const* 块指针) :文件数目(文件数目), 文件句柄(文件句柄), 映射句柄(映射句柄), 映射指针(映射指针), 每帧分块数(每帧分块数), 每块像素数(每块像素数), SizeX(SizeX), SizeY(SizeY), SizeC(SizeC), SizeZ(SizeZ), SizeT(SizeT), 系列间隔(系列间隔), 通道颜色(通道颜色), 设备名称(设备名称), 图像属性(图像属性), 块指针(块指针), SizeBC(每帧分块数* SizeC), SizeZBC(SizeBC* SizeZ), SizeYX(UINT32(SizeY)* SizeX), SizeCYX(SizeC* SizeYX) {}
+	文件列表类 文件列表;
+	unique_ptr<文件映射> 索引文件;
+	Oir索引* 索引;//指向索引文件，无需释放
+	UINT32* 每块像素数;//指向索引文件，无需释放
+	块指针类 块指针;
+	设备颜色* i通道颜色;//指向索引文件，无需释放
 public:
-	const UINT16 SizeX;
-	const UINT16 SizeY;
-	const UINT8 SizeC;
-	const UINT8 SizeZ;
-	const UINT16 SizeT;
-	const float 系列间隔;
-	const float* const* const 通道颜色;
-	const char* const* const 设备名称;
-	const char* const 图像属性;
+	UINT16 SizeX()const noexcept{ return 索引->SizeX; }
+	UINT16 SizeY()const noexcept { return 索引->SizeY; }
+	UINT8 SizeC()const noexcept { return 索引->SizeC; }
+	UINT8 SizeZ()const noexcept { return 索引->SizeZ; }
+	UINT16 SizeT()const noexcept { return 索引->SizeT; }
+	float 系列间隔()const noexcept { return 索引->系列间隔; }
+	const 设备颜色* 通道颜色()const noexcept { return i通道颜色; }
 	bool 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const;
 	bool 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 C)const;
 	bool 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize)const;
-	static Oir读入器* 创建(LPCSTR 头文件路径);
-	~Oir读入器();
+	Oir读入器(LPCSTR 头文件路径);
+	Oir读入器(LPCWSTR 头文件路径);
+	//禁止拷贝，以免意外的析构
+	Oir读入器(const Oir读入器&) = delete;
 };

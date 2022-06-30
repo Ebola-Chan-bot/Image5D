@@ -57,6 +57,7 @@
   </ImportGroup>
   <ImportGroup Label="Shared">
     <Import Project="..\共享库\共享库.vcxitems" Label="Shared" />
+    <Import Project="..\内存优化库\内存优化库.vcxitems" Label="Shared" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
@@ -74,12 +75,14 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.mexw64</TargetExt>
     <ExternalIncludePath>$(SolutionDir)packages\Eigen3.3.3.9\lib\native\include;$(SolutionDir)Mex工具\include;$(SolutionDir)Image5D\include;$(ExternalIncludePath)</ExternalIncludePath>
-    <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <LibraryPath>$(SolutionDir)+Image5D\private;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <OutDir>$(SolutionDir)+Image5D\private\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.mexw64</TargetExt>
     <ExternalIncludePath>$(SolutionDir)packages\Eigen3.3.3.9\lib\native\include;$(SolutionDir)Mex工具\include;$(SolutionDir)Image5D\include;$(ExternalIncludePath)</ExternalIncludePath>
-    <LibraryPath>$(SolutionDir)$(Platform)\$(Configuration)\;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <LibraryPath>$(SolutionDir)+Image5D\private;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <OutDir>$(SolutionDir)+Image5D\private\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -133,7 +136,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>Image5D.lib;Mex工具.lib;Shlwapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Image5D.lib;Mex工具.lib;Shlwapi.lib;Bcrypt.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -158,16 +161,24 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>Image5D.lib;Mex工具.lib;Shlwapi.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Image5D.lib;Mex工具.lib;Shlwapi.lib;Bcrypt.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="Oir索引.h" />
     <ClInclude Include="Oir读入器.h" />
+    <ClInclude Include="分配粒度.h" />
+    <ClInclude Include="哈希.h" />
+    <ClInclude Include="文件控制块.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\OmeBigTiff5D\dllmain.cpp" />
     <ClCompile Include="MexFunction.cpp" />
+    <ClCompile Include="Oir索引.cpp" />
     <ClCompile Include="Oir读入器.cpp" />
+    <ClCompile Include="分配粒度.cpp" />
+    <ClCompile Include="哈希.cpp" />
+    <ClCompile Include="文件控制块.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />

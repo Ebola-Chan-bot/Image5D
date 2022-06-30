@@ -1,46 +1,72 @@
 ﻿#include "pch.h"
 #include "Mex工具.h"
-String GetString(Array& 输入数组)
+ArrayFactory 数组工厂;
+template<>
+String 万能转码<String>(Array& 输入)
 {
-	switch (输入数组.getType())
+	switch (输入.getType())
 	{
 	case ArrayType::CHAR:
-		return CharArray(std::move(输入数组)).toUTF16();
+		return CharArray(std::move(输入)).toUTF16();
 	case ArrayType::MATLAB_STRING:
-		return Get标量<MATLABString>(输入数组);
+		return (StringArray(std::move(输入))[0]);
 	default:
-		throw InvalidArrayTypeException("不是字符串");
+		throw InvalidArrayTypeException("输入不是字符串");
 	}
 }
-char* GetUtf8(Array& 输入数组)
+template String 万能转码<String>(Array& 输入);
+
+template<>
+CharArray 万能转码<CharArray>(Array& 输入)
 {
-	const String MatlabString = GetString(输入数组);
-	const size_t 缓冲区大小 = MatlabString.size() * 3;
-	char* const Utf8String = (LPSTR)malloc(缓冲区大小);
-	WideCharToMultiByte(CP_UTF8, 0, (LPCWCH)MatlabString.c_str(), -1, Utf8String, 缓冲区大小, NULL, NULL);
-	return Utf8String;
-}
-StringArray GetStringVector(uint8_t 个数, const char* const* 数组)noexcept
-{
-	buffer_ptr_t<MATLABString> 缓冲 = 数组工厂.createBuffer<MATLABString>(个数);
-	for (uint8_t C = 0; C < 个数; ++C)
+	switch (输入.getType())
 	{
-		const char* 字符串MB = 数组[C];
-		uint8_t 长度 = strlen(字符串MB);
-		String 字符串WC(长度, 0);
-		MultiByteToWideChar(CP_UTF8, 0, 字符串MB, -1, (LPWSTR)字符串WC.data(), 长度);
-		缓冲[C] = std::move(字符串WC);
+	case ArrayType::CHAR:
+		return std::move(输入);
+	case ArrayType::MATLAB_STRING:
+		return 数组工厂.createCharArray(String(StringArray(std::move(输入))[0]));
+	default:
+		throw InvalidArrayTypeException("输入不是字符串");
 	}
-	return 数组工厂.createArrayFromBuffer({ 个数 }, std::move(缓冲));
 }
-CharArray GetCharArray(const char* 字符串)noexcept
+template CharArray 万能转码<CharArray>(Array& 输入);
+
+template<>
+char* 万能转码<char*>(Array& 输入)
 {
-	const uint32_t 长度 = strlen(字符串);
-	buffer_ptr_t<char16_t> 宽字符串 = 数组工厂.createBuffer<char16_t>(长度);
-	MultiByteToWideChar(CP_UTF8, 0, 字符串, -1, (LPWSTR)宽字符串.get(), 长度);
-	return 数组工厂.createArrayFromBuffer({ 长度 }, std::move(宽字符串));
+	if (输入.getType() == ArrayType::UINT64)
+		return (char*)万能转码<size_t>(输入);
+	const String 字符串 = 万能转码<String>(输入);
+	const int 缓冲区大小 = 字符串.size() * 3;
+	char* const UTF8 = (char*)malloc(缓冲区大小);
+	WideCharToMultiByte(CP_UTF8, 0, (LPCWCH)字符串.c_str(), -1, UTF8, 缓冲区大小, nullptr, nullptr);
+	return UTF8;
 }
-ArrayFactory 数组工厂;
+template char* 万能转码<char*>(Array& 输入);
+
+template<>
+MATLABString 万能转码<MATLABString>(const char* UTF8)
+{
+	const size_t 长度 = strlen(UTF8);
+	String UTF16(长度, 0);
+	MultiByteToWideChar(CP_UTF8, 0, UTF8, -1, (LPWSTR)UTF16.data(), 长度);
+	UTF16.resize(wcslen((wchar_t*)UTF16.c_str()));
+	return UTF16;
+}
+template MATLABString 万能转码<MATLABString>(const char*);
+
+template<>
+CharArray 万能转码<CharArray>(const char* UTF8)
+{
+	size_t 长度 = strlen(UTF8);
+	wchar_t* const UTF16 = (wchar_t*)malloc((长度 + 1) * sizeof(wchar_t));
+	MultiByteToWideChar(CP_UTF8, 0, UTF8, -1, UTF16, 长度);
+	长度 = wcslen(UTF16);
+	buffer_ptr_t<char16_t> 缓冲 = 数组工厂.createBuffer<char16_t>(长度);
+	std::copy_n((char16_t*)UTF16, 长度, 缓冲.get());
+	return 数组工厂.createArrayFromBuffer({ 1,长度 }, std::move(缓冲));
+}
+template CharArray 万能转码<CharArray>(const char*);
 //定义移动
 void mexFunctionAdapter(int nlhs_,
 	int nlhs,

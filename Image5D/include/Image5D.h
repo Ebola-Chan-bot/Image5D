@@ -75,6 +75,24 @@ enum Image5D异常类型
 	缺少必需标签,
 	SizeCZT与SizeI不匹配,
 	BitsPerSample与PixelType不匹配,
+	图像属性未定义,
+	图像相位未定义,
+	相位通道未定义,
+	图像配置未定义,
+	Z层轴未定义,
+	扫描参数未定义,
+	图像尺寸未定义,
+	扫描速度未定义,
+	速度信息未定义,
+	查找表未定义,
+	无法创建索引文件,
+	无法打开索引文件,
+	索引文件损坏,
+	图像文件不完整,
+	文件指针设置失败,
+	设备名称太长,
+	只读打开不可写出,
+	只读打开不可修改,
 };
 enum XML解析状态
 {
@@ -103,41 +121,15 @@ enum XML解析状态
 };
 struct Image5D异常
 {
-	//Win32错误代码放在最前面，以便第一时间获取
+	Image5D异常类型 类型;
 	union
 	{
-		DWORD Win32错误代码;
+		DWORD Win32错误代码 = 0;
 		XML解析状态 XML错误代码;
 	};
-	Image5D异常类型 类型;
+	constexpr Image5D异常(Image5D异常类型 类型) :类型(类型) {}
+	constexpr Image5D异常(Image5D异常类型 类型, DWORD Win32错误代码) : 类型(类型), Win32错误代码(Win32错误代码) {}
+	constexpr Image5D异常(Image5D异常类型 类型, XML解析状态 XML错误代码) : 类型(类型), XML错误代码(XML错误代码) {}
 };
-constexpr Image5D异常 成功{ .类型 = 操作成功 };
-#include <stdlib.h>
-template <typename T>
-class 透明向量
-{
-	bool 需要释放 = true;
-public:
-	UINT32 长度 = 0;
-	UINT32 容量 = 0;
-	T* 指针 = nullptr;
-	void 加尾(T 新元素)
-	{
-		if (++长度 > 容量)
-			指针 = (T*)realloc(指针, sizeof(T) * (容量 = 长度 * 2));
-		指针[长度 - 1] = 新元素;
-	}
-	T* 释放所有权() 
-	{ 
-		需要释放 = false;
-		return 指针; 
-	}
-	~透明向量()
-	{
-		if (需要释放)
-			free(指针);
-	}
-};
-Image5DAPI Image5D异常 打开文件(LPCSTR 文件路径, HANDLE& 文件句柄, HANDLE& 映射句柄, LPVOID& 映射指针, LPVOID& 尾指针);
-Image5DAPI Image5D异常 打开文件(LPCWSTR 文件路径, HANDLE& 文件句柄, HANDLE& 映射句柄, LPVOID& 映射指针, LPVOID& 尾指针);
-Image5DAPI LPVOID Get尾指针(HANDLE 文件句柄, LPVOID 映射指针);
+constexpr Image5D异常 成功(操作成功);
+#include "文件映射.h"
