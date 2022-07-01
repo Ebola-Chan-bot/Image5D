@@ -44,20 +44,20 @@ classdef OirReader<handle
 		%每个采样时点的间隔毫秒数
 		SeriesInterval
 	end
-    methods
+	methods
 		function obj=OirReader(HeaderPath)
 			%构造OirReader对象
-        end
+		end
 		function [Devices,Colors]=DeviceColors(obj)
 			%取各通道的采样设备和颜色信息
-        end
+		end
 		function Pixels=ReadPixels(obj,TStart,TSize,ZStart,ZSize,CStart,CSize)
 			%读入像素块值
-        end
+		end
 		function ReadToPointer(obj,Pointer,TStart,TSize,ZStart,ZSize,CStart,CSize)
 			%读入像素块值到给定指针
-        end
-    end
+		end
+	end
 end
 ```
 # OME-TIFF
@@ -95,8 +95,8 @@ OB5是作者在OME BigTiff基础上进一步严格格式规范：
 可在MATLAB中用`doc Image5D.OmeTiffRWer`命令查看详细文档，以下简要列出接口：
 ```MATLAB
 classdef OmeTiffRWer<handle
-    %OME TIFF 快速5D读写器，使用内存映射文件和强制像素块连续实现高速读写
-    properties(Dependent)
+	%OME TIFF 快速5D读写器，使用内存映射文件和强制像素块连续实现高速读写
+	properties(Dependent)
 		%像素类型。如果文件符合OME标准，从 OME XML 中读入此属性；否则从首IFD中取得。假定所有IFD的像素类型与首IFD相同。
 		PixelType Image5D.PixelType
 		%维度顺序。仅 OME TIFF 支持此属性。
@@ -125,7 +125,7 @@ classdef OmeTiffRWer<handle
 	methods(Static)
 		function obj=OpenRead(FilePath)
 			%只读打开现存TIFF文件
-        end
+		end
 		function obj=OpenRW(FilePath)
 			%读写打开现存 OB5 TIFF 文件
 		end
@@ -166,7 +166,7 @@ classdef OmeTiffRWer<handle
 		end
 		function WriteFromPointerI(obj,Pointer,IStart,ISize)
 			%从给定指针写出到指定IFD范围
-        end
-    end
+		end
+	end
 end
 ```
