@@ -69,3 +69,4 @@ class MexFunction :public Function
 public:
 	void operator()(ArgumentList outputs, ArgumentList inputs);
 };
+void 异常输出补全(ArgumentList& outputs);

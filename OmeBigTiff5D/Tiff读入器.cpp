@@ -4,15 +4,25 @@
 #include "Tiff文件头.h"
 #include "像素类型尺寸.h"
 #include <vector>
+void Tiff读入器::读入像素(char* 缓冲区)const
+{
+	const char* const* 像素头 = IFD像素指针.get();
+	const char* const* const 像素尾 = 像素头 + iSizeI;
+	while (像素头 < 像素尾)
+	{
+		memcpy(缓冲区, *(像素头++), SizePXY);
+		缓冲区 += SizePXY;
+	}
+}
 void Tiff读入器::读入像素(char* 缓冲区, UINT32 IStart, UINT32 ISize)const
 {
 	if (IStart + ISize > iSizeI)
-		throw Image5D异常(指定维度越界);
-	const char** 像素头 = IFD像素指针.get(); +IStart;
-	const char** const 像素尾 = 像素头 + ISize;
-	for (; 像素头 < 像素尾; ++像素头)
+		throw 越界异常;
+	const char* const* 像素头 = IFD像素指针.get() + IStart;
+	const char* const* const 像素尾 = 像素头 + ISize;
+	while (像素头 < 像素尾)
 	{
-		memcpy(缓冲区, *像素头, SizePXY);
+		memcpy(缓冲区, *(像素头++), SizePXY);
 		缓冲区 += SizePXY;
 	}
 }

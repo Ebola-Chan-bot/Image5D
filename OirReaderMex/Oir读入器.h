@@ -24,9 +24,10 @@ public:
 	UINT16 SizeT()const noexcept { return 索引->SizeT; }
 	float 系列间隔()const noexcept { return 索引->系列间隔; }
 	const 设备颜色* 通道颜色()const noexcept { return i通道颜色; }
-	bool 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const;
-	bool 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 C)const;
-	bool 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize)const;
+	void 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const;
+	void 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 C)const;
+	void 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize)const;
+	void 读入像素(uint16_t* 缓冲区)const;
 	Oir读入器(LPCSTR 头文件路径);
 	Oir读入器(LPCWSTR 头文件路径);
 	//禁止拷贝，以免意外的析构

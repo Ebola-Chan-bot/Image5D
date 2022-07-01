@@ -1,5 +1,8 @@
 classdef Image5DException<uint8
+	%适用于Image5D包的异常枚举，指示文件格式无法识别或输入参数有误等异常情况
 	enumeration
+		%Mex抛出的异常
+
 		Successful_operation(0)
 		File_open_failed(1)
 		Memory_mapping_failed(2)
@@ -52,7 +55,7 @@ classdef Image5DException<uint8
 		Missing_DimensionOrder_property(49)
 		Invalid_dimension_order(50)
 		Missing_Type_attribute(51)
-		SizeC_does_not_match_the_number_of_colors(52)
+		Number_of_colors_does_not_match_SizeC(52)
 		Missing_Color_property(53)
 		Invalid_pixel_type(54)
 		The_specified_dimension_is_out_of_bounds(55)
@@ -87,5 +90,19 @@ classdef Image5DException<uint8
 		Device_name_is_too_long(84)
 		Readonly_open_not_writeable(85)
 		Readonly_open_unmodifiable(86)
+		%MATLAB抛出的异常
+
+		Wrong_number_of_parameters(255)
+	end
+	methods
+		function Throw(obj,Message)
+			Identifier=sprintf('Image5D:%s',obj);
+			switch nargin
+				case 1
+					error(Identifier,'%s',obj);
+				case 2
+					error(Identifier,Message,obj)
+			end
+		end
 	end
 end

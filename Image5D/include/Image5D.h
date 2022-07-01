@@ -58,7 +58,7 @@ enum Image5D异常类型
 	缺少DimensionOrder属性,
 	维度顺序无效,
 	缺少Type属性,
-	SizeC与颜色数不匹配,
+	颜色数与SizeC不匹配,
 	缺少Color属性,
 	像素类型无效,
 	指定维度越界,
@@ -131,5 +131,6 @@ struct Image5D异常
 	constexpr Image5D异常(Image5D异常类型 类型, DWORD Win32错误代码) : 类型(类型), Win32错误代码(Win32错误代码) {}
 	constexpr Image5D异常(Image5D异常类型 类型, XML解析状态 XML错误代码) : 类型(类型), XML错误代码(XML错误代码) {}
 };
-constexpr Image5D异常 成功(操作成功);
+constexpr Image5D异常 成功异常(操作成功);
+constexpr Image5D异常 越界异常(指定维度越界);
 #include "文件映射.h"

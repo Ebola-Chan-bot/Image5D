@@ -39,14 +39,18 @@ public:
 	读写器无法检查输入颜色指针是否指向足够长的内存段（至少应有SizeC长），由调用方保证指针正确。
 	*/
 	virtual void 修改参数(像素类型 PixelType, UINT16 SizeX, UINT16 SizeY, UINT8 SizeC, UINT8 SizeZ, UINT16 SizeT, const 颜色* 通道颜色, 维度顺序 DimensionOrder, const char* 文件名) { throw 未实现; }
+	virtual void 读入像素(char* 缓冲区)const { throw 未实现; }
 	virtual void 读入像素(char* 缓冲区, UINT32 IStart, UINT32 ISize)const { throw 未实现; }
 	virtual void 读入像素(char* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const { throw 未实现; }
 	virtual void 读入像素(char* 缓冲区, UINT16 TStart, UINT16 TSize)const { throw 未实现; }
+	virtual void 写出像素(const char* 缓冲区)const { throw 未实现; }
 	virtual void 写出像素(const char* 缓冲区, UINT32 IStart, UINT32 ISize)const { throw 未实现; }
 	virtual void 写出像素(const char* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const { throw 未实现; }
 	virtual void 写出像素(const char* 缓冲区, UINT16 TStart, UINT16 TSize)const { throw 未实现; }
-	virtual char* 像素指针(UINT32 I)const { throw 未实现; }
-	virtual char* 像素指针(UINT16 T, UINT8 Z, UINT8 C)const { throw 未实现; }
+	virtual void 像素指针(char*& 指针, size_t& 容量)const { throw 未实现; }
+	virtual void 像素指针(UINT32 I, char*& 指针, size_t& 容量)const { throw 未实现; }
+	virtual void 像素指针(UINT16 T, char*& 指针, size_t& 容量)const { throw 未实现; }
+	virtual void 像素指针(UINT16 T, UINT8 Z, UINT8 C, char*& 指针, size_t& 容量)const { throw 未实现; }
 	static const IOmeTiff读写器* 只读打开(LPCSTR 文件路径);
 	static const IOmeTiff读写器* 只读打开(LPCWSTR 文件路径);
 	static IOmeTiff读写器* 读写打开(LPCSTR 文件路径);

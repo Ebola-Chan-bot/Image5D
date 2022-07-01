@@ -13,6 +13,7 @@ protected:
 
 	UINT8 iSizeP;
 	UINT32 SizePXY;
+	size_t SizeIPXY;
 	//必须初始化，以免随机指针
 	Tiff属性读入器(文件指针& 文件, 像素类型 iPixelType, UINT16 iSizeX, UINT16 iSizeY, UINT32 iSizeI, 文本数组& 图像描述);
 public:

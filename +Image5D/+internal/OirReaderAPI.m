@@ -10,5 +10,6 @@ classdef OirReaderAPI<uint8
 		SeriesInterval(7)
 		DeviceColors(8)
 		ReadPixels(9)
+		ReadToPointer(10)
     end
 end

@@ -37,7 +37,8 @@ char* 万能转码<char*>(Array& 输入)
 	if (输入.getType() == ArrayType::UINT64)
 		return (char*)万能转码<size_t>(输入);
 	const String 字符串 = 万能转码<String>(输入);
-	const int 缓冲区大小 = 字符串.size() * 3;
+	//这里必须+1，否则无法正确处理空字符串L""
+	const int 缓冲区大小 = (字符串.size() + 1) * 3;
 	char* const UTF8 = (char*)malloc(缓冲区大小);
 	WideCharToMultiByte(CP_UTF8, 0, (LPCWCH)字符串.c_str(), -1, UTF8, 缓冲区大小, nullptr, nullptr);
 	return UTF8;
@@ -67,6 +68,13 @@ CharArray 万能转码<CharArray>(const char* UTF8)
 	return 数组工厂.createArrayFromBuffer({ 1,长度 }, std::move(缓冲));
 }
 template CharArray 万能转码<CharArray>(const char*);
+void 异常输出补全(ArgumentList& outputs)
+{
+	std::vector<Array>::iterator 输出头 = outputs.begin();
+	const std::vector<Array>::iterator 输出尾 = outputs.end();
+	while (++输出头 < 输出尾)
+		*输出头 = 数组工厂.createEmptyArray();
+}
 //定义移动
 void mexFunctionAdapter(int nlhs_,
 	int nlhs,

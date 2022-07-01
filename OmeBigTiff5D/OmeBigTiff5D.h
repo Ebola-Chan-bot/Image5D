@@ -35,14 +35,18 @@ public:
 	const char* 文件名()const { return i文件名; }
 	void 文件名(const char*);
 	void 修改参数(像素类型 PT, UINT16 SizeX, UINT16 SizeY, UINT8 SizeC, UINT8 SizeZ, UINT16 SizeT, const 颜色* 通道颜色, 维度顺序 DO, const char* 文件名)override;
+	void 读入像素(char* 缓冲区)const override;
 	void 读入像素(char* 缓冲区, UINT32 IStart, UINT32 ISize)const override;
 	void 读入像素(char* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const override;
 	void 读入像素(char* 缓冲区, UINT16 TStart, UINT16 TSize)const override { return 读入像素(缓冲区, TStart, TSize, 0, iSizeZ, 0, iSizeC); }
+	void 写出像素(const char* 缓冲区)const override;
 	void 写出像素(const char* 缓冲区, UINT32 IStart, UINT32 ISize)const override;
 	void 写出像素(const char* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const override;
 	void 写出像素(const char* 缓冲区, UINT16 TStart, UINT16 TSize)const override { return 写出像素(缓冲区, TStart, TSize, 0, iSizeZ, 0, iSizeC); }
-	char* 像素指针(UINT32 I)const override;
-	char* 像素指针(UINT16 T, UINT8 Z, UINT8 C)const override;
+	void 像素指针(char*& 指针, size_t& 容量)const override;
+	void 像素指针(UINT32 I, char*& 指针, size_t& 容量)const override;
+	void 像素指针(UINT16 T, char*& 指针, size_t& 容量)const override;
+	void 像素指针(UINT16 T, UINT8 Z, UINT8 C, char*& 指针, size_t& 容量)const override;
 	static const OmeBigTiff5D* 只读打开(文件指针&& 文件);
 	static OmeBigTiff5D* 读写打开(文件指针&& 文件);
 	static OmeBigTiff5D* 覆盖创建(const char* 文件路径, 像素类型 PixelType, UINT16 SizeX, UINT16 SizeY, UINT8 SizeC, UINT8 SizeZ, UINT16 SizeT, const 颜色* 通道颜色, 维度顺序 DimensionOrder);

@@ -302,6 +302,7 @@ void 创建索引(const 文件列表类& 文件列表, const unique_ptr<文件�
 	索引->计算依赖字段();
 	索引->SizeT = 块总数 / 索引->SizeZBC;
 	块总数 = 索引->SizeT * 索引->SizeZBC;
+	索引->SizeTZBC = 块总数;
 	UINT64* 块偏移;
 	索引->Get变长成员(每块像素数, i通道颜色, 块偏移);
 	vector<uint32_t>::const_iterator 块像素头 = 每块像素数向量.cbegin();
@@ -420,10 +421,10 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		创建索引(文件列表, 索引文件, 索引, 每块像素数, i通道颜色, 块指针);
 	}
 }
-bool Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const
+void Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const
 {
 	if (TStart + TSize > 索引->SizeT || ZStart + ZSize > 索引->SizeZ || CStart + CSize > 索引->SizeC)
-		return false;
+		throw 越界异常;
 	const UINT16* const* 读入头T = 块指针.get() + (UINT32(TStart) * 索引->SizeZ + ZStart) * 索引->每帧分块数 * 索引->SizeC + CStart;
 	const UINT16* const* const 读入尾T = 读入头T + UINT32(TSize) * 索引->SizeZBC;
 	const UINT8 读入ZBC = ZSize * 索引->SizeBC;
@@ -457,12 +458,11 @@ bool Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize
 		}
 		读入头T += 索引->SizeZBC;
 	}
-	return true;
 }
-bool Oir读入器::读入像素(UINT16* 写出头, UINT16 TStart, UINT16 TSize, UINT8 C)const
+void Oir读入器::读入像素(UINT16* 写出头, UINT16 TStart, UINT16 TSize, UINT8 C)const
 {
 	if (TStart + TSize > 索引->SizeT || C >= 索引->SizeC)
-		return false;
+		throw 越界异常;
 	const UINT16* const* 读入头 = 块指针.get() + UINT32(TStart) * 索引->SizeZBC + C;
 	const UINT16* const* const 读入尾T = 读入头 + UINT32(TSize) * 索引->SizeZBC;
 	while (读入头 < 读入尾T)
@@ -477,12 +477,11 @@ bool Oir读入器::读入像素(UINT16* 写出头, UINT16 TStart, UINT16 TSize, 
 			块像素头++;
 		}
 	}
-	return true;
 }
-bool Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize)const
+void Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize)const
 {
 	if (TStart + TSize > 索引->SizeT)
-		return false;
+		throw 越界异常;
 	const UINT16* const* 读入头 = 块指针.get() + UINT32(TStart) * 索引->SizeZBC;
 	const UINT16* const* const 读入尾T = 读入头 + UINT32(TSize) * 索引->SizeZBC;
 	while (读入头 < 读入尾T)
@@ -506,5 +505,30 @@ bool Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize
 		}
 		写出头TZ += 索引->SizeCYX;
 	}
-	return true;
+}
+void Oir读入器::读入像素(UINT16* 写出头TZ)const
+{
+	const UINT16* const* 读入头 = 块指针.get();
+	const UINT16* const* const 读入尾T = 读入头 + 索引->SizeTZBC;
+	while (读入头 < 读入尾T)
+	{
+		const UINT16* const* 读入尾B = 读入头 + 索引->SizeBC;
+		UINT16* 写出头B = 写出头TZ;
+		const UINT32* 块像素头 = 每块像素数;
+		while (读入头 < 读入尾B)
+		{
+			const UINT16* const* 读入尾C = 读入头 + 索引->SizeC;
+			UINT32 块像素数 = *块像素头;
+			UINT16* 写出头C = 写出头B;
+			while (读入头 < 读入尾C)
+			{
+				copy_n(*读入头, 块像素数, 写出头C);
+				读入头++;
+				写出头C += 索引->SizeYX;
+			}
+			写出头B += 块像素数;
+			块像素头++;
+		}
+		写出头TZ += 索引->SizeCYX;
+	}
 }
