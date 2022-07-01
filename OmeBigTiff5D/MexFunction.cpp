@@ -25,10 +25,12 @@ API声明(Create)
 		outputs[0] = 万能转码(IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), 图像描述.get()));
 	}
 	break;
-	case 10:
+	case 9:
 	{
-		const buffer_ptr_t<uint32_t> 颜色数组 = TypedArray<UINT32>(std::move(inputs[8])).release();
-		outputs[0] = 万能转码(IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), (像素类型)万能转码<UINT8>(inputs[2]), 万能转码<UINT16>(inputs[3]), 万能转码<UINT16>(inputs[4]), 万能转码<UINT8>(inputs[5]), 万能转码<UINT8>(inputs[6]), 万能转码<UINT16>(inputs[7]), (颜色*)颜色数组.get(), (维度顺序)万能转码<UINT8>(inputs[9])));
+		TypedArray<uint32_t>颜色数组(std::move(inputs[5]));
+		const uint8_t SizeC = 颜色数组.getNumberOfElements();
+		const buffer_ptr_t<uint32_t> 颜色缓冲 = 颜色数组.release();
+		outputs[0] = 万能转码(IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), (像素类型)万能转码<UINT8>(inputs[2]), 万能转码<UINT16>(inputs[3]), 万能转码<UINT16>(inputs[4]), SizeC, 万能转码<UINT8>(inputs[6]), 万能转码<UINT16>(inputs[7]), (颜色*)颜色缓冲.get(), (维度顺序)万能转码<UINT8>(inputs[9])));
 	}
 	break;
 	default:

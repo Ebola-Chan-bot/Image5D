@@ -134,7 +134,7 @@ classdef OirReader<handle
 			% %此方法常用于格式转换，例如在OIR与TIFF之间进行直接像素对拷
 			% [~,Colors]=obj.DeviceColors;
 			% Colors(4,end)=0;
-			% Writer=OmeTiffRWer.Create('图像.tif',PixelType.UINT16,obj.SizeX,obj.SizeY,obj.SizeC,obj.SizeZ,obj.SizeT,ChannelColor.New(flipud(Colors)),DimensionOrder.XYCZT);
+			% Writer=OmeTiffRWer.Create('图像.tif',PixelType.UINT16,obj.SizeX,obj.SizeY,ChannelColor.New(flipud(Colors)),obj.SizeZ,obj.SizeT,DimensionOrder.XYCZT);
 			% obj.ReadToPointer(Writer.PixelPointer);
 			% %上例新建了一个和OIR尺寸相同的TIFF图像，然后取得像素指针，令OIR读入器直接读入该指针，实现两文件直接对拷，而不经过MATLAB数组中介，性能较高。
 			% ```

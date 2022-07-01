@@ -96,12 +96,15 @@ classdef Image5DException<uint8
 	end
 	methods
 		function Throw(obj,Message)
+			%抛出当前异常，可选指定附加信息
 			Identifier=sprintf('Image5D:%s',obj);
 			switch nargin
 				case 1
 					error(Identifier,'%s',obj);
 				case 2
 					error(Identifier,Message,obj)
+				otherwise
+					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
 		end
 	end

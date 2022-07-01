@@ -32,6 +32,12 @@ classdef ChannelColor<uint32
 			% obj=ChannelColor.New(Matrix);
 			% %从uint8或浮点ABGR颜色矩阵创建新ChannelColor
 			% ```
+			%# 示例
+			% ```
+			% Image5D.ChannelColor.New([1 1 1;1 0 0;0 1 0;0 0 1])
+			% Image5D.ChannelColor.New([1 1 1],[1 0 0],[0 1 0],[0 0 1])
+			% %上述两行代码完全等效，都生成3个颜色，依次为完全不透明的纯色蓝、绿、红
+			% ```
 			%# 输入参数
 			% A，不透明度。如果为uint8类型，范围0~255；如果为single或double类型，范围0~1。可以用数组指定多个颜色的不透明度。
 			% B，蓝色分量，数据类型和尺寸必须与A一致。

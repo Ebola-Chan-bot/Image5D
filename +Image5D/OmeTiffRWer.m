@@ -70,7 +70,7 @@ classdef OmeTiffRWer<handle
 			%See also Image5D.OmeTiffRWer.Create
 			obj=Image5D.OmeTiffRWer(ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.OpenRW),FilePath)));
 		end
-		function obj=Create(FilePath,PixelTypeOrImageDescription,SizeX,SizeY,SizeC,SizeZ,SizeT,ChannelColors,DimensionOrder)
+		function obj=Create(FilePath,PixelTypeOrImageDescription,SizeX,SizeY,ChannelColors,SizeZ,SizeT,DimensionOrder)
 			%覆盖创建 OB5 TIFF 文件
 			%必须在创建时指定图像描述或所有基本属性，以便预分配磁盘空间和文件结构，实现像素值快速写出
 			%# 语法
@@ -78,7 +78,7 @@ classdef OmeTiffRWer<handle
 			% obj=Image5D.OmeTiffRWer.Create(FilePath,ImageDescription);
 			% %根据图像描述创建新文件
 			% 
-			% obj=Image5D.OmeTiffRWer.Create(FilePath,PixelType,SizeX,SizeY,SizeC,SizeZ,SizeT,ChannelColors,DimensionOrder)
+			% obj=Image5D.OmeTiffRWer.Create(FilePath,PixelType,SizeX,SizeY,ChannelColors,SizeZ,SizeT,DimensionOrder)
 			% %根据基本属性创建新文件
 			% ```
 			%# 示例
@@ -97,10 +97,9 @@ classdef OmeTiffRWer<handle
 			% PixelType(1,1)Image5D.PixelType，像素类型，不能指定为DEFAULT
 			% SizeX(1,1)uint16，图像宽度
 			% SizeY(1,1)uint16，图像高度
-			% SizeC(1,1)uint8，颜色通道数
+			% ChannelColors(:,1)Image5D.ChannelColor，各通道颜色
 			% SizeZ(1,1)uint8，Z层数
 			% SizeT(1,1)uint16，采样时点数
-			% ChannelColors(:,1)Image5D.ChannelColor，各通道颜色，必须是尺寸等于SizeC的向量
 			% DimensionOrder(1,1)Image5D.DimensionOrder，维度顺序，不能指定为DEFAULT
 			%# 返回值
 			% obj，OB5 TIFF 读写器，支持读写属性和像素值。
@@ -111,8 +110,8 @@ classdef OmeTiffRWer<handle
 			switch nargin
 				case 2
 					obj=OmeTiffRWer(ExceptionCheck(OmeBigTiff5D(uint8(internal.OmeTiffAPI.Create),FilePath,PixelTypeOrImageDescription)));
-				case 9
-					obj=OmeTiffRWer(ExceptionCheck(OmeBigTiff5D(uint8(internal.OmeTiffAPI.Create),FilePath,uint8(PixelTypeOrImageDescription),uint16(SizeX),uint16(SizeY),uint8(SizeC),uint8(SizeZ),uint16(SizeT),uint32(ChannelColors),uint8(DimensionOrder))));
+				case 8
+					obj=OmeTiffRWer(ExceptionCheck(OmeBigTiff5D(uint8(internal.OmeTiffAPI.Create),FilePath,uint8(PixelTypeOrImageDescription),uint16(SizeX),uint16(SizeY),uint32(ChannelColors),uint8(SizeZ),uint16(SizeT),uint8(DimensionOrder))));
 				otherwise
 					Image5DException.Wrong_number_of_parameters.Throw;
 			end
@@ -209,6 +208,18 @@ classdef OmeTiffRWer<handle
 			% DimensionOrder(1,1)Image5D.DimensionOrder，维度顺序。指定DEFAULT表示不修改此参数。
 			% FileName string，文件名。指定""表示不修改此参数。
 			%See also Image5D.PixelType Image5D.ChannelColor Image5D.DimensionOrder
+			arguments
+				obj
+				PixelType=Image5D.PixelType.DEFAULT
+				SizeX=0x0
+				SizeY=0x0
+				SizeC=0x0
+				SizeZ=0x0
+				SizeT=0x0
+				ChannelColors=[]
+				DimensionOrder=Image5D.DimensionOrder.DEFAULT
+				FileName=""
+			end
 			ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.ModifyParameters),obj.Pointer,uint8(PixelType),uint16(SizeX),uint16(SizeY),uint8(SizeC),uint8(SizeZ),uint16(SizeT),uint32(ChannelColors),uint8(DimensionOrder),FileName));
 		end
 		function Pixels=ReadPixels(obj,TStart,TSize,varargin)
@@ -372,7 +383,6 @@ classdef OmeTiffRWer<handle
 			%# 语法
 			% ```
 			% Pointer=obj.PixelPointerI(I);
-			% %返回指定IFD起始的像素指针
 			% ```
 			%# 输入参数
 			%I(1,1)uint32，像素头起始IFD，从0开始
@@ -398,7 +408,7 @@ classdef OmeTiffRWer<handle
 			% ```
 			% import Image5D.*
 			% %此方法常用于文件截取，例如取出一段时间内的像素写出到另一个TIFF文件
-			% Writer=OmeTiffRWer.Create('图像.tif',obj.PixelType,obj.SizeX,obj.SizeY,obj.SizeC,obj.SizeZ,2,obj.ChannelColors,obj.DimensionOrder);
+			% Writer=OmeTiffRWer.Create('图像.tif',obj.PixelType,obj.SizeX,obj.SizeY,obj.ChannelColors,obj.SizeZ,2,obj.DimensionOrder);
 			% obj.ReadToPointer(Writer.PixelPointer,0,2);
 			% %上例新建了一个SizeT=2的新TIFF，然后将旧TIFF的前两个时点截取，直接拷贝到新TIFF中，不经过MATLAB数组。
 			% ```
