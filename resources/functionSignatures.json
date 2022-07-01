@@ -1,0 +1,878 @@
+{
+	"Image5D.ChannelColor.New": {
+		"inputs": [
+			{
+				"mutuallyExclusiveGroup": [
+					[
+						{
+							"name": "A",
+							"kind": "required",
+							"type": "uint8",
+							"purpose": "不透明度"
+						},
+						{
+							"name": "B",
+							"kind": "required",
+							"type": "uint8",
+							"purpose": "蓝色分量"
+						},
+						{
+							"name": "G",
+							"kind": "required",
+							"type": "uint8",
+							"purpose": "绿色分量"
+						},
+						{
+							"name": "R",
+							"kind": "required",
+							"type": "uint8",
+							"purpose": "红色分量"
+						}
+					],
+					[
+						{
+							"name": "A",
+							"kind": "required",
+							"type": [
+								[
+									"single"
+								],
+								[
+									"double"
+								]
+							],
+							"purpose": "不透明度"
+						},
+						{
+							"name": "B",
+							"kind": "required",
+							"type": [
+								[
+									"single"
+								],
+								[
+									"double"
+								]
+							],
+							"purpose": "蓝色分量"
+						},
+						{
+							"name": "G",
+							"kind": "required",
+							"type": [
+								[
+									"single"
+								],
+								[
+									"double"
+								]
+							],
+							"purpose": "绿色分量"
+						},
+						{
+							"name": "R",
+							"kind": "required",
+							"type": [
+								[
+									"single"
+								],
+								[
+									"double"
+								]
+							],
+							"purpose": "红色分量"
+						}
+					],
+					[
+						{
+							"name": "Value",
+							"kind": "required",
+							"type": [
+								[
+									"uint32"
+								],
+								[
+									"int32"
+								]
+							],
+							"purpose": "ABGR颜色共用体"
+						}
+					],
+					[
+						{
+							"name": "Matrix",
+							"kind": "required",
+							"type": [
+								[
+									"uint8",
+									"size=4,:"
+								],
+								[
+									"single",
+									"size=4,:"
+								],
+								[
+									"double",
+									"size=4,:"
+								]
+							],
+							"purpose": "ABGR颜色矩阵"
+						}
+					]
+				]
+			}
+		]
+	},
+	"Image5D.OirReader": {
+		"inputs": [
+			{
+				"name": "HeaderPath",
+				"kind": "required",
+				"type": [
+					[
+						"file=*.oir"
+					],
+					[
+						"char",
+						"vector"
+					],
+					[
+						"string",
+						"scalar"
+					]
+				],
+				"purpose": "头文件路径"
+			}
+		]
+	},
+	"Image5D.OirReader.ReadPixels": {
+		"inputs": [
+			{
+				"name": "obj"
+			},
+			{
+				"tuple": [
+					{
+						"name": "TStart",
+						"kind": "ordered",
+						"type": ">=0",
+						"purpose": "起始采样时间，从0开始"
+					},
+					{
+						"name": "TSize",
+						"type": "positive",
+						"purpose": "要读入的像素块时长"
+					}
+				],
+				"repeating": false
+			},
+			{
+				"mutuallyExclusiveGroup": [
+					[
+						{
+							"name": "C",
+							"kind": "ordered",
+							"type": ">=0",
+							"purpose": "通道序号，从0开始"
+						}
+					],
+					[
+						{
+							"name": "ZStart",
+							"type": ">=0",
+							"purpose": "起始Z层，从0开始"
+						},
+						{
+							"name": "ZSize",
+							"type": "positive",
+							"purpose": "要读入的像素块Z层数"
+						},
+						{
+							"name": "CStart",
+							"type": ">=0",
+							"purpose": "起始通道号，从0开始"
+						},
+						{
+							"name": "CSize",
+							"type": "positive",
+							"purpose": "要读入的像素块通道数"
+						}
+					]
+				]
+			}
+		]
+	},
+	"Image5D.OirReader.ReadToPointer": {
+		"inputs": [
+			{
+				"name": "obj"
+			},
+			{
+				"name": "Pointer",
+				"kind": "required",
+				"type": [
+					"Image5D.SafePointer",
+					"scalar"
+				],
+				"purpose": "C++内存指针"
+			},
+			{
+				"tuple": [
+					{
+						"name": "TStart",
+						"kind": "ordered",
+						"type": ">=0",
+						"purpose": "起始采样时间，从0开始"
+					},
+					{
+						"name": "TSize",
+						"type": "positive",
+						"purpose": "要读入的像素块时长"
+					}
+				],
+				"repeating": false
+			},
+			{
+				"mutuallyExclusiveGroup": [
+					[
+						{
+							"name": "C",
+							"kind": "ordered",
+							"type": ">=0",
+							"purpose": "通道序号，从0开始"
+						}
+					],
+					[
+						{
+							"name": "ZStart",
+							"type": ">=0",
+							"purpose": "起始Z层，从0开始"
+						},
+						{
+							"name": "ZSize",
+							"type": "positive",
+							"purpose": "要读入的像素块Z层数"
+						},
+						{
+							"name": "CStart",
+							"type": ">=0",
+							"purpose": "起始通道号，从0开始"
+						},
+						{
+							"name": "CSize",
+							"type": "positive",
+							"purpose": "要读入的像素块通道数"
+						}
+					]
+				]
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.OpenRead": {
+		"inputs": [
+			{
+				"name": "FilePath",
+				"kind": "required",
+				"type": [
+					[
+						"file=*.tif,*.tiff"
+					],
+					[
+						"char",
+						"vector"
+					],
+					[
+						"string",
+						"scalar"
+					]
+				],
+				"purpose": "文件路径"
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.OpenRW": {
+		"inputs": [
+			{
+				"name": "FilePath",
+				"kind": "required",
+				"type": [
+					[
+						"file=*.tif,*.tiff"
+					],
+					[
+						"char",
+						"vector"
+					],
+					[
+						"string",
+						"scalar"
+					]
+				],
+				"purpose": "文件路径"
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.Create": {
+		"inputs": [
+			{
+				"name": "FilePath",
+				"kind": "required",
+				"type": [
+					[
+						"file=*.tif,*.tiff"
+					],
+					[
+						"char",
+						"vector"
+					],
+					[
+						"string",
+						"scalar"
+					]
+				],
+				"purpose": "文件路径"
+			},
+			{
+				"mutuallyExclusiveGroup": [
+					[
+						{
+							"name": "ImageDescription",
+							"kind": "required",
+							"type": [
+								[
+									"char",
+									"vector"
+								],
+								[
+									"string",
+									"scalar"
+								]
+							],
+							"purpose": "OME XML 图像描述"
+						}
+					],
+					[
+						{
+							"name": "PixelType",
+							"kind": "required",
+							"type": [
+								"Image5D.PixelType",
+								"scalar"
+							],
+							"purpose": "像素类型，不能指定为DEFAULT"
+						},
+						{
+							"name": "SizeX",
+							"kind": "required",
+							"type": "positive",
+							"purpose": "图像宽度"
+						},
+						{
+							"name": "SizeY",
+							"kind": "required",
+							"type": "positive",
+							"purpose": "图像高度"
+						},
+						{
+							"name": "ChannelColors",
+							"kind": "required",
+							"type": "Image5D.ChannelColor",
+							"purpose": "各通道颜色"
+						},
+						{
+							"name": "SizeZ",
+							"kind": "required",
+							"type": "positive",
+							"purpose": "Z层数"
+						},
+						{
+							"name": "SizeT",
+							"kind": "required",
+							"type": "positive",
+							"purpose": "采样时点数"
+						},
+						{
+							"name": "DimensionOrder",
+							"kind": "required",
+							"type": [
+								"Image5D.DimensionOrder",
+								"scalar"
+							],
+							"purpose": "维度顺序，不能指定为DEFAULT"
+						}
+					]
+				]
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.ModifyParameters": {
+		"inputs": [
+			{
+				"name": "obj"
+			},
+			{
+				"name": "PixelType",
+				"kind": "ordered",
+				"type": [
+					"Image5D.PixelType",
+					"scalar"
+				],
+				"purpose": "像素类型。指定DEFAULT表示不修改此参数。",
+				"default": "Image5D.PixelType.DEFAULT"
+			},
+			{
+				"name": "SizeX",
+				"kind": "ordered",
+				"type": ">=0",
+				"purpose": "图像宽度。指定0表示不修改此参数。",
+				"default": 0
+			},
+			{
+				"name": "SizeY",
+				"kind": "ordered",
+				"type": ">=0",
+				"purpose": "图像高度。指定0表示不修改此参数。",
+				"default": 0
+			},
+			{
+				"name": "SizeC",
+				"kind": "ordered",
+				"type": ">=0",
+				"purpose": "颜色通道数。指定0表示不修改此参数。",
+				"default": 0
+			},
+			{
+				"name": "SizeZ",
+				"kind": "ordered",
+				"type": ">=0",
+				"purpose": "Z层数。指定0表示不修改此参数。",
+				"default": 0
+			},
+			{
+				"name": "SizeT",
+				"kind": "ordered",
+				"type": ">=0",
+				"purpose": "采样时点数。指定0表示不修改此参数。",
+				"default": 0
+			},
+			{
+				"name": "ChannelColors",
+				"kind": "ordered",
+				"type": [
+					[
+						"Image5D.ChannelColor"
+					],
+					[
+						"double"
+					]
+				],
+				"purpose": "各通道颜色，必须是尺寸等于SizeC的向量。指定[]表示不修改此参数。",
+				"default": "[]"
+			},
+			{
+				"name": "DimensionOrder",
+				"kind": "ordered",
+				"type": [
+					"Image5D.DimensionOrder",
+					"scalar"
+				],
+				"purpose": "维度顺序。指定DEFAULT表示不修改此参数。",
+				"default": "Image5D.DimensionOrder.DEFAULT"
+			},
+			{
+				"name": "FileName",
+				"kind": "ordered",
+				"type": [
+					[
+						"char",
+						"vector"
+					],
+					[
+						"string",
+						"scalar"
+					]
+				],
+				"purpose": "文件名。指定\"\"表示不修改此参数。",
+				"default": "\"\""
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.ReadPixels": {
+		"inputs": [
+			{
+				"name": "obj"
+			},
+			{
+				"tuple": [
+					{
+						"name": "TStart",
+						"kind": "ordered",
+						"type": ">=0",
+						"purpose": "起始采样时间，从0开始"
+					},
+					{
+						"name": "TSize",
+						"type": "positive",
+						"purpose": "要读入的像素块时长"
+					}
+				],
+				"repeating": false
+			},
+			{
+				"tuple": [
+					{
+						"name": "ZStart",
+						"kind": "ordered",
+						"type": ">=0",
+						"purpose": "起始Z层，从0开始"
+					},
+					{
+						"name": "ZSize",
+						"type": "positive",
+						"purpose": "要读入的像素块Z层数"
+					},
+					{
+						"name": "CStart",
+						"type": ">=0",
+						"purpose": "起始通道号，从0开始"
+					},
+					{
+						"name": "CSize",
+						"type": "positive",
+						"purpose": "要读入的像素块通道数"
+					}
+				],
+				"repeating": false
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.ReadPixelsI": {
+		"inputs": [
+			{
+				"name": "obj"
+			},
+			{
+				"name": "IStart",
+				"kind": "required",
+				"type": ">=0",
+				"purpose": "要读入的起始IFD，从0开始"
+			},
+			{
+				"name": "ISize",
+				"kind": "required",
+				"type": "positive",
+				"purpose": "要读入的IFD个数"
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.WritePixels": {
+		"inputs": [
+			{
+				"name": "obj"
+			},
+			{
+				"name": "Pixels",
+				"kind": "required",
+				"type": "real",
+				"purpose": "要写出的像素值"
+			},
+			{
+				"tuple": [
+					{
+						"name": "TStart",
+						"kind": "ordered",
+						"type": ">=0",
+						"purpose": "起始采样时间，从0开始"
+					},
+					{
+						"name": "TSize",
+						"type": "positive",
+						"purpose": "要写出的像素块时长"
+					}
+				],
+				"repeating": false
+			},
+			{
+				"tuple": [
+					{
+						"name": "ZStart",
+						"kind": "ordered",
+						"type": ">=0",
+						"purpose": "起始Z层，从0开始"
+					},
+					{
+						"name": "ZSize",
+						"type": "positive",
+						"purpose": "要写出的像素块Z层数"
+					},
+					{
+						"name": "CStart",
+						"type": ">=0",
+						"purpose": "起始通道号，从0开始"
+					},
+					{
+						"name": "CSize",
+						"type": "positive",
+						"purpose": "要写出的像素块通道数"
+					}
+				],
+				"repeating": false
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.WritePixelsI": {
+		"inputs": [
+			{
+				"name": "obj"
+			},
+			{
+				"name": "Pixels",
+				"kind": "required",
+				"type": "real",
+				"purpose": "要写出的像素值"
+			},
+			{
+				"name": "IStart",
+				"kind": "required",
+				"type": ">=0",
+				"purpose": "要写出的起始IFD，从0开始"
+			},
+			{
+				"name": "ISize",
+				"kind": "required",
+				"type": "positive",
+				"purpose": "要写出的IFD个数"
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.PixelPointer": {
+		"inputs": [
+			{
+				"name": "obj"
+			},
+			{
+				"name": "T",
+				"kind": "ordered",
+				"type": ">=0",
+				"purpose": "像素头起始时间，从0开始"
+			},
+			{
+				"tuple": [
+					{
+						"name": "Z",
+						"kind": "ordered",
+						"type": ">=0",
+						"purpose": "像素头起始Z层，从0开始"
+					},
+					{
+						"name": "C",
+						"type": ">=0",
+						"purpose": "像素头起始通道，从0开始"
+					}
+				],
+				"repeating": false
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.PixelPointerI": {
+		"inputs": [
+			{
+				"name": "obj"
+			},
+			{
+				"name": "I",
+				"kind": "required",
+				"type": ">=0",
+				"purpose": "像素头起始IFD，从0开始"
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.ReadToPointer": {
+		"inputs": [
+			{
+				"name": "obj"
+			},
+			{
+				"name": "Pointer",
+				"kind": "required",
+				"type": [
+					"Image5D.SafePointer",
+					"scalar"
+				],
+				"purpose": "C++内存指针"
+			},
+			{
+				"tuple": [
+					{
+						"name": "TStart",
+						"kind": "ordered",
+						"type": ">=0",
+						"purpose": "起始采样时间，从0开始"
+					},
+					{
+						"name": "TSize",
+						"type": "positive",
+						"purpose": "要读入的像素块时长"
+					}
+				],
+				"repeating": false
+			},
+			{
+				"tuple": [
+					{
+						"name": "ZStart",
+						"kind": "ordered",
+						"type": ">=0",
+						"purpose": "起始Z层，从0开始"
+					},
+					{
+						"name": "ZSize",
+						"type": "positive",
+						"purpose": "要读入的像素块Z层数"
+					},
+					{
+						"name": "CStart",
+						"type": ">=0",
+						"purpose": "起始通道号，从0开始"
+					},
+					{
+						"name": "CSize",
+						"type": "positive",
+						"purpose": "要读入的像素块通道数"
+					}
+				],
+				"repeating": false
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.ReadToPointerI": {
+		"inputs": [
+			{
+				"name": "obj"
+			},
+			{
+				"name": "Pointer",
+				"kind": "required",
+				"type": [
+					"Image5D.SafePointer",
+					"scalar"
+				],
+				"purpose": "C++内存指针"
+			},
+			{
+				"name": "IStart",
+				"kind": "required",
+				"type": ">=0",
+				"purpose": "要读入的起始IFD，从0开始"
+			},
+			{
+				"name": "ISize",
+				"kind": "required",
+				"type": "positive",
+				"purpose": "要读入的IFD个数"
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.WriteFromPointer": {
+		"inputs": [
+			{
+				"name": "obj"
+			},
+			{
+				"name": "Pointer",
+				"kind": "required",
+				"type": [
+					"Image5D.SafePointer",
+					"scalar"
+				],
+				"purpose": "C++内存指针"
+			},
+			{
+				"tuple": [
+					{
+						"name": "TStart",
+						"kind": "ordered",
+						"type": ">=0",
+						"purpose": "起始采样时间，从0开始"
+					},
+					{
+						"name": "TSize",
+						"type": "positive",
+						"purpose": "要写出的像素块时长"
+					}
+				],
+				"repeating": false
+			},
+			{
+				"tuple": [
+					{
+						"name": "ZStart",
+						"kind": "ordered",
+						"type": ">=0",
+						"purpose": "起始Z层，从0开始"
+					},
+					{
+						"name": "ZSize",
+						"type": "positive",
+						"purpose": "要写出的像素块Z层数"
+					},
+					{
+						"name": "CStart",
+						"type": ">=0",
+						"purpose": "起始通道号，从0开始"
+					},
+					{
+						"name": "CSize",
+						"type": "positive",
+						"purpose": "要写出的像素块通道数"
+					}
+				],
+				"repeating": false
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.WriteFromPointerI": {
+		"inputs": [
+			{
+				"name": "obj"
+			},
+			{
+				"name": "Pointer",
+				"kind": "required",
+				"type": [
+					"Image5D.SafePointer",
+					"scalar"
+				],
+				"purpose": "C++内存指针"
+			},
+			{
+				"name": "IStart",
+				"kind": "required",
+				"type": ">=0",
+				"purpose": "要写出的起始IFD，从0开始"
+			},
+			{
+				"name": "ISize",
+				"kind": "required",
+				"type": "positive",
+				"purpose": "要写出的IFD个数"
+			}
+		]
+	},
+	"Image5D.SafePointer": {
+		"inputs": [
+			{
+				"name": "Pointer",
+				"kind": "required",
+				"type": "positive",
+				"purpose": "内存指针位置"
+			},
+			{
+				"name": "Capacity",
+				"kind": "required",
+				"type": "positive",
+				"purpose": "内存块容量"
+			}
+		]
+	}
+}
