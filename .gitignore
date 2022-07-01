@@ -37,3 +37,9 @@
 /OmeBigTiff5D/x64
 /packages
 /x64
+*.exp
+*.pdb
+*.idb
+*.asv
+*.mexw64
+*.tif

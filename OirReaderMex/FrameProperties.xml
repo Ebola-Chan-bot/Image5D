@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="ASCII"?>
+<lsmframe:frameProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:base="http://www.olympus.co.jp/hpf/model/base" xmlns:commonframe="http://www.olympus.co.jp/hpf/model/commonframe" xmlns:commonparam="http://www.olympus.co.jp/hpf/model/commonparam" xmlns:lsmframe="http://www.olympus.co.jp/hpf/model/lsmframe" xmlns:lsmparam="http://www.olympus.co.jp/hpf/model/lsmparam" xmlns:roi="http://www.olympus.co.jp/hpf/model/roi" id="t001_0_1">
+    <commonframe:general>
+        <base:name>t001_0_1</base:name>
+        <base:creationDateTime>2022-05-14T08:35:02.634+08:00</base:creationDateTime>
+    </commonframe:general>
+    <commonframe:imageDefinition>
+        <base:colorType>GlayScale</base:colorType>
+        <base:width>512</base:width>
+        <base:height>512</base:height>
+        <base:depth>2</base:depth>
+        <base:bitCounts>10</base:bitCounts>
+    </commonframe:imageDefinition>
+    <commonframe:channelImageDefinition channelId="0ed6a743-8e7d-4f43-838b-47f9de722006">
+        <commonframe:bitCounts>10</commonframe:bitCounts>
+    </commonframe:channelImageDefinition>
+    <commonframe:channelImageDefinition channelId="f786c4e7-f58d-4caa-9d7b-b0084d200c44">
+        <commonframe:bitCounts>10</commonframe:bitCounts>
+    </commonframe:channelImageDefinition>
+    <commonframe:channelImageDefinition channelId="4acf9866-6e46-4167-8e7d-dd2700e71fdf">
+        <commonframe:bitCounts>10</commonframe:bitCounts>
+    </commonframe:channelImageDefinition>
+    <commonframe:axisValue>
+        <commonframe:axisType>TIMELAPSE</commonframe:axisType>
+        <commonframe:position>0.0</commonframe:position>
+    </commonframe:axisValue>
+    <commonframe:stimulationRegion>
+        <roi:ROI xsi:type="roi:LSMStimulationROI" id="-2">
+            <roi:roiType>BackgroundROI</roi:roiType>
+            <roi:transmissivity>0</roi:transmissivity>
+        </roi:ROI>
+    </commonframe:stimulationRegion>
+    <lsmframe:acquisitionValue>
+        <lsmframe:pmt channelId="0ed6a743-8e7d-4f43-838b-47f9de722006" detectorId="__FV30-AGAPD_D_4__">
+            <lsmparam:voltage>350</lsmparam:voltage>
+            <lsmparam:offset>0</lsmparam:offset>
+            <lsmparam:gain>1.0</lsmparam:gain>
+        </lsmframe:pmt>
+        <lsmframe:pmt channelId="f786c4e7-f58d-4caa-9d7b-b0084d200c44" detectorId="__FV30-ANALOG_D_1__">
+            <lsmparam:voltage>0</lsmparam:voltage>
+            <lsmparam:offset>0</lsmparam:offset>
+            <lsmparam:gain>1.0</lsmparam:gain>
+        </lsmframe:pmt>
+        <lsmframe:pmt channelId="4acf9866-6e46-4167-8e7d-dd2700e71fdf" detectorId="__FV30-ANALOG_D_2__">
+            <lsmparam:voltage>0</lsmparam:voltage>
+            <lsmparam:offset>0</lsmparam:offset>
+            <lsmparam:gain>1.0</lsmparam:gain>
+        </lsmframe:pmt>
+        <lsmframe:laser xsi:type="commonparam:MPELaserParam" laserDataId="INSIGHT DS-OL_65792Imaging_main_phase_1">
+            <commonparam:power>100.0</commonparam:power>
+            <commonparam:transmissivity>20.0</commonparam:transmissivity>
+            <commonparam:optionalTransmissivity>20.0</commonparam:optionalTransmissivity>
+            <commonparam:alignment>
+                <commonparam:activeAutoAlignment>false</commonparam:activeAutoAlignment>
+                <commonparam:shiftXOffset>0</commonparam:shiftXOffset>
+                <commonparam:shiftYOffset>0</commonparam:shiftYOffset>
+                <commonparam:tiltXOffset>0</commonparam:tiltXOffset>
+                <commonparam:tiltYOffset>0</commonparam:tiltYOffset>
+                <commonparam:shiftXPosition>8990</commonparam:shiftXPosition>
+                <commonparam:shiftYPosition>7899</commonparam:shiftYPosition>
+                <commonparam:tiltXPosition>17614</commonparam:tiltXPosition>
+                <commonparam:tiltYPosition>17787</commonparam:tiltYPosition>
+            </commonparam:alignment>
+        </lsmframe:laser>
+        <lsmframe:zPosition>9648.78</lsmframe:zPosition>
+        <lsmframe:zBase>0.0</lsmframe:zBase>
+        <lsmframe:xPan>0.0</lsmframe:xPan>
+        <lsmframe:yPan>0.0</lsmframe:yPan>
+        <lsmframe:rotation>0.0</lsmframe:rotation>
+    </lsmframe:acquisitionValue>
+</lsmframe:frameProperties>
