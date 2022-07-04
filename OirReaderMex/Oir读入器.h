@@ -6,8 +6,8 @@
 #include "文件控制块.h"
 #include "内存优化库.h"
 using namespace std;
-using 文件列表类 = vector<unique_ptr<const 文件控制块>>;
-using 块指针类 = unique_ptr<const UINT16* [],free删除器>;
+using 文件列表类 = vector<unique_ptr<文件控制块>>;
+using 块指针类 = vector<const uint16_t*>;
 class Oir读入器
 {
 	文件列表类 文件列表;
