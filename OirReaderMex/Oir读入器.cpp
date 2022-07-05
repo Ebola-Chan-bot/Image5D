@@ -1,7 +1,6 @@
 #include "pch.h"
 #include <Shlwapi.h>
 #include <stdio.h>
-#include <algorithm>
 #include <pugixml.hpp>
 #include <numeric>
 //Oir读入器.h含有using namespace std;，会导致std::byte类型混淆，因此必须最后包含
@@ -73,18 +72,21 @@ void 扫描XML块(const char*& s1指针, const void*& 尾指针, vector<unique_p
 			throw;
 }
 using namespace pugi;
+constexpr const char* 字符串尾(const char* 字符串)
+{
+	while (*字符串)
+		字符串++;
+	return 字符串;
+}
 void 创建索引(const 文件列表类& 文件列表, const unique_ptr<文件映射>& 索引文件, Oir索引*& 索引, UINT32*& 每块像素数, 设备颜色*& i通道颜色, 块指针类& 块指针)
 {
-	constexpr const char 图像属性标头[] = "<lsmimage";
-	constexpr uint8_t 图像标头长度 = sizeof(图像属性标头) - 1;
-	static const char* const 图像标头尾 = 图像属性标头 + 图像标头长度;
-	constexpr const char 查找表标头[] = "<lut";
-	constexpr uint8_t 查找表标头长度 = sizeof(查找表标头) - 1;
-	static const char* const 查找表标头尾 = 查找表标头 + 查找表标头长度;
+	constexpr const char* 图像属性标头 = "<lsmimage";
+	constexpr const char* 图像标头尾 = 字符串尾(图像属性标头);
+	constexpr const char* 查找表标头 = "<lut";
+	constexpr const char* 查找表标头尾 = 字符串尾(查找表标头);
+	constexpr const char* 帧属性标头 = "<lsmframe";
+	constexpr const char* 帧标头尾 = 字符串尾(帧属性标头);
 	constexpr uint8_t UUID长度 = 36;
-	constexpr const char 帧属性标头[] = "<lsmframe";
-	constexpr uint8_t 帧标头长度 = sizeof(帧属性标头) - 1;
-	static const char* const 帧标头尾 = 帧属性标头 + 帧标头长度;
 	const 文件映射& 当前文件 = 文件列表[0]->内存映射();
 	const char* const 映射指针 = (char*)当前文件.映射指针();
 	const UID块* UID块指针 = (UID块*)((char*)映射指针 + 96);
@@ -298,16 +300,13 @@ void 创建索引(const 文件列表类& 文件列表, const unique_ptr<文件�
 		}
 	}
 	新索引.每帧分块数 = 每块像素数向量.size() / SizeC;
-	UINT32 块总数 = 块指针.size();
+	const UINT32 块总数 = 块指针.size();
 	const size_t 文件大小 = 新索引.计算文件大小() + 块总数 * sizeof(const UINT16*);
 	索引文件->文件大小(文件大小);
 	索引文件->映射指针(nullptr);
 	*(索引 = (Oir索引*)索引文件->映射指针()) = 新索引;
-	索引->计算依赖字段();
-	索引->SizeT = 块总数 / 索引->SizeZBC;
-	块总数 = 索引->SizeT * 索引->SizeZBC;
-	索引->SizeTZBC = 块总数;
-	块指针.resize(块总数);
+	索引->计算依赖字段(块总数);
+	块指针.resize(索引->SizeTZBC);
 	UINT64* 块偏移;
 	索引->Get变长成员(每块像素数, i通道颜色, 块偏移);
 	vector<uint32_t>::const_iterator 块像素头 = 每块像素数向量.cbegin();
@@ -447,7 +446,7 @@ void Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize
 				UINT32 块像素数 = *块像素头;
 				while (读入头C < 读入尾C)
 				{
-					copy_n(*读入头C, 块像素数, 写出头C);
+					安全拷贝(*读入头C, 块像素数, 写出头C);
 					读入头C++;
 					写出头C += 索引->SizeYX;
 				}
@@ -472,7 +471,7 @@ void Oir读入器::读入像素(UINT16* 写出头, UINT16 TStart, UINT16 TSize, 
 		const UINT32* 块像素头 = 每块像素数;
 		while (读入头 < 读入尾B)
 		{
-			copy_n(*读入头, *块像素头, 写出头);
+			安全拷贝(*读入头, *块像素头, 写出头);
 			读入头 += 索引->SizeC;
 			写出头 += *块像素头;
 			块像素头++;
@@ -497,7 +496,7 @@ void Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize
 			UINT16* 写出头C = 写出头B;
 			while (读入头 < 读入尾C)
 			{
-				copy_n(*读入头, 块像素数, 写出头C);
+				安全拷贝(*读入头, 块像素数, 写出头C);
 				读入头++;
 				写出头C += 索引->SizeYX;
 			}
@@ -523,7 +522,7 @@ void Oir读入器::读入像素(UINT16* 写出头TZ)const
 			UINT16* 写出头C = 写出头B;
 			while (读入头 < 读入尾C)
 			{
-				copy_n(*读入头, 块像素数, 写出头C);
+				安全拷贝(*读入头, 块像素数, 写出头C);
 				读入头++;
 				写出头C += 索引->SizeYX;
 			}

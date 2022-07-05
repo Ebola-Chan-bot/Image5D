@@ -255,7 +255,7 @@ std::shared_ptr<matlab::engine::MATLABEngine> matlab::mex::Function::getEngine()
 	void* engine = cppmex_getEngine(functionImpl);
 	return std::make_shared<matlab::engine::MATLABEngine>(engine);
 }
-void matlab::mex::Function::operator()(matlab::mex::ArgumentList outs, matlab::mex::ArgumentList ins) {}
+void matlab::mex::Function::operator()(matlab::mex::ArgumentList& outs, matlab::mex::ArgumentList& ins) {}
 
 
 

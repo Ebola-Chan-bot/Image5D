@@ -97,7 +97,7 @@ void OmeTiff读入器::读入像素(char* 缓冲区, UINT16 TStart, UINT16 TSize
 			char* const 尾1 = 缓冲区 + 库Size10;
 			while (缓冲区 < 尾1)
 			{
-				memcpy(缓冲区, *(头1++), SizePXY);
+				安全拷贝(*(头1++), SizePXY, 缓冲区);
 				缓冲区 += SizePXY;
 			}
 			头2 += 源Size1;

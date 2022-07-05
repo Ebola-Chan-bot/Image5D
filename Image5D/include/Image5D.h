@@ -1,4 +1,5 @@
 #pragma once
+#include <algorithm>
 #ifdef IMAGE5D_EXPORTS
 #define Image5DAPI __declspec(dllexport)
 #else
@@ -94,7 +95,8 @@ enum Image5D异常类型
 	只读打开不可写出,
 	只读打开不可修改,
 	索引中不包含块,
-	通道长度未定义
+	通道长度未定义,
+	内存拷贝失败,
 };
 enum XML解析状态
 {
@@ -135,4 +137,16 @@ struct Image5D异常
 };
 constexpr Image5D异常 成功异常(操作成功);
 constexpr Image5D异常 越界异常(指定维度越界);
+template <typename T>
+void 安全拷贝(const T* 源, size_t 数目, T* 目标)
+{
+	try
+	{
+		std::copy_n(源, 数目, 目标);
+	}
+	catch (...)
+	{
+		throw Image5D异常(内存拷贝失败);
+	}
+}
 #include "文件映射.h"

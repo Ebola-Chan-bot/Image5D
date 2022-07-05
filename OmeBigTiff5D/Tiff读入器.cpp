@@ -10,7 +10,7 @@ void Tiff读入器::读入像素(char* 缓冲区)const
 	const char* const* const 像素尾 = 像素头 + iSizeI;
 	while (像素头 < 像素尾)
 	{
-		memcpy(缓冲区, *(像素头++), SizePXY);
+		安全拷贝(*(像素头++), SizePXY, 缓冲区);
 		缓冲区 += SizePXY;
 	}
 }
@@ -22,7 +22,7 @@ void Tiff读入器::读入像素(char* 缓冲区, UINT32 IStart, UINT32 ISize)co
 	const char* const* const 像素尾 = 像素头 + ISize;
 	while (像素头 < 像素尾)
 	{
-		memcpy(缓冲区, *(像素头++), SizePXY);
+		安全拷贝(*(像素头++), SizePXY, 缓冲区);
 		缓冲区 += SizePXY;
 	}
 }

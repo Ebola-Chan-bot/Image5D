@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "OmeBigTiff5D.h"
-#include <algorithm>
 #include <rpc.h>
 #include "resource.h"
 #include "模块句柄.h"
@@ -386,13 +385,13 @@ OmeBigTiff5D* OmeBigTiff5D::覆盖创建(const char* 文件路径, const char* �
 }
 void OmeBigTiff5D::读入像素(char* 缓冲区)const
 {
-	memcpy(缓冲区, 像素头, SizeIPXY);
+	安全拷贝(像素头, SizeIPXY,缓冲区);
 }
 void OmeBigTiff5D::读入像素(char* 缓冲区, UINT32 IStart, UINT32 ISize)const
 {
 	if (UINT64(IStart) + ISize > iSizeI)
 		throw 越界异常;
-	memcpy(缓冲区, 像素头 + UINT64(IStart) * SizePXY, UINT64(ISize) * SizePXY);
+	安全拷贝(像素头 + UINT64(IStart) * SizePXY, UINT64(ISize) * SizePXY, 缓冲区);
 }
 template <bool 读>
 inline void 读写3D(维度顺序 iDimensionOrder, UINT16 TStart, UINT16 TSize,UINT16 iSizeT, UINT8 ZStart, UINT8 ZSize, UINT8 iSizeZ,UINT8 CStart, UINT8 CSize,UINT8 iSizeC, UINT32 SizePXY, UINT64 源Size10, UINT64 源Size210, char* 头3, char* 缓冲区)
@@ -447,9 +446,9 @@ inline void 读写3D(维度顺序 iDimensionOrder, UINT16 TStart, UINT16 TSize,U
 		while (缓冲区 < 尾2)
 		{
 			if (读)
-				memcpy(缓冲区, 头2, 库Size10);
+				安全拷贝(头2, 库Size10, 缓冲区);
 			else
-				memcpy(头2, 缓冲区, 库Size10);
+				安全拷贝(缓冲区, 库Size10, 头2);
 			头2 += 源Size10;
 			缓冲区 += 库Size10;
 		}
@@ -464,7 +463,7 @@ void OmeBigTiff5D::写出像素(const char* 缓冲区)const
 {
 	if (文件->只读)
 		throw Image5D异常(只读打开不可写出);
-	memcpy(像素头, 缓冲区, SizeIPXY);
+	安全拷贝(缓冲区, SizeIPXY, 像素头);
 }
 void OmeBigTiff5D::写出像素(const char* 缓冲区, UINT32 IStart, UINT32 ISize)const
 {
@@ -472,7 +471,7 @@ void OmeBigTiff5D::写出像素(const char* 缓冲区, UINT32 IStart, UINT32 ISi
 		throw 越界异常;
 	if (文件->只读)
 		throw Image5D异常(只读打开不可写出);
-	memcpy(像素头 + UINT64(IStart) * SizePXY, 缓冲区, UINT64(ISize) * SizePXY);
+	安全拷贝(缓冲区, UINT64(ISize) * SizePXY, 像素头 + UINT64(IStart) * SizePXY);
 }
 void OmeBigTiff5D::写出像素(const char* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const
 {

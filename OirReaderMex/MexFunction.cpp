@@ -158,7 +158,7 @@ API声明(ReadToPointer)
 	}
 	outputs[0] = 成功结构;
 }
-void MexFunction::operator()(ArgumentList outputs, ArgumentList inputs)
+void MexFunction::operator()(ArgumentList& outputs, ArgumentList& inputs)
 {
 	API索引
 	{

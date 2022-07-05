@@ -92,6 +92,7 @@ classdef Image5DException<uint8
 		Readonly_open_unmodifiable(86)
 		No_blocks_are_included_in_the_index(87)
 		Channel_length_is_undefined(88)
+		Memory_copy_failed(89)
 		%MATLAB抛出的异常
 
 		Wrong_number_of_parameters(255)

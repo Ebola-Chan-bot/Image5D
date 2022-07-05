@@ -1,5 +1,4 @@
 #pragma once
-#include <mex.hpp>
 #include <mexAdapter.hpp>
 #include <algorithm>
 #include "内存优化库.h"
@@ -67,6 +66,6 @@ T 万能转码(const char*);
 class MexFunction :public Function
 {
 public:
-	void operator()(ArgumentList outputs, ArgumentList inputs);
+	void operator()(ArgumentList& outputs, ArgumentList& inputs)override;
 };
 void 异常输出补全(ArgumentList& outputs);

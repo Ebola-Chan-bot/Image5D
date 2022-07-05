@@ -32,7 +32,7 @@ namespace matlab {
              * @param outputs - Collection of matlab::data::Array objects that will returned back to MATLAB
              * @param inputs - Collection of matlab::data::Array objects that are passed to the MEX-file from MATLAB
              */
-            virtual void operator()(ArgumentList outputs, ArgumentList inputs);
+            virtual void operator()(ArgumentList& outputs, ArgumentList& inputs);
 
             std::shared_ptr<matlab::engine::MATLABEngine> getEngine();
 

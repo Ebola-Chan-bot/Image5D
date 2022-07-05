@@ -419,7 +419,7 @@ API声明(Close)
 	delete 万能转码<IOmeTiff读写器*>(inputs[1]);
 	outputs[0] = 成功结构;
 }
-void MexFunction::operator()(ArgumentList outputs, ArgumentList inputs)
+void MexFunction::operator()(ArgumentList& outputs, ArgumentList& inputs)
 {
 	API索引
 	{
