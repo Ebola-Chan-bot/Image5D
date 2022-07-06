@@ -10,7 +10,7 @@
 本库经过精心设计，将复杂的底层逻辑隐藏，而将整个图像文件抽象成一个5D数组，允许用户随意切片，高速读写。核心是C++代码，提供MATLAB包装接口。后续根据需要可能添加其它语言接口。
 
 依赖：pugixml，AVX2以上指令集，Windows系统（推荐Win11，低版本未测试）</param.description>
-    <param.screenshot>C:\Users\vhtmf\source\repos\OmeBigTiff5D\MATLAB工具箱\ome.png</param.screenshot>
+    <param.screenshot />
     <param.version>1.0.4</param.version>
     <param.output>${PROJECT_ROOT}\Image5D.mltbx</param.output>
     <param.products.name />
@@ -81,6 +81,7 @@ x64
     <param.additional.sw.mac.url />
     <param.additional.sw.linux.url />
     <unset>
+      <param.screenshot />
       <param.output />
       <param.products.name />
       <param.products.id />
@@ -124,7 +125,7 @@ x64
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>C:\Program Files\MATLAB\R2022b</root>
+      <root>C:\Program Files\MATLAB\R2022a</root>
       <toolboxes />
     </matlab>
     <platform>
