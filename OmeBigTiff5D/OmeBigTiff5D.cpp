@@ -439,20 +439,27 @@ inline void 读写3D(维度顺序 iDimensionOrder, UINT16 TStart, UINT16 TSize,U
 		尾3 += CSize * 库Size210;
 		break;
 	}
-	while (缓冲区 < 尾3)
+	try
 	{
-		char* 头2 = 头3;
-		char* const 尾2 = 缓冲区 + 库Size210;
-		while (缓冲区 < 尾2)
+		while (缓冲区 < 尾3)
 		{
-			if (读)
-				安全拷贝(头2, 库Size10, 缓冲区);
-			else
-				安全拷贝(缓冲区, 库Size10, 头2);
-			头2 += 源Size10;
-			缓冲区 += 库Size10;
+			char* 头2 = 头3;
+			char* const 尾2 = 缓冲区 + 库Size210;
+			while (缓冲区 < 尾2)
+			{
+				if (读)
+					memcpy(缓冲区, 头2, 库Size10);
+				else
+					memcpy(头2, 缓冲区, 库Size10);
+				头2 += 源Size10;
+				缓冲区 += 库Size10;
+			}
+			头3 += 源Size210;
 		}
-		头3 += 源Size210;
+	}
+	catch (...)
+	{
+		throw 内存异常;
 	}
 }
 void OmeBigTiff5D::读入像素(char* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const

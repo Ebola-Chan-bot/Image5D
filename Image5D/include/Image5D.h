@@ -137,6 +137,7 @@ struct Image5D异常
 };
 constexpr Image5D异常 成功异常(操作成功);
 constexpr Image5D异常 越界异常(指定维度越界);
+constexpr Image5D异常 内存异常(内存拷贝失败);
 template <typename T>
 void 安全拷贝(const T* 源, size_t 数目, T* 目标)
 {

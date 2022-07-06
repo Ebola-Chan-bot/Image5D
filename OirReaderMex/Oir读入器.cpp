@@ -429,34 +429,41 @@ void Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize
 	const UINT16* const* const 读入尾T = 读入头T + UINT32(TSize) * 索引->SizeZBC;
 	const UINT8 读入ZBC = ZSize * 索引->SizeBC;
 	const UINT32 写出CYX = UINT32(CSize) * 索引->SizeYX;
-	while (读入头T < 读入尾T)
+	try
 	{
-		const UINT16* const* 读入头ZB = 读入头T;
-		const UINT16* const* 读入尾Z = 读入头ZB + 读入ZBC;
-		while (读入头ZB < 读入尾Z)
+		while (读入头T < 读入尾T)
 		{
-			const UINT32* 块像素头 = 每块像素数;
-			const UINT16* const* 读入尾B = 读入头ZB + 索引->SizeBC;
-			UINT16* 写出头B = 写出头TZ;
-			while (读入头ZB < 读入尾B)
+			const UINT16* const* 读入头ZB = 读入头T;
+			const UINT16* const* 读入尾Z = 读入头ZB + 读入ZBC;
+			while (读入头ZB < 读入尾Z)
 			{
-				const UINT16* const* 读入头C = 读入头ZB;
-				const UINT16* const* 读入尾C = 读入头C + CSize;
-				UINT16* 写出头C = 写出头B;
-				UINT32 块像素数 = *块像素头;
-				while (读入头C < 读入尾C)
+				const UINT32* 块像素头 = 每块像素数;
+				const UINT16* const* 读入尾B = 读入头ZB + 索引->SizeBC;
+				UINT16* 写出头B = 写出头TZ;
+				while (读入头ZB < 读入尾B)
 				{
-					安全拷贝(*读入头C, 块像素数, 写出头C);
-					读入头C++;
-					写出头C += 索引->SizeYX;
+					const UINT16* const* 读入头C = 读入头ZB;
+					const UINT16* const* 读入尾C = 读入头C + CSize;
+					UINT16* 写出头C = 写出头B;
+					UINT32 块像素数 = *块像素头;
+					while (读入头C < 读入尾C)
+					{
+						std::copy_n(*读入头C, 块像素数, 写出头C);
+						读入头C++;
+						写出头C += 索引->SizeYX;
+					}
+					读入头ZB += 索引->SizeC;
+					写出头B += 块像素数;
+					块像素头++;
 				}
-				读入头ZB += 索引->SizeC;
-				写出头B += 块像素数;
-				块像素头++;
+				写出头TZ += 写出CYX;
 			}
-			写出头TZ += 写出CYX;
+			读入头T += 索引->SizeZBC;
 		}
-		读入头T += 索引->SizeZBC;
+	}
+	catch (...)
+	{
+		throw 内存异常;
 	}
 }
 void Oir读入器::读入像素(UINT16* 写出头, UINT16 TStart, UINT16 TSize, UINT8 C)const
@@ -465,17 +472,24 @@ void Oir读入器::读入像素(UINT16* 写出头, UINT16 TStart, UINT16 TSize, 
 		throw 越界异常;
 	const UINT16* const* 读入头 = 块指针.data() + UINT32(TStart) * 索引->SizeZBC + C;
 	const UINT16* const* const 读入尾T = 读入头 + UINT32(TSize) * 索引->SizeZBC;
-	while (读入头 < 读入尾T)
+	try
 	{
-		const UINT16* const* 读入尾B = 读入头 + 索引->SizeBC;
-		const UINT32* 块像素头 = 每块像素数;
-		while (读入头 < 读入尾B)
+		while (读入头 < 读入尾T)
 		{
-			安全拷贝(*读入头, *块像素头, 写出头);
-			读入头 += 索引->SizeC;
-			写出头 += *块像素头;
-			块像素头++;
+			const UINT16* const* 读入尾B = 读入头 + 索引->SizeBC;
+			const UINT32* 块像素头 = 每块像素数;
+			while (读入头 < 读入尾B)
+			{
+				std::copy_n(*读入头, *块像素头, 写出头);
+				读入头 += 索引->SizeC;
+				写出头 += *块像素头;
+				块像素头++;
+			}
 		}
+	}
+	catch (...)
+	{
+		throw 内存异常;
 	}
 }
 void Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize)const
@@ -484,51 +498,65 @@ void Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize
 		throw 越界异常;
 	const UINT16* const* 读入头 = 块指针.data() + UINT32(TStart) * 索引->SizeZBC;
 	const UINT16* const* const 读入尾T = 读入头 + UINT32(TSize) * 索引->SizeZBC;
-	while (读入头 < 读入尾T)
+	try
 	{
-		const UINT16* const* 读入尾B = 读入头 + 索引->SizeBC;
-		UINT16* 写出头B = 写出头TZ;
-		const UINT32* 块像素头 = 每块像素数;
-		while (读入头 < 读入尾B)
+		while (读入头 < 读入尾T)
 		{
-			const UINT16* const* 读入尾C = 读入头 + 索引->SizeC;
-			UINT32 块像素数 = *块像素头;
-			UINT16* 写出头C = 写出头B;
-			while (读入头 < 读入尾C)
+			const UINT16* const* 读入尾B = 读入头 + 索引->SizeBC;
+			UINT16* 写出头B = 写出头TZ;
+			const UINT32* 块像素头 = 每块像素数;
+			while (读入头 < 读入尾B)
 			{
-				安全拷贝(*读入头, 块像素数, 写出头C);
-				读入头++;
-				写出头C += 索引->SizeYX;
+				const UINT16* const* 读入尾C = 读入头 + 索引->SizeC;
+				UINT32 块像素数 = *块像素头;
+				UINT16* 写出头C = 写出头B;
+				while (读入头 < 读入尾C)
+				{
+					安全拷贝(*读入头, 块像素数, 写出头C);
+					读入头++;
+					写出头C += 索引->SizeYX;
+				}
+				写出头B += 块像素数;
+				块像素头++;
 			}
-			写出头B += 块像素数;
-			块像素头++;
+			写出头TZ += 索引->SizeCYX;
 		}
-		写出头TZ += 索引->SizeCYX;
+	}
+	catch (...)
+	{
+		throw 内存异常;
 	}
 }
 void Oir读入器::读入像素(UINT16* 写出头TZ)const
 {
 	const UINT16* const* 读入头 = 块指针.data();
 	const UINT16* const* const 读入尾T = 读入头 + 索引->SizeTZBC;
-	while (读入头 < 读入尾T)
+	try
 	{
-		const UINT16* const* 读入尾B = 读入头 + 索引->SizeBC;
-		UINT16* 写出头B = 写出头TZ;
-		const UINT32* 块像素头 = 每块像素数;
-		while (读入头 < 读入尾B)
+		while (读入头 < 读入尾T)
 		{
-			const UINT16* const* 读入尾C = 读入头 + 索引->SizeC;
-			UINT32 块像素数 = *块像素头;
-			UINT16* 写出头C = 写出头B;
-			while (读入头 < 读入尾C)
+			const UINT16* const* 读入尾B = 读入头 + 索引->SizeBC;
+			UINT16* 写出头B = 写出头TZ;
+			const UINT32* 块像素头 = 每块像素数;
+			while (读入头 < 读入尾B)
 			{
-				安全拷贝(*读入头, 块像素数, 写出头C);
-				读入头++;
-				写出头C += 索引->SizeYX;
+				const UINT16* const* 读入尾C = 读入头 + 索引->SizeC;
+				UINT32 块像素数 = *块像素头;
+				UINT16* 写出头C = 写出头B;
+				while (读入头 < 读入尾C)
+				{
+					安全拷贝(*读入头, 块像素数, 写出头C);
+					读入头++;
+					写出头C += 索引->SizeYX;
+				}
+				写出头B += 块像素数;
+				块像素头++;
 			}
-			写出头B += 块像素数;
-			块像素头++;
+			写出头TZ += 索引->SizeCYX;
 		}
-		写出头TZ += 索引->SizeCYX;
+	}
+	catch (...)
+	{
+		throw 内存异常;
 	}
 }

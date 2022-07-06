@@ -87,22 +87,29 @@ void OmeTiff读入器::读入像素(char* 缓冲区, UINT16 TStart, UINT16 TSize
 		尾3 += CSize * 库Size210;
 		break;
 	}
-	while (缓冲区 < 尾3)
+	try
 	{
-		const char** 头2 = 头3;
-		char* const 尾2 = 缓冲区 + 库Size210;
-		while (缓冲区 < 尾2)
+		while (缓冲区 < 尾3)
 		{
-			const char** 头1 = 头2;
-			char* const 尾1 = 缓冲区 + 库Size10;
-			while (缓冲区 < 尾1)
+			const char** 头2 = 头3;
+			char* const 尾2 = 缓冲区 + 库Size210;
+			while (缓冲区 < 尾2)
 			{
-				安全拷贝(*(头1++), SizePXY, 缓冲区);
-				缓冲区 += SizePXY;
+				const char** 头1 = 头2;
+				char* const 尾1 = 缓冲区 + 库Size10;
+				while (缓冲区 < 尾1)
+				{
+					memcpy(缓冲区, *(头1++), SizePXY);
+					缓冲区 += SizePXY;
+				}
+				头2 += 源Size1;
 			}
-			头2 += 源Size1;
+			头3 += 源Size21;
 		}
-		头3 += 源Size21;
+	}
+	catch (...)
+	{
+		throw 内存异常;
 	}
 }
 const OmeTiff读入器* OmeTiff读入器::只读打开(文件指针& 文件, 像素类型 iPixelType, UINT16 iSizeX, UINT16 iSizeY, UINT32 iSizeI, 文本数组& 图像描述, IFD数组& IFD像素指针)

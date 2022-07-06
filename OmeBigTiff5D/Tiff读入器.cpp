@@ -8,10 +8,17 @@ void Tiff读入器::读入像素(char* 缓冲区)const
 {
 	const char* const* 像素头 = IFD像素指针.get();
 	const char* const* const 像素尾 = 像素头 + iSizeI;
-	while (像素头 < 像素尾)
+	try
 	{
-		安全拷贝(*(像素头++), SizePXY, 缓冲区);
-		缓冲区 += SizePXY;
+		while (像素头 < 像素尾)
+		{
+			memcpy(缓冲区, *(像素头++), SizePXY);
+			缓冲区 += SizePXY;
+		}
+	}
+	catch (...)
+	{
+		throw 内存异常;
 	}
 }
 void Tiff读入器::读入像素(char* 缓冲区, UINT32 IStart, UINT32 ISize)const
@@ -20,10 +27,17 @@ void Tiff读入器::读入像素(char* 缓冲区, UINT32 IStart, UINT32 ISize)co
 		throw 越界异常;
 	const char* const* 像素头 = IFD像素指针.get() + IStart;
 	const char* const* const 像素尾 = 像素头 + ISize;
-	while (像素头 < 像素尾)
+	try
 	{
-		安全拷贝(*(像素头++), SizePXY, 缓冲区);
-		缓冲区 += SizePXY;
+		while (像素头 < 像素尾)
+		{
+			memcpy(缓冲区, *(像素头++), SizePXY);
+			缓冲区 += SizePXY;
+		}
+	}
+	catch (...)
+	{
+		throw 内存异常;
 	}
 }
 template<typename T, UINT8 N>
