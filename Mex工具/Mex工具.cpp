@@ -15,7 +15,6 @@ String 万能转码<String>(Array& 输入)
 	}
 }
 template String 万能转码<String>(Array& 输入);
-
 template<>
 CharArray 万能转码<CharArray>(Array& 输入)
 {
@@ -30,21 +29,17 @@ CharArray 万能转码<CharArray>(Array& 输入)
 	}
 }
 template CharArray 万能转码<CharArray>(Array& 输入);
-
 template<>
-char* 万能转码<char*>(Array& 输入)
+std::unique_ptr<char[]>万能转码<std::unique_ptr<char[]>>(Array& 输入)
 {
-	if (输入.getType() == ArrayType::UINT64)
-		return (char*)万能转码<size_t>(输入);
 	const String 字符串 = 万能转码<String>(输入);
 	//这里必须+1，否则无法正确处理空字符串L""
 	const int 缓冲区大小 = (字符串.size() + 1) * 3;
-	char* const UTF8 = (char*)malloc(缓冲区大小);
-	WideCharToMultiByte(CP_UTF8, 0, (LPCWCH)字符串.c_str(), -1, UTF8, 缓冲区大小, nullptr, nullptr);
+	std::unique_ptr<char[]>UTF8 = std::make_unique_for_overwrite<char[]>(缓冲区大小);
+	WideCharToMultiByte(CP_UTF8, 0, (LPCWCH)字符串.c_str(), -1, UTF8.get(), 缓冲区大小, nullptr, nullptr);
 	return UTF8;
 }
-template char* 万能转码<char*>(Array& 输入);
-
+template std::unique_ptr<char[]>万能转码<std::unique_ptr<char[]>>(Array& 输入);
 template<>
 MATLABString 万能转码<MATLABString>(const char* UTF8)
 {
@@ -55,7 +50,6 @@ MATLABString 万能转码<MATLABString>(const char* UTF8)
 	return UTF16;
 }
 template MATLABString 万能转码<MATLABString>(const char*);
-
 template<>
 CharArray 万能转码<CharArray>(const char* UTF8)
 {

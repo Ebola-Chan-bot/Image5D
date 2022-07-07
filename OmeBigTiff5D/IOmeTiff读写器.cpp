@@ -50,7 +50,7 @@ IOmeTiff读写器* IOmeTiff读写器::覆盖创建(LPCSTR 文件路径, 像素�
 文本数组 GetUtf8(LPCWSTR UTF16)
 {
 	const size_t 长度 = wcslen(UTF16) * 3 + 1;
-	文本数组 返回 = 文本数组((char*)malloc(长度));
+	文本数组 返回 = std::make_unique_for_overwrite<char[]>(长度);
 	WideCharToMultiByte(CP_UTF8, 0, UTF16, -1, 返回.get(), 长度, nullptr, nullptr);
 	return 返回;
 }

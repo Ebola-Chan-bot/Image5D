@@ -3,7 +3,7 @@
 #include "OME概念定义.h"
 constexpr Image5D异常 未实现(未实现的方法);
 //只能用malloc分配的指针填充此类型
-using 文本数组 = std::unique_ptr<char[],free删除器>;
+using 文本数组 = std::unique_ptr<char[]>;
 class IOmeTiff读写器
 {
 public:

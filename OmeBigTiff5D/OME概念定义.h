@@ -1,6 +1,5 @@
 #pragma once
 #include <Image5D.h>
-#include "内存优化库.h"
 enum class 像素类型 :UINT8
 {
 	UINT8,
@@ -38,5 +37,4 @@ enum 维度顺序 :UINT8
 	XYTZC,
 	缺省
 };
-//此类只能使用malloc分配的指针，不可使用new分配指针
-using 颜色数组 = std::unique_ptr<颜色[], free删除器>;
+using 颜色数组 = std::unique_ptr<颜色[]>;

@@ -1,7 +1,6 @@
 #pragma once
 #include <mexAdapter.hpp>
 #include <algorithm>
-#include "内存优化库.h"
 using namespace matlab::data;
 using namespace matlab::mex;
 extern ArrayFactory 数组工厂;
@@ -26,15 +25,7 @@ String 万能转码<String>(Array& 输入);
 template<>
 CharArray 万能转码<CharArray>(Array& 输入);
 template<>
-char* 万能转码<char*>(Array& 输入);
-using 窄字符数组 = std::unique_ptr<char[], free删除器>;
-template<typename T>
-requires std::_Is_any_of_v<T,char[]>
-inline 窄字符数组 万能转码(Array& 输入)
-{
-	return 窄字符数组(万能转码<char*>(输入));
-}
-
+std::unique_ptr<char[]>万能转码<std::unique_ptr<char[]>>(Array& 输入);
 //C++转MATLAB
 
 template <typename T>
@@ -44,18 +35,15 @@ inline buffer_ptr_t<T> 万能转码(const T* 指针, UINT64 尺寸)noexcept
 	std::copy_n(指针, 尺寸, 缓冲.get());
 	return 缓冲;
 }
-
 inline TypedArray<uint64_t>万能转码(const void*指针)
 {
 	return 数组工厂.createScalar((uint64_t)指针);
 }
-
 template <数值 T>
 inline TypedArray<T> 万能转码(T 输入)
 {
 	return 数组工厂.createScalar(输入);
 }
-
 template<class T>
 requires std::_Is_any_of_v<T,CharArray,MATLABString>
 T 万能转码(const char*);
