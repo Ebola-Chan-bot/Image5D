@@ -26,14 +26,15 @@ struct 通道设备
 	const char* 设备;
 	uint8_t 顺序;
 };
-LPVOID 连续映射(size_t 总映射空间, const vector<unique_ptr<文件控制块>>& 文件列表)noexcept
+LPVOID 连续映射(size_t 总映射空间, const vector<unique_ptr<文件控制块>>& 文件列表)
 {
-	char* 映射指针 = (char*)malloc(总映射空间 + 分配粒度);
-	free(映射指针);
-	映射指针 = (char*)(((LONGLONG)映射指针 / 分配粒度 + 1) * 分配粒度);
+	char* 映射指针 = (char*)VirtualAlloc(nullptr, 总映射空间 + 分配粒度, MEM_RESERVE, PAGE_READONLY);
+	VirtualFree(映射指针, 0, MEM_RELEASE);
 	for (const unique_ptr<文件控制块>& 文件 : 文件列表)
 	{
-		文件->内存映射().映射指针(映射指针);
+		Image5D异常 异常 = 文件->内存映射().映射指针(映射指针);
+		if (异常.类型 != 操作成功)
+			throw 异常;
 		映射指针 += 文件->粒度大小();
 	}
 	return 映射指针;
@@ -57,9 +58,15 @@ void 载入索引(const unique_ptr<文件映射>& 索引文件, Oir索引*& 索�
 	for (const UINT64* const 块偏移尾 = 块偏移 + 块总数; 块偏移 < 块偏移尾; ++块偏移)
 		块指针.push_back((const uint16_t*)(映射指针 + *块偏移));
 }
-constexpr const char XML标头[] = "<?xml version=\"1.0\" encoding=\"ASCII\"?>\r\n";
-constexpr uint8_t XML标头长度 = sizeof(XML标头) - 1;
-static const char* const XML标头尾 = XML标头 + XML标头长度;
+constexpr const char* 字符串尾(const char* 字符串)
+{
+	while (*字符串)
+		字符串++;
+	return 字符串;
+}
+constexpr const char* XML标头 = "<?xml version=\"1.0\" encoding=\"ASCII\"?>\r\n";
+constexpr const char* XML标头尾 = 字符串尾(XML标头);
+constexpr uint8_t XML标头长度 = XML标头尾 - XML标头;
 void 扫描XML块(const char*& s1指针, const void*& 尾指针, vector<unique_ptr<文件控制块>>::const_iterator& 文件头, const vector<unique_ptr<文件控制块>>::const_iterator& 文件尾)
 {
 	while ((s1指针 = search(s1指针, (const char*)尾指针, XML标头, XML标头尾)) >= 尾指针)
@@ -72,12 +79,6 @@ void 扫描XML块(const char*& s1指针, const void*& 尾指针, vector<unique_p
 			throw;
 }
 using namespace pugi;
-constexpr const char* 字符串尾(const char* 字符串)
-{
-	while (*字符串)
-		字符串++;
-	return 字符串;
-}
 void 创建索引(const 文件列表类& 文件列表, const unique_ptr<文件映射>& 索引文件, Oir索引*& 索引, UINT32*& 每块像素数, 设备颜色*& i通道颜色, 块指针类& 块指针)
 {
 	constexpr const char* 图像属性标头 = "<lsmimage";
@@ -512,7 +513,7 @@ void Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize
 				UINT16* 写出头C = 写出头B;
 				while (读入头 < 读入尾C)
 				{
-					安全拷贝(*读入头, 块像素数, 写出头C);
+					std::copy_n(*读入头, 块像素数, 写出头C);
 					读入头++;
 					写出头C += 索引->SizeYX;
 				}
@@ -545,7 +546,7 @@ void Oir读入器::读入像素(UINT16* 写出头TZ)const
 				UINT16* 写出头C = 写出头B;
 				while (读入头 < 读入尾C)
 				{
-					安全拷贝(*读入头, 块像素数, 写出头C);
+					std::copy_n(*读入头, 块像素数, 写出头C);
 					读入头++;
 					写出头C += 索引->SizeYX;
 				}

@@ -36,8 +36,7 @@ void 覆盖创建(HANDLE 文件句柄, HANDLE& 映射句柄, LONGLONG 文件大�
 	if (文件句柄 == INVALID_HANDLE_VALUE)
 		throw Image5D异常(文件打开失败, GetLastError());
 	分位数 文件分位{ .全位 = 文件大小 };
-	映射句柄 = CreateFileMapping(文件句柄, NULL,PAGE_READWRITE, 文件分位.高位, 文件分位.低位, NULL);
-	if (映射句柄 == INVALID_HANDLE_VALUE)
+	if (!(映射句柄 = CreateFileMapping(文件句柄, NULL, PAGE_READWRITE, 文件分位.高位, 文件分位.低位, NULL)))
 	{
 		Image5D异常 异常(内存映射失败, GetLastError());
 		CloseHandle(文件句柄);
