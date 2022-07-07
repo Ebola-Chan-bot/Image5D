@@ -288,10 +288,10 @@ void 构造文件(const char* 图像描述, UINT32 图像描述字节数, UINT32
 	const UINT32 SizePXY = UINT32(SizeX) * SizeY * 像素类型尺寸[(UINT8)PixelType];
 	Image5D异常 异常 = 文件映射::创建(文件路径, 像素偏移 + LONGLONG(SizePXY) * SizeI, 文件);
 	if (异常.类型 != 操作成功)
-		throw Image5D异常(Tiff文件创建失败);
+		throw Image5D异常(Tiff文件创建失败,异常.Win32错误代码);
 	异常 = 文件->映射指针(nullptr);
 	if (异常.类型 != 操作成功)
-		throw Image5D异常(Tiff文件映射失败);
+		throw Image5D异常(Tiff文件映射失败,异常.Win32错误代码);
 	OmeBigTiff5D文件头* const 文件头 = (OmeBigTiff5D文件头*)文件->映射指针();
 	*文件头 = OmeBigTiff5D文件头();
 	文件头->首IFD偏移 = IFD偏移对象;
