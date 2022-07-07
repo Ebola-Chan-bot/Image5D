@@ -93,6 +93,11 @@ classdef Image5DException<uint8
 		No_blocks_are_included_in_the_index(87)
 		Channel_length_is_undefined(88)
 		Memory_copy_failed(89)
+		Opacity_undefined(90)
+		Index_file_creation_failed(91)
+		Oir_continuous_mapping_failed(92)
+		Tiff_file_creation_failed(93)
+		Tiff_file_mapping_failed(94)
 		%MATLAB抛出的异常
 
 		Wrong_number_of_parameters(255)

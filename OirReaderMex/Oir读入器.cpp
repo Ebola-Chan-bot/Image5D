@@ -34,7 +34,7 @@ LPVOID 连续映射(size_t 总映射空间, const vector<unique_ptr<文件控制
 	{
 		Image5D异常 异常 = 文件->内存映射().映射指针(映射指针);
 		if (异常.类型 != 操作成功)
-			throw 异常;
+			throw Image5D异常(Oir连续映射失败);
 		映射指针 += 文件->粒度大小();
 	}
 	return 映射指针;
@@ -169,8 +169,10 @@ void 创建索引(const 文件列表类& 文件列表, const unique_ptr<文件�
 		throw Image5D异常(图像相位未定义);
 	vector<通道设备> 通道设备向量;
 	const char* 属性值;
+	uint8_t 通道组个数 = 0;
 	for (xml_node 节点 : 节点.children("commonphase:group"))
 	{
+		通道组个数++;
 		xml_node 通道;
 		if (!(通道 = 节点.child("commonphase:channel")))
 			throw Image5D异常(相位通道未定义);
@@ -198,8 +200,8 @@ void 创建索引(const 文件列表类& 文件列表, const unique_ptr<文件�
 	if (通道设备向量.empty())
 		throw Image5D异常(通道未定义);
 	const UINT8 SizeC = 新索引.SizeC = 通道设备向量.size();
-	sort(通道设备向量.begin(), 通道设备向量.end(), [](const 通道设备& 对象1, const 通道设备& 对象2) {return 对象1.顺序 <= 对象2.顺序; });
-	unique_ptr<设备颜色[]> 通道颜色((设备颜色*)malloc(sizeof(设备颜色) * SizeC));
+	std::sort(通道设备向量.begin(), 通道设备向量.end(), [](const 通道设备& 对象1, const 通道设备& 对象2) {return 对象1.顺序 <= 对象2.顺序; });
+	unique_ptr<设备颜色[]> 通道颜色 = std::make_unique_for_overwrite<设备颜色[]>(SizeC);
 	for (uint8_t C = 0; C < SizeC; ++C)
 		if (strcpy_s(通道颜色[C].设备名称, 通道设备向量[C].设备))
 			throw Image5D异常(设备名称太长);
@@ -240,7 +242,7 @@ void 创建索引(const 文件列表类& 文件列表, const unique_ptr<文件�
 		throw Image5D异常(扫描设置未定义);
 	//不能复用图像解析文档，会损坏通道设备指针的通道
 	xml_document LUT文档;
-	for (uint8_t C1 = 0; C1 < SizeC; ++C1)
+	for (uint8_t C1 = 0; C1 < 通道组个数; ++C1)
 	{
 		if ((s1指针 = search(s1指针 + 长度, (const char*)尾指针, XML标头, XML标头尾)) >= 尾指针)
 			throw Image5D异常(找不到查找表);
@@ -266,6 +268,9 @@ void 创建索引(const 文件列表类& 文件列表, const unique_ptr<文件�
 				if (!((节点 = 父节点.child("lut:blue")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
 					throw Image5D异常(蓝色分量未定义);
 				通道.蓝 = 节点文本.as_float();
+				if (!((节点 = 父节点.child("lut:alpha")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
+					throw Image5D异常(不透明度未定义);
+				通道.不透明度 = 节点文本.as_float();
 				break;
 			}
 	}
@@ -324,7 +329,7 @@ Oir读入器::Oir读入器(LPCSTR 头文件路径)
 {
 	const size_t 长度 = strlen(头文件路径) + 1;
 	//make_unique会对内存初始化，不用于分配POD数组
-	const unique_ptr<char[]> 字符缓冲((char*)malloc(长度 * 5 + 6));
+	const unique_ptr<char[]> 字符缓冲 = make_unique_for_overwrite<char[]>(长度 * 5 + 6);
 	char* const 驱动器号 = 字符缓冲.get();
 	char* const 目录路径 = 驱动器号 + 长度;
 	char* const 基文件名 = 目录路径 + 长度;
@@ -366,7 +371,7 @@ Oir读入器::Oir读入器(LPCSTR 头文件路径)
 		索引文件.reset();
 		Image5D异常 异常 = 文件映射::创建(当前路径, 1ll, 索引文件);
 		if (异常.类型 != 操作成功)
-			throw 异常;
+			throw Image5D异常(索引文件创建失败);
 		创建索引(文件列表, 索引文件, 索引, 每块像素数, i通道颜色, 块指针);
 	}
 }
@@ -374,7 +379,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 {
 	const size_t 长度 = wcslen(头文件路径) + 1;
 	//make_unique会对内存初始化，不用于分配POD数组
-	const unique_ptr<wchar_t[]> 字符缓冲((wchar_t*)malloc((长度 * 5 + 6) * sizeof(wchar_t)));
+	const unique_ptr<wchar_t[]> 字符缓冲 = make_unique_for_overwrite<wchar_t[]>(长度 * 5 + 6);
 	wchar_t* const 驱动器号 = 字符缓冲.get();
 	wchar_t* const 目录路径 = 驱动器号 + 长度;
 	wchar_t* const 基文件名 = 目录路径 + 长度;
@@ -418,7 +423,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		//先尝试建立索引文件，如果失败直接抛出，以免读完大量文件以后再出错浪费时间
 		Image5D异常 异常 = 文件映射::创建(当前路径, 1ll, 索引文件);
 		if (异常.类型 != 操作成功)
-			throw 异常;
+			throw Image5D异常(索引文件创建失败);
 		创建索引(文件列表, 索引文件, 索引, 每块像素数, i通道颜色, 块指针);
 	}
 }

@@ -6,6 +6,7 @@ struct 设备颜色
 	float 红;
 	float 绿;
 	float 蓝;
+	float 不透明度;
 };
 constexpr UINT8 哈希长度 = 32;
 class Oir索引
