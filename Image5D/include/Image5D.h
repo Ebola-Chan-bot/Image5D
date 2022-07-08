@@ -102,6 +102,7 @@ enum Image5D异常类型
 	Oir连续映射失败,
 	Tiff文件创建失败,
 	Tiff文件映射失败,
+	不支持的字节顺序,
 };
 enum XML解析状态
 {
