@@ -125,7 +125,7 @@ x64
     </build-deliverables>
     <workflow />
     <matlab>
-      <root>C:\Program Files\MATLAB\R2022b</root>
+      <root>C:\Program Files\MATLAB\R2022a</root>
       <toolboxes />
     </matlab>
     <platform>
