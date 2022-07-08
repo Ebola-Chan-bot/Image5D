@@ -3,16 +3,13 @@
 #include <stdlib.h>
 #include "Tiff文件头.h"
 #include "像素类型尺寸.h"
-#include <vector>
 void Tiff读入器::读入像素(char* 缓冲区)const
 {
-	const char* const* 像素头 = IFD像素指针.get();
-	const char* const* const 像素尾 = 像素头 + iSizeI;
 	try
 	{
-		while (像素头 < 像素尾)
+		for (const char* 指针 : IFD像素指针)
 		{
-			memcpy(缓冲区, *(像素头++), SizePXY);
+			memcpy(缓冲区, 指针, SizePXY);
 			缓冲区 += SizePXY;
 		}
 	}
@@ -25,8 +22,8 @@ void Tiff读入器::读入像素(char* 缓冲区, UINT32 IStart, UINT32 ISize)co
 {
 	if (IStart + ISize > iSizeI)
 		throw 越界异常;
-	const char* const* 像素头 = IFD像素指针.get() + IStart;
-	const char* const* const 像素尾 = 像素头 + ISize;
+	IFD数组::const_iterator 像素头 = IFD像素指针.cbegin() + IStart;
+	const IFD数组::const_iterator 像素尾 = 像素头 + ISize;
 	try
 	{
 		while (像素头 < 像素尾)
@@ -46,7 +43,7 @@ constexpr UINT8 Get数组长度(T(&)[N])
 	return N;
 }
 template <版本 V>
-const Tiff读入器* Tiff读入器::只读打开(文件指针&文件)
+Tiff读入器* Tiff读入器::只读打开(文件指针&文件)
 {
 	const Tiff文件头<V>* 文件头 = (Tiff文件头<V>*)文件->映射指针();
 	const void* 尾指针 = (char*)文件头 + 文件->文件大小();
@@ -60,14 +57,7 @@ const Tiff读入器* Tiff读入器::只读打开(文件指针&文件)
 	if (标签尾 > 尾指针)
 		throw Image5D异常(头IFD不完整);
 	UINT8 完成进度 = 0;
-	const char* 像素指针;
-	malloc可选free<const char*>分配器;
-	std::vector<const char*, malloc可选free<const char*>> IFD像素向量(分配器);
-	UINT8 iSizeP;
-	像素类型 iPixelType;
-	UINT16 iSizeX;
-	UINT16 iSizeY;
-	文本数组 图像描述;
+	IFD数组 IFD像素向量;	UINT8 iSizeP;	像素类型 iPixelType;	UINT16 iSizeX;	UINT16 iSizeY;	std::string 图像描述; const char* 像素指针;
 	while (当前标签 < 标签尾)
 	{
 		switch (当前标签->Identifier)
@@ -103,9 +93,7 @@ const Tiff读入器* Tiff读入器::只读打开(文件指针&文件)
 			const UINT32 图像描述字节数 = 当前标签->NoValues;
 			if (ImageDescription + 图像描述字节数 > 尾指针)
 				throw Image5D异常(图像描述不完整);
-			图像描述.reset((char*)malloc(图像描述字节数 + 1));
-			memcpy(图像描述.get(), ImageDescription, 图像描述字节数);
-			图像描述[图像描述字节数] = 0;
+			图像描述.assign(ImageDescription, 图像描述字节数);
 		}
 			break;
 		}
@@ -134,19 +122,17 @@ const Tiff读入器* Tiff读入器::只读打开(文件指针&文件)
 			当前标签++;
 		}
 	}
-	IFD数组 IFD像素指针(IFD像素向量.data());
-	分配器.释放 = false;
 	try
 	{
-		return OmeTiff读入器::只读打开(文件, iPixelType, iSizeX, iSizeY, IFD像素向量.size(), 图像描述, IFD像素指针);
+		return OmeTiff读入器::只读打开(文件, iPixelType, iSizeX, iSizeY,  图像描述, IFD像素向量);
 	}
 	catch (Image5D异常)
 	{
-		return new Tiff读入器(文件, iPixelType, iSizeX, iSizeY, IFD像素向量.size(), 图像描述, IFD像素指针);
+		return new Tiff读入器(文件, iPixelType, iSizeX, iSizeY,  图像描述, IFD像素向量);
 	}
 }
 template<>
-const Tiff读入器* Tiff读入器::只读打开<基本>(文件指针&文件)
+Tiff读入器* Tiff读入器::只读打开<基本>(文件指针&文件)
 {
 	switch (((Tiff文件头<基本>*)文件->映射指针())->版本号)
 	{

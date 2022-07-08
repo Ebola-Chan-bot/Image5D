@@ -27,8 +27,8 @@ public:
 	void 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 C)const;
 	void 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize)const;
 	void 读入像素(uint16_t* 缓冲区)const;
-	Oir读入器(LPCSTR 头文件路径);
-	Oir读入器(LPCWSTR 头文件路径);
+	template<字符 T>
+	Oir读入器(const T* 头文件路径);
 	//禁止拷贝，以免意外的析构
 	Oir读入器(const Oir读入器&) = delete;
 };

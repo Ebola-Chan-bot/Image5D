@@ -2,8 +2,6 @@
 #include <string>
 #include "OME概念定义.h"
 constexpr Image5D异常 未实现(未实现的方法);
-//只能用malloc分配的指针填充此类型
-using 文本数组 = std::unique_ptr<char[]>;
 class IOmeTiff读写器
 {
 public:
@@ -31,7 +29,7 @@ public:
 	virtual void 通道颜色(const 颜色*) { throw 未实现; }
 	virtual void DimensionOrder(维度顺序) { throw 未实现; }
 	//图像描述中的文件名字段将覆盖对象中的文件名属性，而不会修改图像描述
-	virtual void 图像描述(const char*) { throw 未实现; }
+	virtual void 图像描述(std::string&&) { throw 未实现; }
 	virtual void 文件名(const char*) { throw 未实现; }
 	/*
 	请使用本方法同时修改多个参数，不要逐一调用每个参数的修改方法，那样会导致多次不必要的文件重构。每个参数自己的修改方法，本质上也是调用了本方法实现的，并没有专门的优化。
@@ -51,15 +49,14 @@ public:
 	virtual void 像素指针(UINT32 I, char*& 指针, size_t& 容量)const { throw 未实现; }
 	virtual void 像素指针(UINT16 T, char*& 指针, size_t& 容量)const { throw 未实现; }
 	virtual void 像素指针(UINT16 T, UINT8 Z, UINT8 C, char*& 指针, size_t& 容量)const { throw 未实现; }
-	static const IOmeTiff读写器* 只读打开(LPCSTR 文件路径);
-	static const IOmeTiff读写器* 只读打开(LPCWSTR 文件路径);
-	static IOmeTiff读写器* 读写打开(LPCSTR 文件路径);
-	static IOmeTiff读写器* 读写打开(LPCWSTR 文件路径);
-	static IOmeTiff读写器* 覆盖创建(LPCSTR 文件路径, 像素类型 PixelType, UINT16 SizeX, UINT16 SizeY, UINT8 SizeC, UINT8 SizeZ, UINT16 SizeT, const 颜色* 通道颜色, 维度顺序 DimensionOrder);
-	static IOmeTiff读写器* 覆盖创建(LPCWSTR 文件路径, 像素类型 PixelType, UINT16 SizeX, UINT16 SizeY, UINT8 SizeC, UINT8 SizeZ, UINT16 SizeT, const 颜色* 通道颜色, 维度顺序 DimensionOrder);
+	template <字符 T>
+	static IOmeTiff读写器* 只读打开(const T* 文件路径);
+	template<字符 T>
+	static IOmeTiff读写器* 读写打开(const T* 文件路径);
+	template<字符 T>
+	static IOmeTiff读写器* 覆盖创建(const T* 文件路径, 像素类型 PixelType, UINT16 SizeX, UINT16 SizeY, UINT8 SizeC, UINT8 SizeZ, UINT16 SizeT, const 颜色* 通道颜色, 维度顺序 DimensionOrder);
 	//将根据路径中的文件名修改图像描述中的文件名字段。
-	static IOmeTiff读写器* 覆盖创建(LPCSTR 文件路径, const char* 图像描述);
-	//将根据路径中的文件名修改图像描述中的文件名字段。如有异常，则不会修改。
-	static IOmeTiff读写器* 覆盖创建(LPCWSTR 文件路径, const char* 图像描述);
+	template<字符 T>
+	static IOmeTiff读写器* 覆盖创建(const T* 文件路径, const char* 图像描述);
 	virtual ~IOmeTiff读写器() {}
 };

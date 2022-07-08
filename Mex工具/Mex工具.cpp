@@ -29,39 +29,6 @@ CharArray 万能转码<CharArray>(Array& 输入)
 	}
 }
 template CharArray 万能转码<CharArray>(Array& 输入);
-template<>
-std::unique_ptr<char[]>万能转码<std::unique_ptr<char[]>>(Array& 输入)
-{
-	const String 字符串 = 万能转码<String>(输入);
-	//这里必须+1，否则无法正确处理空字符串L""
-	const int 缓冲区大小 = (字符串.size() + 1) * 3;
-	std::unique_ptr<char[]>UTF8 = std::make_unique_for_overwrite<char[]>(缓冲区大小);
-	WideCharToMultiByte(CP_UTF8, 0, (LPCWCH)字符串.c_str(), -1, UTF8.get(), 缓冲区大小, nullptr, nullptr);
-	return UTF8;
-}
-template std::unique_ptr<char[]>万能转码<std::unique_ptr<char[]>>(Array& 输入);
-template<>
-MATLABString 万能转码<MATLABString>(const char* UTF8)
-{
-	const size_t 长度 = strlen(UTF8);
-	String UTF16(长度, 0);
-	MultiByteToWideChar(CP_UTF8, 0, UTF8, -1, (LPWSTR)UTF16.data(), 长度);
-	UTF16.resize(wcslen((wchar_t*)UTF16.c_str()));
-	return UTF16;
-}
-template MATLABString 万能转码<MATLABString>(const char*);
-template<>
-CharArray 万能转码<CharArray>(const char* UTF8)
-{
-	size_t 长度 = strlen(UTF8);
-	wchar_t* const UTF16 = (wchar_t*)malloc((长度 + 1) * sizeof(wchar_t));
-	MultiByteToWideChar(CP_UTF8, 0, UTF8, -1, UTF16, 长度);
-	长度 = wcslen(UTF16);
-	buffer_ptr_t<char16_t> 缓冲 = 数组工厂.createBuffer<char16_t>(长度);
-	std::copy_n((char16_t*)UTF16, 长度, 缓冲.get());
-	return 数组工厂.createArrayFromBuffer({ 1,长度 }, std::move(缓冲));
-}
-template CharArray 万能转码<CharArray>(const char*);
 void 异常输出补全(ArgumentList& outputs)
 {
 	std::vector<Array>::iterator 输出头 = outputs.begin();
@@ -69,6 +36,30 @@ void 异常输出补全(ArgumentList& outputs)
 	while (++输出头 < 输出尾)
 		*输出头 = 数组工厂.createEmptyArray();
 }
+template<>
+std::string 万能转码<std::string>(Array& 输入)
+{
+	const String 字符串 = 万能转码<String>(输入);
+	std::string 返回;
+	返回.resize_and_overwrite(字符串.size() * 3, [&字符串](char* 指针, size_t 尺寸)
+		{
+			return WideCharToMultiByte(CP_UTF8, 0, (wchar_t*)字符串.c_str(), -1, 指针, 尺寸, nullptr, nullptr);
+		});
+	return 返回;
+}
+template std::string 万能转码<std::string>(Array& 输入);
+template<>
+String 万能转码<String>(const char* 输入)
+{
+	String 返回;
+	const size_t 长度 = strlen(输入);
+	返回.resize_and_overwrite(长度, [输入](char16_t* 指针, size_t 尺寸) 
+		{
+			return MultiByteToWideChar(CP_UTF8, 0, 输入, -1, (wchar_t*)指针, 尺寸);
+		});
+	return 返回;
+}
+template String 万能转码<String>(const char*);
 //定义移动
 void mexFunctionAdapter(int nlhs_,
 	int nlhs,

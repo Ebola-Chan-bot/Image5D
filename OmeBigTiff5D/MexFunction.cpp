@@ -21,8 +21,8 @@ API声明(Create)
 	{
 	case 3:
 	{
-		const 窄字符数组 图像描述 = 万能转码<char[]>(inputs[2]);
-		outputs[0] = 万能转码(IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), 图像描述.get()));
+		const std::string 图像描述 = 万能转码<std::string>(inputs[2]);
+		outputs[0] = 万能转码(IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), 图像描述.c_str()));
 	}
 	break;
 	case 9:
@@ -100,8 +100,8 @@ API声明(FileName)
 {
 	if (inputs.size() > 2)
 	{
-		窄字符数组 字符串 = 万能转码<char[]>(inputs[2]);
-		万能转码<IOmeTiff读写器*>(inputs[1])->文件名(字符串.get());
+		const std::string 字符串 = 万能转码<std::string>(inputs[2]);
+		万能转码<IOmeTiff读写器*>(inputs[1])->文件名(字符串.c_str());
 		outputs[0] = 成功结构;
 	}
 	else
@@ -111,8 +111,7 @@ API声明(ImageDescription)
 {
 	if (inputs.size() > 2)
 	{
-		const 窄字符数组 图像描述 = 万能转码<char[]>(inputs[2]);
-		万能转码<IOmeTiff读写器*>(inputs[1])->图像描述(图像描述.get());
+		万能转码<IOmeTiff读写器*>(inputs[1])->图像描述(万能转码<std::string>(inputs[2]));
 		outputs[0] = 成功结构;
 	}
 	else
@@ -125,8 +124,8 @@ API声明(ModifyParameters)
 	const bool 指定值 = 颜色数组.getNumberOfElements();
 	const buffer_ptr_t<uint32_t>颜色缓冲 = 颜色数组.release();
 	const 颜色* const 颜色指针 = 指定值 ? (颜色*)颜色缓冲.get() : nullptr;
-	const 窄字符数组 文件名 = 万能转码<char[]>(inputs[10]);
-	const char* 文件名指针 = 文件名.get();
+	const std::string 文件名 = 万能转码<std::string>(inputs[10]);
+	const char* 文件名指针 = 文件名.c_str();
 	if (!*文件名指针)
 		文件名指针 = nullptr;
 	对象指针->修改参数((像素类型)万能转码<UINT8>(inputs[2]), 万能转码<UINT16>(inputs[3]), 万能转码<UINT16>(inputs[4]), 万能转码<UINT8>(inputs[5]), 万能转码<UINT8>(inputs[6]), 万能转码<UINT16>(inputs[7]), 颜色指针, (维度顺序)万能转码<UINT8>(inputs[9]), 文件名指针);

@@ -1,6 +1,6 @@
 #include "pch.h"
 #include "Image5D.h"
-void 句柄构造(HANDLE 文件句柄, HANDLE& 映射句柄, bool 只读, LONGLONG& i文件大小)
+void 句柄构造(HANDLE 文件句柄, HANDLE& 映射句柄, LONGLONG& i文件大小, bool 只读)
 {
 	if (文件句柄 == INVALID_HANDLE_VALUE)
 		throw Image5D异常(文件打开失败, GetLastError());
@@ -12,15 +12,15 @@ void 句柄构造(HANDLE 文件句柄, HANDLE& 映射句柄, bool 只读, LONGLO
 	}
 	GetFileSizeEx(文件句柄, (LARGE_INTEGER*)&i文件大小);
 }
-文件映射::文件映射(LPCSTR 文件路径, bool 只读) :
-	文件句柄(CreateFileA(文件路径, 只读 ? GENERIC_READ : GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL)),只读(只读)
+文件映射::文件映射(const char* 文件路径, bool 只读) :
+	文件句柄(CreateFileA(文件路径, 只读 ? GENERIC_READ : GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL)), 只读(只读)
 {
-	句柄构造(文件句柄, 映射句柄, 只读, i文件大小);
+	句柄构造(文件句柄, 映射句柄, i文件大小, 只读);
 }
-文件映射::文件映射(LPCWSTR 文件路径, bool 只读):
+文件映射::文件映射(const wchar_t* 文件路径, bool 只读) :
 	文件句柄(CreateFileW(文件路径, 只读 ? GENERIC_READ : GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, NULL)), 只读(只读)
 {
-	句柄构造(文件句柄, 映射句柄, 只读,   i文件大小);
+	句柄构造(文件句柄, 映射句柄, i文件大小, 只读);
 }
 union 分位数
 {
@@ -93,11 +93,12 @@ Image5D异常 文件映射::文件大小(LONGLONG 大小)noexcept
 	CloseHandle(映射句柄);
 	CloseHandle(文件句柄);
 }
-Image5D异常 文件映射::打开(LPCSTR 文件路径, bool 只读, std::unique_ptr<文件映射>& 返回指针)noexcept
+template<字符 T>
+Image5D异常 文件映射::打开(const T* 文件路径, bool 只读, std::unique_ptr<文件映射>& 返回指针)noexcept
 {
 	try
 	{
-		返回指针 = std::unique_ptr<文件映射>(new 文件映射(文件路径, 只读));
+		返回指针.reset(new 文件映射(文件路径, 只读));
 	}
 	catch (Image5D异常& 异常)
 	{
@@ -105,35 +106,12 @@ Image5D异常 文件映射::打开(LPCSTR 文件路径, bool 只读, std::unique
 	}
 	return 成功异常;
 }
-Image5D异常 文件映射::打开(LPCWSTR 文件路径, bool 只读, std::unique_ptr<文件映射>& 返回指针)noexcept
+template<字符 T>
+Image5D异常 文件映射::创建(const T* 文件路径, LONGLONG 文件大小, std::unique_ptr<文件映射>& 返回指针)noexcept
 {
 	try
 	{
-		返回指针 = std::unique_ptr<文件映射>(new 文件映射(文件路径, 只读));
-	}
-	catch (Image5D异常& 异常)
-	{
-		return 异常;
-	}
-	return 成功异常;
-}
-Image5D异常 文件映射::创建(LPCSTR 文件路径, LONGLONG 文件大小, std::unique_ptr<文件映射>& 返回指针)noexcept
-{
-	try
-	{
-		返回指针 = std::unique_ptr<文件映射>(new 文件映射(文件路径, 文件大小));
-	}
-	catch (Image5D异常& 异常)
-	{
-		return 异常;
-	}
-	return 成功异常;
-}
-Image5D异常 文件映射::创建(LPCWSTR 文件路径, LONGLONG 文件大小, std::unique_ptr<文件映射>& 返回指针)noexcept
-{
-	try
-	{
-		返回指针 = std::unique_ptr<文件映射>(new 文件映射(文件路径, 文件大小));
+		返回指针.reset(new 文件映射(文件路径, 文件大小));
 	}
 	catch (Image5D异常& 异常)
 	{

@@ -25,7 +25,7 @@ String 万能转码<String>(Array& 输入);
 template<>
 CharArray 万能转码<CharArray>(Array& 输入);
 template<>
-std::unique_ptr<char[]>万能转码<std::unique_ptr<char[]>>(Array& 输入);
+std::string 万能转码<std::string>(Array& 输入);
 //C++转MATLAB
 
 template <typename T>
@@ -45,8 +45,20 @@ inline TypedArray<T> 万能转码(T 输入)
 	return 数组工厂.createScalar(输入);
 }
 template<class T>
-requires std::_Is_any_of_v<T,CharArray,MATLABString>
+requires std::_Is_any_of_v<T,String,MATLABString,CharArray>
 T 万能转码(const char*);
+template<>
+String 万能转码<String>(const char*);
+template<>
+inline MATLABString 万能转码<MATLABString>(const char* UTF8)
+{
+	return 万能转码<String>(UTF8);
+}
+template<>
+inline CharArray 万能转码<CharArray>(const char* UTF8)
+{
+	return 数组工厂.createCharArray(万能转码<String>(UTF8));
+}
 
 #define API声明(函数名) void 函数名(ArgumentList& outputs,ArgumentList& inputs)
 #define API索引 constexpr void (*(API[]))(ArgumentList&, ArgumentList&) =

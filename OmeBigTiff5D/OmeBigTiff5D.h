@@ -20,7 +20,7 @@ class OmeBigTiff5D :public Tiff属性读入器, public Ome属性读入器
 
 	UINT64 源Size10;
 	UINT64 源Size210;
-	OmeBigTiff5D(文件指针& 文件, 像素类型 iPixelType, UINT16 iSizeX, UINT16 iSizeY, UINT32 iSizeI, 文本数组& 图像描述, UINT8 SizeC, UINT8 SizeZ, UINT16 SizeT, 维度顺序 DimensionOrder, 颜色数组& 通道颜色, const char* 文件名, xml_node Pixels, xml_document& 图像描述文档, const char* 唯一标识符, char* 像素头);
+	OmeBigTiff5D(文件指针& 文件, 像素类型 iPixelType, UINT16 iSizeX, UINT16 iSizeY, UINT32 iSizeI, std::string& 图像描述, UINT8 SizeC, UINT8 SizeZ, UINT16 SizeT, 维度顺序 DimensionOrder, 颜色数组& 通道颜色, const char* 文件名, xml_node Pixels, xml_document& 图像描述文档, const char* 唯一标识符, char* 像素头);
 public:
 	void PixelType(像素类型)override;
 	void SizeX(UINT16)override;
@@ -31,7 +31,7 @@ public:
 	void 通道颜色(const 颜色*)override;
 	void DimensionOrder(维度顺序)override;
 	//图像描述中的文件名字段将覆盖对象中的文件名属性，而不会修改图像描述
-	void 图像描述(const char*)override;
+	void 图像描述(std::string&&)override;
 	const char* 文件名()const { return i文件名; }
 	void 文件名(const char*);
 	void 修改参数(像素类型 PT, UINT16 SizeX, UINT16 SizeY, UINT8 SizeC, UINT8 SizeZ, UINT16 SizeT, const 颜色* 通道颜色, 维度顺序 DO, const char* 文件名)override;
@@ -47,9 +47,11 @@ public:
 	void 像素指针(UINT32 I, char*& 指针, size_t& 容量)const override;
 	void 像素指针(UINT16 T, char*& 指针, size_t& 容量)const override;
 	void 像素指针(UINT16 T, UINT8 Z, UINT8 C, char*& 指针, size_t& 容量)const override;
-	static const OmeBigTiff5D* 只读打开(文件指针&& 文件);
+	static OmeBigTiff5D* 只读打开(文件指针&& 文件);
 	static OmeBigTiff5D* 读写打开(文件指针&& 文件);
-	static OmeBigTiff5D* 覆盖创建(const char* 文件路径, 像素类型 PixelType, UINT16 SizeX, UINT16 SizeY, UINT8 SizeC, UINT8 SizeZ, UINT16 SizeT, const 颜色* 通道颜色, 维度顺序 DimensionOrder);
-	static OmeBigTiff5D* 覆盖创建(const char* 文件路径, const char* 图像描述);
+	template<字符 T>
+	static OmeBigTiff5D* 覆盖创建(const T* 文件路径, 像素类型 PixelType, UINT16 SizeX, UINT16 SizeY, UINT8 SizeC, UINT8 SizeZ, UINT16 SizeT, const 颜色* 通道颜色, 维度顺序 DimensionOrder);
+	template<字符 T>
+	static OmeBigTiff5D* 覆盖创建(const T* 文件路径, const char* 图像描述);
 	virtual ~OmeBigTiff5D() {}
 };
