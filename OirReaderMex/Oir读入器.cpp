@@ -41,22 +41,29 @@ LPVOID 连续映射(size_t 总映射空间, const vector<unique_ptr<文件控制
 }
 void 载入索引(const unique_ptr<文件映射>& 索引文件, Oir索引*& 索引, UINT32*& 每块像素数, 设备颜色*& i通道颜色, const 文件列表类& 文件列表, LPVOID 尾指针, 块指针类& 块指针)
 {
+	constexpr Image5D异常 损坏(索引文件损坏);
 	索引文件->映射指针(nullptr);
 	索引 = (Oir索引*)索引文件->映射指针();
 	if (sizeof(索引) > 索引文件->文件大小() || !索引->验证(索引文件->文件大小()))
-		throw Image5D异常(索引文件损坏);
+		throw 损坏;
 	UINT64* 块偏移;
 	索引->Get变长成员(每块像素数, i通道颜色, 块偏移);
 	const UINT32 块总数 = UINT32(索引->SizeZBC) * 索引->SizeT;
 	if (!块总数)
-		throw Image5D异常(索引中不包含块);
+		throw 损坏;
 	if ((char*)(块偏移 + 块总数) > (char*)索引文件->映射指针() + 索引文件->文件大小())
-		throw Image5D异常(索引文件损坏);
+		throw 损坏;
 	const char* const 映射指针 = (char*)文件列表[0]->内存映射().映射指针();
 	if (映射指针 + 块偏移[块总数 - 1] > 尾指针)
-		throw Image5D异常(图像文件不完整);
+		throw 损坏;
 	for (const UINT64* const 块偏移尾 = 块偏移 + 块总数; 块偏移 < 块偏移尾; ++块偏移)
-		块指针.push_back((const uint16_t*)(映射指针 + *块偏移));
+	{
+		const uint16_t* 指针 = (const uint16_t*)(映射指针 + *块偏移);
+		if (指针 < 尾指针)
+			块指针.push_back(指针);
+		else
+			throw 损坏;
+	}
 }
 constexpr const char* 字符串尾(const char* 字符串)
 {
@@ -459,6 +466,47 @@ void Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize
 					块像素头++;
 				}
 				写出头TZ += 写出CYX;
+			}
+			读入头T += 索引->SizeZBC;
+		}
+	}
+	catch (...)
+	{
+		throw 内存异常;
+	}
+}
+void Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize)const
+{
+	if (TStart + TSize > 索引->SizeT || ZStart + ZSize > 索引->SizeZ)
+		throw 越界异常;
+	const UINT16* const* 读入头T = 块指针.data() + (UINT32(TStart) * 索引->SizeZ + ZStart) * 索引->每帧分块数 * 索引->SizeC;
+	const UINT16* const* const 读入尾T = 读入头T + UINT32(TSize) * 索引->SizeZBC;
+	const UINT8 读入ZBC = ZSize * 索引->SizeBC;
+	try
+	{
+		while (读入头T < 读入尾T)
+		{
+			const UINT16* const* 读入头ZB = 读入头T;
+			const UINT16* const* 读入尾Z = 读入头ZB + 读入ZBC;
+			while (读入头ZB < 读入尾Z)
+			{
+				const UINT32* 块像素头 = 每块像素数;
+				const UINT16* const* 读入尾B = 读入头ZB + 索引->SizeBC;
+				UINT16* 写出头B = 写出头TZ;
+				while (读入头ZB < 读入尾B)
+				{
+					const UINT16* const* 读入尾C = 读入头ZB + 索引->SizeC;
+					UINT16* 写出头C = 写出头B;
+					UINT32 块像素数 = *块像素头;
+					while (读入头ZB < 读入尾C)
+					{
+						std::copy_n(*(读入头ZB++), 块像素数, 写出头C);
+						写出头C += 索引->SizeYX;
+					}
+					写出头B += 块像素数;
+					块像素头++;
+				}
+				写出头TZ += 索引->SizeCYX;
 			}
 			读入头T += 索引->SizeZBC;
 		}

@@ -52,10 +52,15 @@ template<>
 String 万能转码<String>(const char* 输入)
 {
 	String 返回;
-	const size_t 长度 = strlen(输入);
-	返回.resize_and_overwrite(长度, [输入](char16_t* 指针, size_t 尺寸) 
+	const size_t 长度 = strlen(输入)+1;
+	返回.resize_and_overwrite(长度, [输入](char16_t* 指针, size_t 尺寸)
 		{
+#ifdef _DEBUG
+			尺寸 = MultiByteToWideChar(CP_UTF8, 0, 输入, -1, (wchar_t*)指针, 尺寸);
+			return 尺寸;
+#else
 			return MultiByteToWideChar(CP_UTF8, 0, 输入, -1, (wchar_t*)指针, 尺寸);
+#endif
 		});
 	return 返回;
 }
