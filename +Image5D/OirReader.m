@@ -79,6 +79,9 @@ classdef OirReader<handle
 			% Pixels=obj.ReadPixels(TStart,TSize,C);
 			% %读入特定通道设备在一段时间内采得的像素
 			%
+			% Pixels=obj.ReadPixels(TStart,TSize,ZStart,ZSize);
+			% %读入一段时间和Z层内采得的像素
+			%
 			% Pixels=obj.ReadPixels(TStart,TSize,ZStart,ZSize,CStart,CSize);
 			% %读入一定时间、Z层、通道范围内的像素
 			% ```
@@ -103,7 +106,7 @@ classdef OirReader<handle
 			switch nargin
 				case 1
 					Pixels=OirReaderMex(uint8(Image5D.internal.OirReaderAPI.ReadPixels),obj.Pointer);
-				case {3,4,7}
+				case {3,4,5,7}
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
 					Pixels=OirReaderMex(uint8(Image5D.internal.OirReaderAPI.ReadPixels),obj.Pointer,uint16(TStart),uint16(TSize),varargin{:});
 				otherwise
@@ -124,6 +127,9 @@ classdef OirReader<handle
 			%
 			% obj.ReadToPointer(Pointer,TStart,TSize,C);
 			% %读入特定通道设备在一段时间内采得的像素
+			%
+			% obj.ReadToPointer(Pointer,TStart,TSize,ZStart,ZSize);
+			% %读入一段时间和Z层内采得的像素
 			%
 			% obj.ReadToPointer(Pointer,TStart,TSize,ZStart,ZSize,CStart,CSize);
 			% %读入一定时间、Z层、通道范围内的像素
@@ -151,7 +157,7 @@ classdef OirReader<handle
 			switch nargin
 				case 2
 					ExceptionCheck(OirReaderMex(uint8(Image5D.internal.OirReaderAPI.ReadToPointer),obj.Pointer,Pointer.Pointer,Pointer.Capacity));
-				case {4,5,8}
+				case {4,5,6,8}
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
 					ExceptionCheck(OirReaderMex(uint8(Image5D.internal.OirReaderAPI.ReadToPointer),obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint16(TStart),uint16(TSize),varargin{:}));
 				otherwise

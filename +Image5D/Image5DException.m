@@ -104,6 +104,7 @@ classdef Image5DException<uint8
 		The_file_is_occupied_by_another_process(98)
 		Disk_is_full(99)
 		File_size_is_0(100)
+		Unsupported_byte_order(101)
 		%MATLAB抛出的异常
 
 		Wrong_number_of_parameters(255)

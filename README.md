@@ -82,7 +82,7 @@ OME规范与TIFF/BigTiff的规范是正交的，即它既可以基于TIFF，也�
 
 文件中的字节是在地址空间中线性排列的，无论文件具有何种结构，这种结构都必须序列化为一串字节。TIFF规范在文件头中定义了首个IFD的字节偏移，即从文件起始开始向后多少个字节到达首个IFD；而IFD中的StripOffsets标签则记录了该IFD所对应的实际的像素数据的字节偏移；IFD结构的最后还记录了下一个IFD的字节偏移。也就是说，TIFF文件中的IFD维度并不是连续线性分布的，而是呈单向链表结构，只能从首IFD开始逐一寻找下一个IFD，直到最后一个IFD会指示它的下一个IFD的字节偏移为0，即本IFD是最后一个IFD。
 链表结构的优势在于可以高效地插入和删除，但随机访问性能很差。虽然读取程序可以建立缓存来存储每个IFD实际像素数据的指针，但仍不能免于遍历目标IFD之前的所有IFD。
-OB5是作者在OME BigTiff基础上进一步严格格式规范：
+OB5是作者在OME-BigTiff基础上进一步严格格式规范：
 - 紧接BigTiff文件头之后，字节偏移16的位置写入一个固定字节79，标志该文件遵守本规范
 - IFD的标签可以是单个值，也可以指向文件的某个位置，表示该位置存储着该标签的值。因此首IFD的ImageDescription标签，在本规范中被要求指向所有IFD之前，紧接文件头之后。ImageDescription块与首IFD之间可以有任意大空隙，为后续扩展预留空间。
 - 每个IFD都有且仅有13个标签。这些标签按照固定顺序排列：ImageDescription, StripOffsets, ImageWidth, ImageLength, BitsPerSample, RowsPerStrip, StripByteCounts, SampleFormat, Compression, PhotometricInterpretation, XResolution, YResolution, ResolutionUnit。因为每个标签恰好占用20字节且紧密线性排列，所以每个IFD占用的字节也是固定的。
@@ -170,3 +170,9 @@ classdef OmeTiffRWer<handle
 	end
 end
 ```
+## 已知问题
+本库并不支持标准OME-TIFF规范的全部特性，包括但不限于：
+- 仅支持Windows标准Little-endian字节序，不支持ImageJ输出的Big-endian字节序
+- 不支持对非OB5-TIFF格式的写出，只能读入
+- 不支持分多条带的TIFF像素块
+- 不支持分多文件的OME-TIFF图像

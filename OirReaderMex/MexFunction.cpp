@@ -70,11 +70,11 @@ API声明(ReadPixels)
 	const Oir读入器* const 指针 = 万能转码<Oir读入器*>(inputs[1]);
 	const uint16_t SizeX = 指针->SizeX();
 	const uint16_t SizeY = 指针->SizeY();
-	const uint8_t SizeZ = 指针->SizeZ();
 	switch (inputs.size())
 	{
 	case 2:
 	{
+		const uint8_t SizeZ = 指针->SizeZ();
 		buffer_ptr_t<uint16_t> 缓冲 = 数组工厂.createBuffer<uint16_t>(uint64_t(指针->SizeT()) * SizeZ * 指针->SizeC() * SizeY * SizeX);
 		指针->读入像素(缓冲.get());
 		outputs[0] = 数组工厂.createArrayFromBuffer({ SizeX,SizeY,指针->SizeC(),SizeZ,指针->SizeT() }, std::move(缓冲));
@@ -82,6 +82,7 @@ API声明(ReadPixels)
 	break;
 	case 4:
 	{
+		const uint8_t SizeZ = 指针->SizeZ();
 		const uint16_t TSize = 万能转码<uint16_t>(inputs[3]);
 		const uint8_t SizeC = 指针->SizeC();
 		const uint64_t 尺寸 = uint64_t(TSize) * SizeZ * SizeC * SizeY * SizeX;
@@ -92,11 +93,23 @@ API声明(ReadPixels)
 	break;
 	case 5:
 	{
+		const uint8_t SizeZ = 指针->SizeZ();
 		const uint16_t TSize = 万能转码<uint16_t>(inputs[3]);
 		const uint64_t 尺寸 = uint64_t(TSize) * SizeZ * SizeY * SizeX;
 		buffer_ptr_t<uint16_t> 缓冲 = 数组工厂.createBuffer<uint16_t>(尺寸);
 		指针->读入像素(缓冲.get(), 万能转码<uint16_t>(inputs[2]), TSize, 万能转码<uint8_t>(inputs[4]));
 		outputs[0] = 数组工厂.createArrayFromBuffer({ SizeX,SizeY,1,SizeZ,TSize }, std::move(缓冲));
+	}
+	break;
+	case 6:
+	{
+		const uint8_t SizeC = 指针->SizeC();
+		const uint16_t TSize = 万能转码<uint16_t>(inputs[3]);
+		const uint8_t ZSize = 万能转码<uint8_t>(inputs[5]);
+		const uint64_t 尺寸 = uint64_t(TSize) * ZSize * SizeC * SizeY * SizeX;
+		buffer_ptr_t<uint16_t> 缓冲 = 数组工厂.createBuffer<uint16_t>(尺寸);
+		指针->读入像素(缓冲.get(), 万能转码<uint16_t>(inputs[2]), TSize, 万能转码<uint8_t>(inputs[4]), ZSize);
+		outputs[0] = 数组工厂.createArrayFromBuffer({ SizeX,SizeY,SizeC,ZSize,TSize }, std::move(缓冲));
 	}
 	break;
 	case 8:
@@ -141,6 +154,15 @@ API声明(ReadToPointer)
 		if (SizePXY * TSize * 对象指针->SizeZ() > 输出容量)
 			throw NumberOfElementsExceedsMaximumException("目标内存溢出");
 		对象指针->读入像素(输出指针, 万能转码<uint16_t>(inputs[4]), TSize, 万能转码<uint8_t>(inputs[6]));
+	}
+	break;
+	case 8:
+	{
+		const uint16_t TSize = 万能转码<uint16_t>(inputs[5]);
+		const uint8_t ZSize = 万能转码<uint8_t>(inputs[7]);
+		if (SizePXY * TSize * ZSize * 对象指针->SizeC() > 输出容量)
+			throw NumberOfElementsExceedsMaximumException("目标内存溢出");
+		对象指针->读入像素(输出指针, 万能转码<uint16_t>(inputs[4]), TSize, 万能转码<uint8_t>(inputs[6]), ZSize);
 	}
 	break;
 	case 10:

@@ -24,6 +24,7 @@ public:
 	float 系列间隔()const noexcept { return 索引->系列间隔; }
 	const 设备颜色* 通道颜色()const noexcept { return i通道颜色; }
 	void 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const;
+	void 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize)const;
 	void 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 C)const;
 	void 读入像素(UINT16* 缓冲区, UINT16 TStart, UINT16 TSize)const;
 	void 读入像素(uint16_t* 缓冲区)const;
