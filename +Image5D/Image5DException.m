@@ -98,6 +98,7 @@ classdef Image5DException<uint8
 		Oir_continuous_mapping_failed(92)
 		Tiff_file_creation_failed(93)
 		Tiff_file_mapping_failed(94)
+		Unsupported_byte_order(95)
 		%MATLAB抛出的异常
 
 		Wrong_number_of_parameters(255)

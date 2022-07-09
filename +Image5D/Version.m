@@ -1,2 +1,2 @@
 function V=Version
-V='1.0.5';
+V='1.0.6';
