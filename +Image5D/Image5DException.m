@@ -98,6 +98,12 @@ classdef Image5DException<uint8
 		Oir_continuous_mapping_failed(92)
 		Tiff_file_creation_failed(93)
 		Tiff_file_mapping_failed(94)
+		The_specified_file_could_not_be_found(95)
+		The_specified_path_could_not_be_found(96)
+		File_access_denied(97)
+		The_file_is_occupied_by_another_process(98)
+		Disk_is_full(99)
+		File_size_is_0(100)
 		%MATLAB抛出的异常
 
 		Wrong_number_of_parameters(255)
@@ -105,12 +111,12 @@ classdef Image5DException<uint8
 	methods
 		function Throw(obj,Message)
 			%抛出当前异常，可选指定附加信息
-			Identifier=sprintf('Image5D:%s',obj);
+			Identifier=sprintf('Image5DException:%s',obj);
 			switch nargin
 				case 1
-					error(Identifier,'%s',obj);
+					error(Identifier,'%s',Identifier);
 				case 2
-					error(Identifier,Message,obj)
+					error(Identifier,Message,Identifier)
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
