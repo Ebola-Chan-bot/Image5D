@@ -1,4 +1,4 @@
-classdef Image5DException<uint8
+classdef Image5DException<uint8&MATLAB.Lang.IEnumerableException
 	%适用于Image5D包的异常枚举，指示文件格式无法识别或输入参数有误等异常情况
 	enumeration
 		%Mex抛出的异常
@@ -108,19 +108,5 @@ classdef Image5DException<uint8
 		%MATLAB抛出的异常
 
 		Wrong_number_of_parameters(255)
-	end
-	methods
-		function Throw(obj,Message)
-			%抛出当前异常，可选指定附加信息
-			Identifier=sprintf('Image5DException:%s',obj);
-			switch nargin
-				case 1
-					error(Identifier,'%s',Identifier);
-				case 2
-					error(Identifier,Message,Identifier)
-				otherwise
-					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
-			end
-		end
 	end
 end
