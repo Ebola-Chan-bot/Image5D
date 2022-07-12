@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration file="C:\Users\vhtmf\source\repos\Image5D\Image5D工具箱.prj" location="C:\Users\vhtmf\source\repos\Image5D" name="Image5D工具箱" target="target.toolbox" target-name="打包为工具箱">
+  <configuration build-checksum="3041207619" file="C:\Users\vhtmf\source\repos\Image5D\Image5D工具箱.prj" location="C:\Users\vhtmf\source\repos\Image5D" name="Image5D工具箱" target="target.toolbox" target-name="打包为工具箱">
     <param.appname>Image5D</param.appname>
     <param.authnamewatermark>埃博拉酱</param.authnamewatermark>
     <param.email>vhtmfu@outlook.com</param.email>
@@ -11,7 +11,7 @@
 
 依赖：pugixml，AVX2以上指令集，Windows系统（推荐Win11，低版本未测试）</param.description>
     <param.screenshot>${PROJECT_ROOT}\工具箱图像.png</param.screenshot>
-    <param.version>1.1.1</param.version>
+    <param.version>1.1.2</param.version>
     <param.output>${PROJECT_ROOT}\Image5D.mltbx</param.output>
     <param.products.name />
     <param.products.id />
@@ -64,7 +64,11 @@ x64
     <param.matlabpath.excludes />
     <param.javaclasspath.excludes />
     <param.exported.on.package>false</param.exported.on.package>
-    <param.required.addons />
+    <param.required.addons>
+      <requiredaddons>
+        <requiredAddOn earliest="8.0.0" fromRepository="true" id="b344599a-983e-4a6c-bd99-ed3a1bdd9626" include="true" latest="latest">埃博拉酱 的 MATLAB 扩展 Extension(2)</requiredAddOn>
+      </requiredaddons>
+    </param.required.addons>
     <param.matlab.project.id />
     <param.matlab.project.name />
     <param.release.start>R2021a</param.release.start>
@@ -95,7 +99,6 @@ x64
       <param.matlabpath.excludes />
       <param.javaclasspath.excludes />
       <param.exported.on.package />
-      <param.required.addons />
       <param.matlab.project.id />
       <param.matlab.project.name />
       <param.release.current.only />
