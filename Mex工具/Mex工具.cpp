@@ -41,9 +41,9 @@ std::string 万能转码<std::string>(Array& 输入)
 {
 	const String 字符串 = 万能转码<String>(输入);
 	std::string 返回;
-	返回.resize_and_overwrite(字符串.size() * 3, [&字符串](char* 指针, size_t 尺寸)
+	返回.resize_and_overwrite(字符串.size() * 3 + 1, [&字符串](char* 指针, size_t 尺寸)
 		{
-			return WideCharToMultiByte(CP_UTF8, 0, (wchar_t*)字符串.c_str(), -1, 指针, 尺寸, nullptr, nullptr);
+			return WideCharToMultiByte(CP_UTF8, 0, (wchar_t*)字符串.c_str(), -1, 指针, 尺寸, nullptr, nullptr) - 1;
 		});
 	return 返回;
 }
@@ -52,14 +52,14 @@ template<>
 String 万能转码<String>(const char* 输入)
 {
 	String 返回;
-	const size_t 长度 = strlen(输入)+1;
+	const size_t 长度 = strlen(输入) + 1;
 	返回.resize_and_overwrite(长度, [输入](char16_t* 指针, size_t 尺寸)
 		{
 #ifdef _DEBUG
-			尺寸 = MultiByteToWideChar(CP_UTF8, 0, 输入, -1, (wchar_t*)指针, 尺寸);
+			尺寸 = MultiByteToWideChar(CP_UTF8, 0, 输入, -1, (wchar_t*)指针, 尺寸) - 1;
 			return 尺寸;
 #else
-			return MultiByteToWideChar(CP_UTF8, 0, 输入, -1, (wchar_t*)指针, 尺寸);
+			return MultiByteToWideChar(CP_UTF8, 0, 输入, -1, (wchar_t*)指针, 尺寸) - 1;
 #endif
 		});
 	return 返回;

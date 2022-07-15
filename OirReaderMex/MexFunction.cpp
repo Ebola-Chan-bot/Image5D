@@ -57,7 +57,12 @@ API声明(DeviceColors)
 	const 设备颜色* 通道颜色 = 指针->通道颜色();
 	for (const 设备颜色* const 通道尾 = 通道颜色 + SizeC; 通道颜色 < 通道尾; 通道颜色++)
 	{
-		*(设备缓冲头++) = 万能转码<MATLABString>(通道颜色->设备名称);
+#ifdef _DEBUG
+		MATLABString&& 名称= 万能转码<MATLABString>(通道颜色->设备名称);
+		*(设备缓冲头++) = 名称;
+#else
+		* (设备缓冲头++) = 万能转码<MATLABString>(通道颜色->设备名称);
+#endif
 		*(颜色缓冲头++) = 通道颜色->红;
 		*(颜色缓冲头++) = 通道颜色->绿;
 		*(颜色缓冲头++) = 通道颜色->蓝;
