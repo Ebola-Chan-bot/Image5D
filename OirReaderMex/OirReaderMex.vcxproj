@@ -55,9 +55,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
   </ImportGroup>
-  <ImportGroup Label="Shared">
-    <Import Project="..\共享库\共享库.vcxitems" Label="Shared" />
-  </ImportGroup>
+  <ImportGroup Label="Shared" />
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
@@ -73,15 +71,15 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetExt>.mexw64</TargetExt>
-    <ExternalIncludePath>$(SolutionDir)packages\Eigen3.3.3.9\lib\native\include;$(SolutionDir)Mex工具\include;$(SolutionDir)Image5D\include;$(ExternalIncludePath)</ExternalIncludePath>
-    <LibraryPath>$(SolutionDir)+Image5D\private;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
-    <OutDir>$(SolutionDir)+Image5D\private\</OutDir>
+    <ExternalIncludePath>$(SolutionDir)Image5D\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>$(SolutionDir)+Image5D\+internal\private\;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <OutDir>$(SolutionDir)+Image5D\+internal\private\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetExt>.mexw64</TargetExt>
-    <ExternalIncludePath>$(SolutionDir)packages\Eigen3.3.3.9\lib\native\include;$(SolutionDir)Mex工具\include;$(SolutionDir)Image5D\include;$(ExternalIncludePath)</ExternalIncludePath>
-    <LibraryPath>$(SolutionDir)+Image5D\private;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
-    <OutDir>$(SolutionDir)+Image5D\private\</OutDir>
+    <ExternalIncludePath>$(SolutionDir)Image5D\include;$(ExternalIncludePath)</ExternalIncludePath>
+    <LibraryPath>$(SolutionDir)+Image5D\+internal\private\;$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64)</LibraryPath>
+    <OutDir>$(SolutionDir)+Image5D\+internal\private\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -136,7 +134,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>Image5D.lib;Mex工具.lib;Shlwapi.lib;Bcrypt.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Image5D.lib;Shlwapi.lib;Bcrypt.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -162,12 +160,14 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>Image5D.lib;Mex工具.lib;Shlwapi.lib;Bcrypt.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Image5D.lib;Shlwapi.lib;Bcrypt.lib;$(CoreLibraryDependencies);%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="framework.h" />
     <ClInclude Include="Oir索引.h" />
     <ClInclude Include="Oir读入器.h" />
+    <ClInclude Include="pch.h" />
     <ClInclude Include="分配粒度.h" />
     <ClInclude Include="哈希.h" />
     <ClInclude Include="文件控制块.h" />
@@ -177,6 +177,7 @@
     <ClCompile Include="MexFunction.cpp" />
     <ClCompile Include="Oir索引.cpp" />
     <ClCompile Include="Oir读入器.cpp" />
+    <ClCompile Include="pch.cpp" />
     <ClCompile Include="分配粒度.cpp" />
     <ClCompile Include="哈希.cpp" />
     <ClCompile Include="文件控制块.cpp" />
@@ -188,18 +189,17 @@
     <ProjectReference Include="..\Image5D\Image5D.vcxproj">
       <Project>{72a300aa-0d89-4028-a043-9b448939bd78}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\Mex工具\Mex工具.vcxproj">
-      <Project>{ce6ce462-a955-46a7-bb11-895054ef51ea}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\pugixml.1.12.0\build\native\pugixml.targets" Condition="Exists('..\packages\pugixml.1.12.0\build\native\pugixml.targets')" />
+    <Import Project="..\packages\MATLAB.MexTools.1.1.0\build\native\MATLAB.MexTools.targets" Condition="Exists('..\packages\MATLAB.MexTools.1.1.0\build\native\MATLAB.MexTools.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\pugixml.1.12.0\build\native\pugixml.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\pugixml.1.12.0\build\native\pugixml.targets'))" />
+    <Error Condition="!Exists('..\packages\MATLAB.MexTools.1.1.0\build\native\MATLAB.MexTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MATLAB.MexTools.1.1.0\build\native\MATLAB.MexTools.targets'))" />
   </Target>
 </Project>

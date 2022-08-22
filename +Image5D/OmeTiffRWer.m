@@ -54,7 +54,7 @@ classdef OmeTiffRWer<handle
 			% FilePath，文件路径
 			%# 返回值
 			% obj，TIFF读入器对象，仅支持读入属性和像素值，不能编辑写出。
-			obj=Image5D.OmeTiffRWer(ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.OpenRead),FilePath)));
+			obj=Image5D.OmeTiffRWer(Image5D.internal.OmeTiffAPI.OpenRead.Call(FilePath));
 		end
 		function obj=OpenRW(FilePath)
 			%读写打开现存 OB5 TIFF 文件
@@ -68,7 +68,7 @@ classdef OmeTiffRWer<handle
 			%# 返回值
 			% obj，OB5 TIFF 读写器，支持读写属性和像素值。
 			%See also Image5D.OmeTiffRWer.Create
-			obj=Image5D.OmeTiffRWer(ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.OpenRW),FilePath)));
+			obj=Image5D.OmeTiffRWer(Image5D.internal.OmeTiffAPI.OpenRW.Call(FilePath));
 		end
 		function obj=Create(FilePath,PixelTypeOrImageDescription,SizeX,SizeY,ChannelColors,SizeZ,SizeT,DimensionOrder)
 			%覆盖创建 OB5 TIFF 文件
@@ -86,7 +86,7 @@ classdef OmeTiffRWer<handle
 			% import Image5D.*
 			%
 			% %首先指定基本属性创建第1个图像文件
-			% obj1=OmeTiffRWer.Create('示例图像1.tif',PixelType.UINT16,512,512,4,2,5,[ChannelColor.New(1,1,0,0),ChannelColor.New(1,0,1,0),ChannelColor.New(1,0,0,1),ChannelColor.New(1,1,1,1)],DimensionOrder.XYCZT);
+			% obj1=OmeTiffRWer.Create('示例图像1.tif',PixelType.UINT16,512,512,4,2,5,[ChannelColor.New(1,1,0,0.Call(ChannelColor.New(1,0,1,0.Call(ChannelColor.New(1,0,0,1.Call(ChannelColor.New(1,1,1,1)],DimensionOrder.XYCZT);
 			%
 			% %创建第2个图像文件，和第1个只有文件名不同
 			% obj2=OmeTiffRWer.Create('示例图像2.tif',obj1.ImageDescription);
@@ -109,9 +109,9 @@ classdef OmeTiffRWer<handle
 			import Image5D.*
 			switch nargin
 				case 2
-					obj=OmeTiffRWer(ExceptionCheck(OmeBigTiff5D(uint8(internal.OmeTiffAPI.Create),FilePath,PixelTypeOrImageDescription)));
+					obj=OmeTiffRWer(internal.OmeTiffAPI.Create.Call(FilePath,PixelTypeOrImageDescription));
 				case 8
-					obj=OmeTiffRWer(ExceptionCheck(OmeBigTiff5D(uint8(internal.OmeTiffAPI.Create),FilePath,uint8(PixelTypeOrImageDescription),uint16(SizeX),uint16(SizeY),uint32(ChannelColors),uint8(SizeZ),uint16(SizeT),uint8(DimensionOrder))));
+					obj=OmeTiffRWer(internal.OmeTiffAPI.Create.Call(FilePath,uint8(PixelTypeOrImageDescription),uint16(SizeX),uint16(SizeY),uint32(ChannelColors),uint8(SizeZ),uint16(SizeT),uint8(DimensionOrder)));
 				otherwise
 					Image5DException.Wrong_number_of_parameters.Throw;
 			end
@@ -119,70 +119,70 @@ classdef OmeTiffRWer<handle
 	end
 	methods
 		function V=get.PixelType(obj)
-			V=Image5D.PixelType(ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.PixelType),obj.Pointer)));
+			V=Image5D.PixelType(Image5D.internal.OmeTiffAPI.PixelType.Call(obj.Pointer));
 		end
 		function set.PixelType(obj,V)
-			Image5D.PixelType(ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.PixelType),obj.Pointer,uint8(V))));
+			Image5D.PixelType(Image5D.internal.OmeTiffAPI.PixelType.Call(obj.Pointer,uint8(V)));
 		end
 		function V=get.DimensionOrder(obj)
-			V=Image5D.DimensionOrder(ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.DimensionOrder),obj.Pointer)));
+			V=Image5D.DimensionOrder(Image5D.internal.OmeTiffAPI.DimensionOrder.Call(obj.Pointer));
 		end
 		function set.DimensionOrder(obj,V)
-			Image5D.DimensionOrder(ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.DimensionOrder),obj.Pointer,uint8(V))));
+			Image5D.DimensionOrder(Image5D.internal.OmeTiffAPI.DimensionOrder.Call(obj.Pointer,uint8(V)));
 		end
 		function V=get.SizeP(obj)
-			V=ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.SizeP),obj.Pointer));
+			V=Image5D.internal.OmeTiffAPI.SizeP.Call(obj.Pointer);
 		end
 		function V=get.SizeX(obj)
-			V=ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.SizeX),obj.Pointer));
+			V=Image5D.internal.OmeTiffAPI.SizeX.Call(obj.Pointer);
 		end
 		function set.SizeX(obj,V)
-			ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.SizeX),obj.Pointer,V));
+			Image5D.internal.OmeTiffAPI.SizeX.Call(obj.Pointer,V);
 		end
 		function V=get.SizeY(obj)
-			V=ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.SizeY),obj.Pointer));
+			V=Image5D.internal.OmeTiffAPI.SizeY.Call(obj.Pointer);
 		end
 		function set.SizeY(obj,V)
-			ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.SizeY),obj.Pointer,V));
+			Image5D.internal.OmeTiffAPI.SizeY.Call(obj.Pointer,V);
 		end
 		function V=get.SizeI(obj)
-			V=ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.SizeI),obj.Pointer));
+			V=Image5D.internal.OmeTiffAPI.SizeI.Call(obj.Pointer);
 		end
 		function V=get.SizeC(obj)
-			V=ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.SizeC),obj.Pointer));
+			V=Image5D.internal.OmeTiffAPI.SizeC.Call(obj.Pointer);
 		end
 		function set.SizeC(obj,V)
-			ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.SizeC),obj.Pointer,V));
+			Image5D.internal.OmeTiffAPI.SizeC.Call(obj.Pointer,V);
 		end
 		function V=get.SizeZ(obj)
-			V=ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.SizeZ),obj.Pointer));
+			V=Image5D.internal.OmeTiffAPI.SizeZ.Call(obj.Pointer);
 		end
 		function set.SizeZ(obj,V)
-			ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.SizeZ),obj.Pointer,V));
+			Image5D.internal.OmeTiffAPI.SizeZ.Call(obj.Pointer,V);
 		end
 		function V=get.SizeT(obj)
-			V=ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.SizeT),obj.Pointer));
+			V=Image5D.internal.OmeTiffAPI.SizeT.Call(obj.Pointer);
 		end
 		function set.SizeT(obj,V)
-			ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.SizeT),obj.Pointer,V));
+			Image5D.internal.OmeTiffAPI.SizeT.Call(obj.Pointer,V);
 		end
 		function V=get.ChannelColors(obj)
-			V=Image5D.ChannelColor.New(ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.ChannelColors),obj.Pointer)));
+			V=Image5D.ChannelColor.New(Image5D.internal.OmeTiffAPI.ChannelColors.Call(obj.Pointer));
 		end
 		function set.ChannelColors(obj,V)
-			ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.ChannelColors),obj.Pointer,uint32(V)));
+			Image5D.internal.OmeTiffAPI.ChannelColors.Call(obj.Pointer,uint32(V));
 		end
 		function V=get.FileName(obj)
-			V=ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.FileName),obj.Pointer));
+			V=Image5D.internal.OmeTiffAPI.FileName.Call(obj.Pointer);
 		end
 		function set.FileName(obj,V)
-			ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.FileName),obj.Pointer,V));
+			Image5D.internal.OmeTiffAPI.FileName.Call(obj.Pointer,V);
 		end
 		function V=get.ImageDescription(obj)
-			V=ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.ImageDescription),obj.Pointer));
+			V=Image5D.internal.OmeTiffAPI.ImageDescription.Call(obj.Pointer);
 		end
 		function set.ImageDescription(obj,V)
-			ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.ImageDescription),obj.Pointer,V));
+			Image5D.internal.OmeTiffAPI.ImageDescription.Call(obj.Pointer,V);
 		end
 		function ModifyParameters(obj,PixelType,SizeX,SizeY,SizeC,SizeZ,SizeT,ChannelColors,DimensionOrder,FileName)
 			%一次修改多个参数，只进行一次文件重构，因此比依次修改多个属性更快。
@@ -220,7 +220,7 @@ classdef OmeTiffRWer<handle
 				DimensionOrder=Image5D.DimensionOrder.DEFAULT
 				FileName=""
 			end
-			ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.ModifyParameters),obj.Pointer,uint8(PixelType),uint16(SizeX),uint16(SizeY),uint8(SizeC),uint8(SizeZ),uint16(SizeT),uint32(ChannelColors),uint8(DimensionOrder),FileName));
+			Image5D.internal.OmeTiffAPI.ModifyParameters.Call(obj.Pointer,uint8(PixelType),uint16(SizeX),uint16(SizeY),uint8(SizeC),uint8(SizeZ),uint16(SizeT),uint32(ChannelColors),uint8(DimensionOrder),FileName);
 		end
 		function Pixels=ReadPixels(obj,TStart,TSize,varargin)
 			%读入指定范围内的像素值。仅 OME TIFF 支持此方法。
@@ -256,10 +256,10 @@ classdef OmeTiffRWer<handle
 			%See also Image5D.OmeTiffRWer.ReadPixelsI Image5D.OmeTiffRWer.WritePixels
 			switch nargin
 				case 1
-					Pixels=ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.ReadPixels),obj.Pointer));
+					Pixels=Image5D.internal.OmeTiffAPI.ReadPixels.Call(obj.Pointer);
 				case {3,7}
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
-					Pixels=ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.ReadPixels),obj.Pointer,uint16(TStart),uint16(TSize),varargin{:}));
+					Pixels=Image5D.internal.OmeTiffAPI.ReadPixels.Call(obj.Pointer,uint16(TStart),uint16(TSize),varargin{:});
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
@@ -284,7 +284,7 @@ classdef OmeTiffRWer<handle
 			%# 返回值
 			% Pixels(:,:,:)，像素值，数据类型取决于PixelType属性，维度顺序XYI
 			%See also Image5D.OmeTiffRWer.ReadPixels Image5D.OmeTiffRWer.WritePixelsI
-			Pixels=ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.ReadPixelsI),obj.Pointer,uint32(IStart),uint32(ISize)));
+			Pixels=Image5D.internal.OmeTiffAPI.ReadPixelsI.Call(obj.Pointer,uint32(IStart),uint32(ISize));
 		end
 		function WritePixels(obj,Pixels,TStart,TSize,varargin)
 			%写出指定范围内的像素值
@@ -301,7 +301,7 @@ classdef OmeTiffRWer<handle
 			% ```
 			%# 示例
 			% ```
-			% obj.WritePixels(ones(obj.SizeX,obj.SizeY,obj.SizeC,obj.SizeZ,obj.SizeT,'uint16'),0,obj.SizeT,0,obj.SizeZ,0,obj.SizeC);
+			% obj.WritePixels(ones(obj.SizeX,obj.SizeY,obj.SizeC,obj.SizeZ,obj.SizeT,'uint16'.Call(0,obj.SizeT,0,obj.SizeZ,0,obj.SizeC);
 			% %写出全部像素值为1。注意此处假定PixelType为UINT16且DimensionOrder为XYCZT。
 			% ```
 			%# 输入参数
@@ -315,10 +315,10 @@ classdef OmeTiffRWer<handle
 			%See also Image5D.OmeTiffRWer.ReadPixels Image5D.OmeTiffRWer.WritePixelsI
 			switch nargin
 				case 2
-					ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.WritePixels),obj.Pointer,Pixels));
+					Image5D.internal.OmeTiffAPI.WritePixels.Call(obj.Pointer,Pixels);
 				case {4,8}
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
-					ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.WritePixels),obj.Pointer,Pixels,uint16(TStart),uint16(TSize),varargin{:}));
+					Image5D.internal.OmeTiffAPI.WritePixels.Call(obj.Pointer,Pixels,uint16(TStart),uint16(TSize),varargin{:});
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
@@ -331,7 +331,7 @@ classdef OmeTiffRWer<handle
 			% ```
 			%# 示例
 			% ```
-			% obj.WritePixelsI(ones(obj.SizeX,obj.SizeY,obj.SizeI,'uint16'),0,obj.SizeI);
+			% obj.WritePixelsI(ones(obj.SizeX,obj.SizeY,obj.SizeI,'uint16'.Call(0,obj.SizeI);
 			% %写出全部像素值为1。注意此处假定PixelType为UINT16。
 			% ```
 			%# 输入参数
@@ -339,7 +339,7 @@ classdef OmeTiffRWer<handle
 			% IStart(1,1)uint32，要写出的起始IFD，从0开始
 			% ISize(1,1)uint32，要写出的IFD个数
 			%See also Image5D.OmeTiffRWer.ReadPixelsI Image5D.OmeTiffRWer.WritePixels
-			ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.WritePixelsI),obj.Pointer,Pixels,uint32(IStart),uint32(ISize)));
+			Image5D.internal.OmeTiffAPI.WritePixelsI.Call(obj.Pointer,Pixels,uint32(IStart),uint32(ISize));
 		end
 		function Pointer=PixelPointer(obj,T,Z,C)
 			%返回一个指向像素值的指针。仅 OB5 TIFF 支持此方法。
@@ -367,15 +367,15 @@ classdef OmeTiffRWer<handle
 			%See also Image5D.SafePointer Image5D.OmeTiffRWer.PixelPointerI Image5D.OmeTiffRWer.ReadToPointer Image5D.OmeTiffRWer.WriteFromPointer
 			switch nargin
 				case 1
-					[Pointer,Capacity]=OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.PixelPointer),obj.Pointer);
+					[Pointer,Capacity]=Image5D.internal.OmeTiffAPI.PixelPointer.Call(obj.Pointer);
 				case 2
-					[Pointer,Capacity]=OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.PixelPointer),obj.Pointer,uint16(T));
+					[Pointer,Capacity]=Image5D.internal.OmeTiffAPI.PixelPointer.Call(obj.Pointer,uint16(T));
 				case 4
-					[Pointer,Capacity]=OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.PixelPointer),obj.Pointer,uint16(T),uint8(Z),uint8(C));
+					[Pointer,Capacity]=Image5D.internal.OmeTiffAPI.PixelPointer.Call(obj.Pointer,uint16(T),uint8(Z),uint8(C));
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
-			Pointer=Image5D.SafePointer(ExceptionCheck(Pointer),Capacity);
+			Pointer=Image5D.SafePointer(Pointer,Capacity);
 		end
 		function Pointer=PixelPointerI(obj,I)
 			%返回一个指向像素值的指针。仅 OB5 TIFF 支持此方法。
@@ -387,8 +387,8 @@ classdef OmeTiffRWer<handle
 			%# 输入参数
 			%I(1,1)uint32，像素头起始IFD，从0开始
 			%See also Image5D.OmeTiffRWer.PixelPointer Image5D.OmeTiffRWer.ReadToPointerI Image5D.OmeTiffRWer.WriteFromPointerI
-			[Pointer,Capacity]=OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.PixelPointer),obj.Pointer,uint32(I));
-			Pointer=Image5D.SafePointer(ExceptionCheck(Pointer),Capacity);
+			[Pointer,Capacity]=Image5D.internal.OmeTiffAPI.PixelPointer.Call(obj.Pointer,uint32(I));
+			Pointer=Image5D.SafePointer(Pointer,Capacity);
 		end
 		function ReadToPointer(obj,Pointer,TStart,TSize,varargin)
 			%读入像素块值到给定指针
@@ -423,10 +423,10 @@ classdef OmeTiffRWer<handle
 			%See also Image5D.SafePointer Image5D.OmeTiffRWer.PixelPointer Image5D.OmeTiffRWer.ReadToPointerI Image5D.OmeTiffRWer.WriteFromPointer
 			switch nargin
 				case 2
-					ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.ReadToPointer),obj.Pointer,Pointer.Pointer,Pointer.Capacity));
+					Image5D.internal.OmeTiffAPI.ReadToPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity);
 				case {4,5,8}
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
-					ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.ReadToPointer),obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint16(TStart),uint16(TSize),varargin{:}));
+					Image5D.internal.OmeTiffAPI.ReadToPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint16(TStart),uint16(TSize),varargin{:});
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
@@ -443,7 +443,7 @@ classdef OmeTiffRWer<handle
 			% IStart(1,1)uint32，起始IFD，从0开始
 			% ISize(1,1)uint32，要读入的IFD数目
 			%See also Image5D.SafePointer Image5D.OmeTiffRWer.PixelPointerI Image5D.OmeTiffRWer.ReadToPointer Image5D.OmeTiffRWer.WriteFromPointerI
-			ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.ReadToPointerI),obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint32(IStart),uint32(ISize)));
+			Image5D.internal.OmeTiffAPI.ReadToPointerI.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint32(IStart),uint32(ISize));
 		end
 		function WriteFromPointer(obj,Pointer,TStart,TSize,varargin)
 			%从给定指针写出到指定像素范围
@@ -481,10 +481,10 @@ classdef OmeTiffRWer<handle
 			%See also Image5D.SafePointer Image5D.OmeTiffRWer.PixelPointer Image5D.OmeTiffRWer.ReadToPointer Image5D.OmeTiffRWer.WriteFromPointerI
 			switch nargin
 				case 2
-					ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.WriteFromPointer),obj.Pointer,Pointer.Pointer,Pointer.Capacity));
+					Image5D.internal.OmeTiffAPI.WriteFromPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity);
 				case {4,5,8}
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
-					ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.WriteFromPointer),obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint16(TStart),uint16(TSize),varargin{:}));
+					Image5D.internal.OmeTiffAPI.WriteFromPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint16(TStart),uint16(TSize),varargin{:});
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
@@ -512,12 +512,12 @@ classdef OmeTiffRWer<handle
 			% IStart(1,1)uint32，起始IFD，从0开始
 			% ISize(1,1)uint32，要写出的IFD数目
 			%See also Image5D.SafePointer Image5D.OmeTiffRWer.PixelPointerI Image5D.OmeTiffRWer.ReadToPointerI Image5D.OmeTiffRWer.WriteFromPointer
-			ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.WriteFromPointerI),obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint32(IStart),uint32(ISize)));
+			Image5D.internal.OmeTiffAPI.WriteFromPointerI.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint32(IStart),uint32(ISize));
 		end
 		function delete(obj)
 			%删除OmeTiffRWer对象。
 			%删除OmeTiffRWer对象变量时会自动关闭相关文件，无需手动操作。
-			ExceptionCheck(OmeBigTiff5D(uint8(Image5D.internal.OmeTiffAPI.Close),obj.Pointer));
+			Image5D.internal.OmeTiffAPI.Close.Call(obj.Pointer);
 		end
 	end
 end

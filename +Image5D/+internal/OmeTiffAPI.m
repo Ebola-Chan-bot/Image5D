@@ -28,4 +28,11 @@ classdef OmeTiffAPI<uint8
 		WriteFromPointerI(25)
 		Close(26)
 	end
+	methods
+		function varargout=Call(obj,varargin)
+			varargout=cell(1,nargout);
+			[Status,varargout{:}]=OmeBigTiff5D(uint8(obj),varargin{:});
+			StatusCheck(Status);
+		end
+	end
 end

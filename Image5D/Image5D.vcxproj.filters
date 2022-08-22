@@ -15,31 +15,41 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\共享库\pch.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="dllmain.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="文件映射.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
+    <ClCompile Include="Image5D异常.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="pch.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\共享库\framework.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="..\共享库\pch.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="include\Image5D.h">
+    <ClInclude Include="include\安全拷贝.h">
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="include\文件映射.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="include\Image5D异常.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="framework.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="pch.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="include\字符.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="cpp.hint" />
+    <None Include="packages.config" />
   </ItemGroup>
 </Project>

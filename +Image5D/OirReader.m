@@ -30,30 +30,30 @@ classdef OirReader<handle
 			%# 提示
 			% OIR文件的像素值是在文件中间断存储的数据块，且没有内置索引。为了实现快速读入，首次构造时需要遍历文件建立索引。遍历算法尽可能优化过，但对于大Oir文件仍可能需要等待相当长时间。
 			% 建立的索引需要保存在Oir文件同目录下，这样下次可以快速打开，无需重新建立索引。但也因此要求该目录具有写入权限，暂不支持打开只读目录下的Oir文件。
-			obj.Pointer=ExceptionCheck(OirReaderMex(uint8(Image5D.internal.OirReaderAPI.CreateOirReader),HeaderPath));
+			obj.Pointer=Image5D.internal.OirReaderAPI.CreateOirReader.Call(HeaderPath);
 		end
 		function delete(obj)
 			%删除OirReader对象。
 			%删除OirReader对象变量时会自动关闭相关文件，无需手动操作。
-			OirReaderMex(uint8(Image5D.internal.OirReaderAPI.DestroyOirReader),obj.Pointer);
+			Image5D.internal.OirReaderAPI.DestroyOirReader.Call(obj.Pointer);
 		end
 		function Size=get.SizeX(obj)
-			Size=OirReaderMex(uint8(Image5D.internal.OirReaderAPI.SizeX),obj.Pointer);
+			Size=Image5D.internal.OirReaderAPI.SizeX.Call(obj.Pointer);
 		end
 		function Size=get.SizeY(obj)
-			Size=OirReaderMex(uint8(Image5D.internal.OirReaderAPI.SizeY),obj.Pointer);
+			Size=Image5D.internal.OirReaderAPI.SizeY.Call(obj.Pointer);
 		end
 		function Size=get.SizeC(obj)
-			Size=OirReaderMex(uint8(Image5D.internal.OirReaderAPI.SizeC),obj.Pointer);
+			Size=Image5D.internal.OirReaderAPI.SizeC.Call(obj.Pointer);
 		end
 		function Size=get.SizeZ(obj)
-			Size=OirReaderMex(uint8(Image5D.internal.OirReaderAPI.SizeZ),obj.Pointer);
+			Size=Image5D.internal.OirReaderAPI.SizeZ.Call(obj.Pointer);
 		end
 		function Size=get.SizeT(obj)
-			Size=OirReaderMex(uint8(Image5D.internal.OirReaderAPI.SizeT),obj.Pointer);
+			Size=Image5D.internal.OirReaderAPI.SizeT.Call(obj.Pointer);
 		end
 		function SI=get.SeriesInterval(obj)
-			SI=OirReaderMex(uint8(Image5D.internal.OirReaderAPI.SeriesInterval),obj.Pointer);
+			SI=Image5D.internal.OirReaderAPI.SeriesInterval.Call(obj.Pointer);
 		end
 		function [Devices,Colors]=DeviceColors(obj)
 			%取各通道的采样设备和颜色信息
@@ -64,7 +64,7 @@ classdef OirReader<handle
 			%# 返回值
 			% Devices(:,1)string，依次返回每个通道的采样设备名称
 			% Colors(3,:)single，各通道颜色。第1维依次排列红、绿、蓝色分量，数值范围0~1；第2维排列不同的通道.
-			[Devices,Colors]=OirReaderMex(uint8(Image5D.internal.OirReaderAPI.DeviceColors),obj.Pointer);
+			[Devices,Colors]=Image5D.internal.OirReaderAPI.DeviceColors.Call(obj.Pointer);
 		end
 		function Pixels=ReadPixels(obj,TStart,TSize,varargin)
 			%读入像素块值
@@ -105,14 +105,13 @@ classdef OirReader<handle
 			% Pixels(:,:,:,:,:)uint16，像素块，维度顺序XYCZT。注意，MATLAB imshow imwrite 等图像处理函数默认维度顺序是YXC，与文件中不同，可能需要permute。
 			switch nargin
 				case 1
-					Pixels=OirReaderMex(uint8(Image5D.internal.OirReaderAPI.ReadPixels),obj.Pointer);
+					Pixels=Image5D.internal.OirReaderAPI.ReadPixels.Call(obj.Pointer);
 				case {3,4,5,7}
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
-					Pixels=OirReaderMex(uint8(Image5D.internal.OirReaderAPI.ReadPixels),obj.Pointer,uint16(TStart),uint16(TSize),varargin{:});
+					Pixels=Image5D.internal.OirReaderAPI.ReadPixels.Call(obj.Pointer,uint16(TStart),uint16(TSize),varargin{:});
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
-			ExceptionCheck(Pixels);
 		end
 		function ReadToPointer(obj,Pointer,TStart,TSize,varargin)
 			%读入像素块值到给定指针
@@ -140,7 +139,7 @@ classdef OirReader<handle
 			% %此方法常用于格式转换，例如在OIR与TIFF之间进行直接像素对拷
 			% [~,Colors]=obj.DeviceColors;
 			% Colors(4,end)=0;
-			% Writer=OmeTiffRWer.Create('图像.tif',PixelType.UINT16,obj.SizeX,obj.SizeY,ChannelColor.New(flipud(Colors)),obj.SizeZ,obj.SizeT,DimensionOrder.XYCZT);
+			% Writer=OmeTiffRWer.Create('图像.tif',PixelType.UINT16,obj.SizeX,obj.SizeY,ChannelColor.New(flipud(Colors).Call(obj.SizeZ,obj.SizeT,DimensionOrder.XYCZT);
 			% obj.ReadToPointer(Writer.PixelPointer);
 			% %上例新建了一个和OIR尺寸相同的TIFF图像，然后取得像素指针，令OIR读入器直接读入该指针，实现两文件直接对拷，而不经过MATLAB数组中介，性能较高。
 			% ```
@@ -156,10 +155,10 @@ classdef OirReader<handle
 			%See also Image5D.SafePointer Image5D.OmeTiffRWer.PixelPointer Image5D.OirReader.ReadPixels 
 			switch nargin
 				case 2
-					ExceptionCheck(OirReaderMex(uint8(Image5D.internal.OirReaderAPI.ReadToPointer),obj.Pointer,Pointer.Pointer,Pointer.Capacity));
+					Image5D.internal.OirReaderAPI.ReadToPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity);
 				case {4,5,6,8}
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
-					ExceptionCheck(OirReaderMex(uint8(Image5D.internal.OirReaderAPI.ReadToPointer),obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint16(TStart),uint16(TSize),varargin{:}));
+					Image5D.internal.OirReaderAPI.ReadToPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint16(TStart),uint16(TSize),varargin{:});
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end

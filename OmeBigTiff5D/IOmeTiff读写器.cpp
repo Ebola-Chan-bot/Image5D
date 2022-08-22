@@ -16,7 +16,7 @@ IOmeTiff读写器* IOmeTiff读写器::只读打开(const T* 文件路径)
 {
 	std::unique_ptr<文件映射> 映射;
 	Image5D异常 异常 = 文件映射::打开(文件路径, true, 映射);
-	if (异常.类型 != 操作成功)
+	if (异常)
 		throw 异常;
 	return 只读打开核心(映射);
 }
@@ -27,7 +27,7 @@ IOmeTiff读写器* IOmeTiff读写器::读写打开(const T* 文件路径)
 {
 	文件指针 文件;
 	Image5D异常 异常 = 文件映射::打开(文件路径, false, 文件);
-	if (异常.类型 != 操作成功)
+	if (异常)
 		throw 异常;
 	return OmeBigTiff5D::读写打开(std::move(文件));
 }

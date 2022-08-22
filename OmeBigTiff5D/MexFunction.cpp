@@ -1,17 +1,19 @@
 #include "pch.h"
+#include <Mex实现.h>
 #include "IOmeTiff读写器.h"
-#include "异常转换.h"
+constexpr Image5D异常 指针越界(输入指针访问越界);
+constexpr Image5D异常 元素太少(输入数组元素太少);
 //只读
 API声明(OpenRead)
 {
 	const String 字符串 = 万能转码<String>(inputs[1]);
-	outputs[0] = 万能转码(IOmeTiff读写器::只读打开((wchar_t*)字符串.c_str()));
+	outputs[1] = 万能转码(IOmeTiff读写器::只读打开((wchar_t*)字符串.c_str()));
 }
 //读写
 API声明(OpenRW)
 {
 	const String 字符串= 万能转码<String>(inputs[1]);
-	outputs[0] = 万能转码(IOmeTiff读写器::读写打开((wchar_t*)字符串.c_str()));
+	outputs[1] = 万能转码(IOmeTiff读写器::读写打开((wchar_t*)字符串.c_str()));
 }
 //只写
 API声明(Create)
@@ -22,7 +24,7 @@ API声明(Create)
 	case 3:
 	{
 		const std::string 图像描述 = 万能转码<std::string>(inputs[2]);
-		outputs[0] = 万能转码(IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), 图像描述.c_str()));
+		outputs[1] = 万能转码(IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), 图像描述.c_str()));
 	}
 	break;
 	case 9:
@@ -30,46 +32,37 @@ API声明(Create)
 		TypedArray<uint32_t>颜色数组(std::move(inputs[5]));
 		const uint8_t SizeC = 颜色数组.getNumberOfElements();
 		const buffer_ptr_t<uint32_t> 颜色缓冲 = 颜色数组.release();
-		outputs[0] = 万能转码(IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), (像素类型)万能转码<UINT8>(inputs[2]), 万能转码<UINT16>(inputs[3]), 万能转码<UINT16>(inputs[4]), SizeC, 万能转码<UINT8>(inputs[6]), 万能转码<UINT16>(inputs[7]), (颜色*)颜色缓冲.get(), (维度顺序)万能转码<UINT8>(inputs[8])));
+		outputs[1] = 万能转码(IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), (像素类型)万能转码<UINT8>(inputs[2]), 万能转码<UINT16>(inputs[3]), 万能转码<UINT16>(inputs[4]), SizeC, 万能转码<UINT8>(inputs[6]), 万能转码<UINT16>(inputs[7]), (颜色*)颜色缓冲.get(), (维度顺序)万能转码<UINT8>(inputs[8])));
 	}
 	break;
 	default:
-		throw FeatureNotSupportedException("输入参数个数错误，不支持此重载");
+		throw 参数异常;
 	}
 }
 API声明(PixelType)
 {
 	if (inputs.size() > 2)
-	{
 		万能转码<IOmeTiff读写器*>(inputs[1])->PixelType((像素类型)万能转码<UINT8>(inputs[2]));
-		outputs[0] = 成功结构;
-	}
 	else
-		outputs[0] = 万能转码((UINT8)万能转码<const IOmeTiff读写器*>(inputs[1])->PixelType());
+		outputs[1] = 万能转码((UINT8)万能转码<const IOmeTiff读写器*>(inputs[1])->PixelType());
 }
 API声明(DimensionOrder)
 {
 	if (inputs.size() > 2)
-	{
 		万能转码<IOmeTiff读写器*>(inputs[1])->DimensionOrder((维度顺序)万能转码<UINT8>(inputs[2]));
-		outputs[0] = 成功结构;
-	}
 	else
-		outputs[0] = 万能转码((UINT8)万能转码<const IOmeTiff读写器*>(inputs[1])->DimensionOrder());
+		outputs[1] = 万能转码((UINT8)万能转码<const IOmeTiff读写器*>(inputs[1])->DimensionOrder());
 }
 API声明(SizeP)
 {
-	outputs[0] = 万能转码(万能转码<const IOmeTiff读写器*>(inputs[1])->SizeP());
+	outputs[1] = 万能转码(万能转码<const IOmeTiff读写器*>(inputs[1])->SizeP());
 }
 #define 尺寸属性(类型,字段) API声明(字段)\
 {\
 	if (inputs.size() > 2)\
-	{\
 		万能转码<IOmeTiff读写器*>(inputs[1])->字段(万能转码<类型>(inputs[2]));\
-		outputs[0] = 成功结构;\
-	}\
 	else\
-		outputs[0] = 万能转码(万能转码<const IOmeTiff读写器*>(inputs[1])->字段());\
+		outputs[1] = 万能转码(万能转码<const IOmeTiff读写器*>(inputs[1])->字段());\
 }
 尺寸属性(UINT16, SizeX);
 尺寸属性(UINT16, SizeY);
@@ -87,13 +80,12 @@ API声明(ChannelColors)
 			throw Image5D异常(颜色数与SizeC不匹配);
 		const buffer_ptr_t<uint32_t> 颜色缓冲 = 颜色数组.release();
 		对象指针->通道颜色((颜色*)颜色缓冲.get());
-		outputs[0] = 成功结构;
 	}
 	else
 	{
 		const IOmeTiff读写器* 对象指针 = 万能转码<const IOmeTiff读写器*>(inputs[1]);
 		const UINT8 SizeC = 对象指针->SizeC();
-		outputs[0] = 数组工厂.createArrayFromBuffer({ SizeC,1 }, 万能转码((UINT32*)对象指针->通道颜色(), SizeC));
+		outputs[1] = 数组工厂.createArrayFromBuffer({ SizeC,1 }, 万能转码((UINT32*)对象指针->通道颜色(), SizeC));
 	}
 }
 API声明(FileName)
@@ -102,20 +94,16 @@ API声明(FileName)
 	{
 		const std::string 字符串 = 万能转码<std::string>(inputs[2]);
 		万能转码<IOmeTiff读写器*>(inputs[1])->文件名(字符串.c_str());
-		outputs[0] = 成功结构;
 	}
 	else
-		outputs[0] = 万能转码<CharArray>(万能转码<const IOmeTiff读写器*>(inputs[1])->文件名());
+		outputs[1] = 万能转码<CharArray>(万能转码<const IOmeTiff读写器*>(inputs[1])->文件名());
 }
 API声明(ImageDescription)
 {
 	if (inputs.size() > 2)
-	{
 		万能转码<IOmeTiff读写器*>(inputs[1])->图像描述(万能转码<std::string>(inputs[2]));
-		outputs[0] = 成功结构;
-	}
 	else
-		outputs[0] = 万能转码<CharArray>(万能转码<const IOmeTiff读写器*>(inputs[1])->图像描述());
+		outputs[1] = 万能转码<CharArray>(万能转码<const IOmeTiff读写器*>(inputs[1])->图像描述());
 }
 API声明(ModifyParameters)
 {
@@ -129,7 +117,6 @@ API声明(ModifyParameters)
 	if (!*文件名指针)
 		文件名指针 = nullptr;
 	对象指针->修改参数((像素类型)万能转码<UINT8>(inputs[2]), 万能转码<UINT16>(inputs[3]), 万能转码<UINT16>(inputs[4]), 万能转码<UINT8>(inputs[5]), 万能转码<UINT8>(inputs[6]), 万能转码<UINT16>(inputs[7]), 颜色指针, (维度顺序)万能转码<UINT8>(inputs[9]), 文件名指针);
-	outputs[0] = 成功结构;
 }
 #define 类型化读写(API名) API声明(API名)\
 {\
@@ -189,7 +176,7 @@ inline void ReadPixels(const IOmeTiff读写器* 对象指针, ArgumentList& outp
 	{
 		buffer_ptr_t<T>缓冲 = 数组工厂.createBuffer<T>((UINT64)对象指针->SizeI() * 对象指针->SizeX() * 对象指针->SizeY());
 		对象指针->读入像素((char*)缓冲.get());
-		outputs[0] = 数组工厂.createArrayFromBuffer({ 对象指针->SizeX(),对象指针->SizeY(),对象指针->SizeI() }, std::move(缓冲));
+		outputs[1] = 数组工厂.createArrayFromBuffer({ 对象指针->SizeX(),对象指针->SizeY(),对象指针->SizeI() }, std::move(缓冲));
 	}
 	break;
 	case 4:
@@ -197,7 +184,7 @@ inline void ReadPixels(const IOmeTiff读写器* 对象指针, ArgumentList& outp
 		const UINT16 TSize = 万能转码<UINT16>(inputs[3]);
 		buffer_ptr_t<T>缓冲 = 数组工厂.createBuffer<T>((UINT64)TSize * 对象指针->SizeZ() * 对象指针->SizeC() * 对象指针->SizeX() * 对象指针->SizeY());
 		对象指针->读入像素((char*)缓冲.get(), 万能转码<UINT16>(inputs[2]), TSize);
-		outputs[0] = 数组工厂.createArrayFromBuffer(CZT重排(对象指针->DimensionOrder(), 对象指针->SizeX(), 对象指针->SizeY(), 对象指针->SizeC(), 对象指针->SizeZ(), TSize), std::move(缓冲));
+		outputs[1] = 数组工厂.createArrayFromBuffer(CZT重排(对象指针->DimensionOrder(), 对象指针->SizeX(), 对象指针->SizeY(), 对象指针->SizeC(), 对象指针->SizeZ(), TSize), std::move(缓冲));
 	}
 	break;
 	case 8:
@@ -207,11 +194,11 @@ inline void ReadPixels(const IOmeTiff读写器* 对象指针, ArgumentList& outp
 		const UINT8 CSize = 万能转码<UINT8>(inputs[7]);
 		buffer_ptr_t<T>缓冲 = 数组工厂.createBuffer<T>((UINT64)TSize * ZSize * CSize * 对象指针->SizeX() * 对象指针->SizeY());
 		对象指针->读入像素((char*)缓冲.get(), 万能转码<UINT16>(inputs[2]), TSize, 万能转码<UINT8>(inputs[4]), ZSize, 万能转码<UINT8>(inputs[6]), CSize);
-		outputs[0] = 数组工厂.createArrayFromBuffer(CZT重排(对象指针->DimensionOrder(), 对象指针->SizeX(), 对象指针->SizeY(), CSize, ZSize, TSize), std::move(缓冲));
+		outputs[1] = 数组工厂.createArrayFromBuffer(CZT重排(对象指针->DimensionOrder(), 对象指针->SizeX(), 对象指针->SizeY(), CSize, ZSize, TSize), std::move(缓冲));
 	}
 	break;
 	default:
-		throw FeatureNotSupportedException("输入参数个数错误，不支持此重载");
+		throw 参数异常;
 	}
 }
 类型化读写(ReadPixels);
@@ -221,7 +208,7 @@ inline void ReadPixelsI(const IOmeTiff读写器* 对象指针, ArgumentList& out
 	const UINT32 ISize = 万能转码<UINT32>(inputs[3]);
 	buffer_ptr_t<T>缓冲 = 数组工厂.createBuffer<T>((UINT64)ISize * 对象指针->SizeX() * 对象指针->SizeY());
 	对象指针->读入像素((char*)缓冲.get(), 万能转码<UINT32>(inputs[2]), ISize);
-	outputs[0] = 数组工厂.createArrayFromBuffer({ 对象指针->SizeX(),对象指针->SizeY(),ISize }, std::move(缓冲));
+	outputs[1] = 数组工厂.createArrayFromBuffer({ 对象指针->SizeX(),对象指针->SizeY(),ISize }, std::move(缓冲));
 }
 类型化读写(ReadPixelsI);
 template<数值 T>
@@ -233,10 +220,9 @@ inline void WritePixels(const IOmeTiff读写器* 对象指针, ArgumentList& out
 	{
 		TypedArray<T>写出数组(std::move(inputs[2]));
 		if (写出数组.getNumberOfElements() < (size_t)对象指针->SizeT() * 对象指针->SizeZ() * 对象指针->SizeC() * 对象指针->SizeX() * 对象指针->SizeY())
-			throw InvalidNumberOfElementsProvidedException("数组元素太少，不够写出");
+			throw 元素太少;
 		const buffer_ptr_t<T>写出缓冲 = 写出数组.release();
 		对象指针->写出像素((char*)写出缓冲.get());
-		outputs[0] = 成功结构;
 	}
 	break;
 	case 5:
@@ -244,10 +230,9 @@ inline void WritePixels(const IOmeTiff读写器* 对象指针, ArgumentList& out
 		TypedArray<T>写出数组(std::move(inputs[2]));
 		const uint16_t TSize = 万能转码<UINT16>(inputs[4]);
 		if (写出数组.getNumberOfElements() < (size_t)TSize * 对象指针->SizeZ() * 对象指针->SizeC() * 对象指针->SizeX() * 对象指针->SizeY())
-			throw InvalidNumberOfElementsProvidedException("数组元素太少，不够写出");
+			throw 元素太少;
 		const buffer_ptr_t<T>写出缓冲 = 写出数组.release();
 		对象指针->写出像素((char*)写出缓冲.get(), 万能转码<UINT16>(inputs[3]), TSize);
-		outputs[0] = 成功结构;
 	}
 	break;
 	case 9:
@@ -257,14 +242,13 @@ inline void WritePixels(const IOmeTiff读写器* 对象指针, ArgumentList& out
 		const uint8_t ZSize = 万能转码<UINT8>(inputs[6]);
 		const uint8_t CSize = 万能转码<UINT8>(inputs[8]);
 		if (写出数组.getNumberOfElements() < (size_t)TSize * ZSize * CSize * 对象指针->SizeX() * 对象指针->SizeY())
-			throw InvalidNumberOfElementsProvidedException("数组元素太少，不够写出");
+			throw 元素太少;
 		const buffer_ptr_t<T>写出缓冲 = 写出数组.release();
 		对象指针->写出像素((char*)写出缓冲.get(), 万能转码<UINT16>(inputs[3]), TSize, 万能转码<UINT8>(inputs[5]), ZSize, 万能转码<UINT8>(inputs[7]), CSize);
-		outputs[0] = 成功结构;
 	}
 	break;
 	default:
-		throw FeatureNotSupportedException("输入参数个数错误，不支持此重载");
+		throw 参数异常;
 	}
 }
 类型化读写(WritePixels);
@@ -274,10 +258,9 @@ inline void WritePixelsI(const IOmeTiff读写器* 对象指针, ArgumentList& ou
 	TypedArray<T>写出数组(std::move(inputs[2]));
 	const uint32_t ISize = 万能转码<UINT32>(inputs[4]);
 	if (写出数组.getNumberOfElements() < (size_t)ISize * 对象指针->SizeX() * 对象指针->SizeY())
-		throw InvalidNumberOfElementsProvidedException("数组元素太少，不够写出");
+		throw 元素太少;
 	const buffer_ptr_t<T>写出缓冲 = 写出数组.release();
 	对象指针->写出像素((char*)写出缓冲.get(), 万能转码<UINT32>(inputs[3]), ISize);
-	outputs[0] = 成功结构;
 }
 类型化读写(WritePixelsI);
 API声明(PixelPointer)
@@ -297,11 +280,10 @@ API声明(PixelPointer)
 		对象指针->像素指针(万能转码<UINT16>(inputs[2]), 万能转码<UINT8>(inputs[3]), 万能转码<UINT8>(inputs[4]), 像素指针, 容量);
 		break;
 	default:
-		throw FeatureNotSupportedException("输入参数个数错误，不支持此重载");
+		throw 参数异常;
 	}
-	outputs[0] = 万能转码(像素指针);
-	if (outputs.size() > 1)
-		outputs[1] = 万能转码(容量);
+	outputs[1] = 万能转码(像素指针);
+	outputs[2] = 万能转码(容量);
 }
 API声明(PixelPointerI)
 {
@@ -309,9 +291,8 @@ API声明(PixelPointerI)
 	char* 像素指针;
 	size_t 容量;
 	对象指针->像素指针(万能转码<UINT32>(inputs[2]), 像素指针, 容量);
-	outputs[0] = 万能转码(像素指针);
-	if (outputs.size() > 1)
-		outputs[1] = 万能转码(容量);
+	outputs[1] = 万能转码(像素指针);
+	outputs[2] = 万能转码(容量);
 }
 API声明(ReadToPointer)
 {
@@ -323,17 +304,15 @@ API声明(ReadToPointer)
 	{
 	case 4:
 		if (SizePXY * 对象指针->SizeT() * 对象指针->SizeZ() * 对象指针->SizeC() > 输出容量)
-			throw NumberOfElementsExceedsMaximumException("目标内存溢出");
+			throw 内存溢出;
 		对象指针->读入像素(输出指针);
-		outputs[0] = 成功结构;
 		break;
 	case 6:
 	{
 		const uint16_t TSize = 万能转码<uint16_t>(inputs[5]);
 		if (SizePXY * TSize * 对象指针->SizeZ() * 对象指针->SizeC() > 输出容量)
-			throw NumberOfElementsExceedsMaximumException("目标内存溢出");
+			throw 内存溢出;
 		对象指针->读入像素(输出指针, 万能转码<uint16_t>(inputs[4]), TSize);
-		outputs[0] = 成功结构;
 	}
 	break;
 	case 10:
@@ -342,13 +321,12 @@ API声明(ReadToPointer)
 		const uint8_t ZSize = 万能转码<uint8_t>(inputs[7]);
 		const uint8_t CSize = 万能转码<uint8_t>(inputs[9]);
 		if (SizePXY * TSize * ZSize * CSize > 输出容量)
-			throw NumberOfElementsExceedsMaximumException("目标内存溢出");
+			throw 内存溢出;
 		对象指针->读入像素(输出指针, 万能转码<uint16_t>(inputs[4]), TSize, 万能转码<uint8_t>(inputs[6]), ZSize, 万能转码<uint8_t>(inputs[8]), CSize);
-		outputs[0] = 成功结构;
 	}
 	break;
 	default:
-		throw FeatureNotSupportedException("输入参数个数错误，不支持此重载");
+		throw 参数异常;
 	}
 }
 API声明(ReadToPointerI)
@@ -359,9 +337,8 @@ API声明(ReadToPointerI)
 	const size_t SizePXY = 对象指针->SizeP() * 对象指针->SizeX() * 对象指针->SizeY();
 	const uint32_t ISize = 万能转码<uint32_t>(inputs[5]);
 	if (SizePXY * ISize > 输出容量)
-		throw NumberOfElementsExceedsMaximumException("目标内存溢出");
+		throw 内存溢出;
 	对象指针->读入像素(输出指针, 万能转码<uint32_t>(inputs[4]), ISize);
-	outputs[0] = 成功结构;
 }
 API声明(WriteFromPointer)
 {
@@ -373,17 +350,15 @@ API声明(WriteFromPointer)
 	{
 	case 4:
 		if (SizePXY * 对象指针->SizeT() * 对象指针->SizeZ() * 对象指针->SizeC() > 输入容量)
-			throw InvalidNumberOfElementsProvidedException("输入指针内存太小，不够写出");
+			throw 指针越界;
 		对象指针->写出像素(输入指针);
-		outputs[0] = 成功结构;
 		break;
 	case 6:
 	{
 		const uint16_t TSize = 万能转码<uint16_t>(inputs[5]);
 		if (SizePXY * TSize * 对象指针->SizeZ() * 对象指针->SizeC() > 输入容量)
-			throw InvalidNumberOfElementsProvidedException("输入指针内存太小，不够写出");
+			throw 指针越界;
 		对象指针->写出像素(输入指针, 万能转码<uint16_t>(inputs[4]), TSize);
-		outputs[0] = 成功结构;
 	}
 	break;
 	case 10:
@@ -392,13 +367,12 @@ API声明(WriteFromPointer)
 		const uint8_t ZSize = 万能转码<uint8_t>(inputs[7]);
 		const uint8_t CSize = 万能转码<uint8_t>(inputs[9]);
 		if (SizePXY * TSize * ZSize * CSize > 输入容量)
-			throw InvalidNumberOfElementsProvidedException("输入指针内存太小，不够写出");
+			throw 指针越界;
 		对象指针->写出像素(输入指针, 万能转码<uint16_t>(inputs[4]), TSize, 万能转码<uint8_t>(inputs[6]), ZSize, 万能转码<uint8_t>(inputs[8]), CSize);
-		outputs[0] = 成功结构;
 	}
 	break;
 	default:
-		throw FeatureNotSupportedException("输入参数个数错误，不支持此重载");
+		throw 参数异常;
 	}
 }
 API声明(WriteFromPointerI)
@@ -409,14 +383,12 @@ API声明(WriteFromPointerI)
 	const size_t SizePXY = 对象指针->SizeP() * 对象指针->SizeX() * 对象指针->SizeY();
 	const uint32_t ISize = 万能转码<uint32_t>(inputs[5]);
 	if (SizePXY * ISize > 输入容量)
-		throw InvalidNumberOfElementsProvidedException("输入指针内存太小，不够写出");
+		throw 指针越界;
 	对象指针->写出像素(输入指针, 万能转码<uint32_t>(inputs[4]), ISize);
-	outputs[0] = 成功结构;
 }
 API声明(Close)
 {
 	delete 万能转码<IOmeTiff读写器*>(inputs[1]);
-	outputs[0] = 成功结构;
 }
 void MexFunction::operator()(ArgumentList& outputs, ArgumentList& inputs)
 {
@@ -453,10 +425,11 @@ void MexFunction::operator()(ArgumentList& outputs, ArgumentList& inputs)
 	try
 	{
 		API调用;
+		outputs[0] = 成功结构;
 	}
 	catch (Image5D异常 异常)
 	{
-		outputs[0] = 异常转换(异常);
+		outputs[0] = 异常;
 		异常输出补全(outputs);
 	}
 }

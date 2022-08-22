@@ -1,12 +1,13 @@
 #include "pch.h"
-#include "OmeBigTiff5D.h"
 #include <rpc.h>
+#include <vector>
+#include <安全拷贝.h>
+#include "OmeBigTiff5D.h"
 #include "resource.h"
 #include "模块句柄.h"
 #include "Tiff文件头.h"
 #include "IFD5D.h"
 #include "像素类型尺寸.h"
-#include <vector>
 #include "OmeXml基本解析.h"
 constexpr char 通道ID模板[] = "Channel:0:%u";
 #pragma pack(push,1)
@@ -293,10 +294,10 @@ void 构造文件(const char* 图像描述, UINT32 图像描述字节数, UINT32
 	const LONGLONG 像素偏移 = IFD偏移对象 + SizeI * sizeof(IFD5D) * 2;
 	const UINT32 SizePXY = UINT32(SizeX) * SizeY * 像素类型尺寸[(UINT8)PixelType];
 	Image5D异常 异常 = 文件映射::创建(文件路径, 像素偏移 + LONGLONG(SizePXY) * SizeI, 文件);
-	if (异常.类型 != 操作成功)
+	if (异常)
 		throw Image5D异常(Tiff文件创建失败, 异常.Win32错误代码);
 	异常 = 文件->映射指针(nullptr);
-	if (异常.类型 != 操作成功)
+	if (异常)
 		throw Image5D异常(Tiff文件映射失败, 异常.Win32错误代码);
 	OmeBigTiff5D文件头* const 文件头 = (OmeBigTiff5D文件头*)文件->映射指针();
 	*文件头 = OmeBigTiff5D文件头();

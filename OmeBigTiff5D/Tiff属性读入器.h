@@ -1,5 +1,6 @@
 #pragma once
 #include "IOmeTiff读写器.h"
+#include <文件映射.h>
 using 文件指针 = std::unique_ptr<文件映射>;
 class Tiff属性读入器 :virtual public IOmeTiff读写器
 {

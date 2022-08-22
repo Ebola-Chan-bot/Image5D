@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
-template<typename T>
-concept 字符 = std::_Is_any_of_v<T, char, wchar_t>;
+#include <Image5D异常.h>
+#include <字符.h>
 class Image5DAPI 文件映射
 {
 	const HANDLE 文件句柄;

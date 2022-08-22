@@ -1,5 +1,7 @@
 #pragma once
 #include <string>
+#include <Image5D异常.h>
+#include <字符.h>
 #include "OME概念定义.h"
 constexpr Image5D异常 未实现(未实现的方法);
 class IOmeTiff读写器

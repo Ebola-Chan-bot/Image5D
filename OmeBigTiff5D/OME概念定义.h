@@ -1,5 +1,5 @@
 #pragma once
-#include <Image5D.h>
+#include <memory>
 enum class 像素类型 :UINT8
 {
 	UINT8,

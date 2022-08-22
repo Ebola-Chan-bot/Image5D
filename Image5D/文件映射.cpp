@@ -1,50 +1,13 @@
 #include "pch.h"
-#include "Image5D.h"
-void 检查文件句柄(HANDLE 文件句柄)
-{
-	if (文件句柄 == INVALID_HANDLE_VALUE)
-	{
-		const DWORD 错误代码 = GetLastError();
-		switch (错误代码)
-		{
-		case ERROR_FILE_NOT_FOUND:
-			throw Image5D异常(找不到指定的文件);
-		case ERROR_PATH_NOT_FOUND:
-			throw Image5D异常(找不到指定的路径);
-		case ERROR_ACCESS_DENIED:
-			throw Image5D异常(文件拒绝访问);
-		case ERROR_SHARING_VIOLATION:
-			throw Image5D异常(文件被另一个进程占用);
-		default:
-			throw Image5D异常(文件打开失败, 错误代码);
-		}
-	}
-}
-Image5D异常 检查映射句柄(HANDLE 映射句柄)noexcept
-{
-	if (映射句柄)
-		return 成功异常;
-	else
-	{
-		const DWORD 错误代码 = GetLastError();
-		switch (错误代码)
-		{
-		case ERROR_DISK_FULL:
-			return Image5D异常(磁盘已满);
-		case ERROR_FILE_INVALID:
-			return Image5D异常(文件大小为0);
-		default:
-			return Image5D异常(内存映射失败, 错误代码);
-		}
-	}
-}
+#include "文件映射.h"
 void 句柄构造(HANDLE 文件句柄, HANDLE& 映射句柄, LONGLONG& i文件大小, bool 只读)
 {
-	检查文件句柄(文件句柄);
+	if (文件句柄 == INVALID_HANDLE_VALUE)
+		throw Image5D异常(文件打开失败, GetLastError());
 	//此映射有可能失败（文件大小为0）
-	const Image5D异常 异常 = 检查映射句柄(映射句柄 = CreateFileMapping(文件句柄, NULL, 只读 ? PAGE_READONLY : PAGE_READWRITE, 0, 0, NULL));
-	if (异常.类型 != 操作成功)
+	if(!(映射句柄 = CreateFileMapping(文件句柄, NULL, 只读 ? PAGE_READONLY : PAGE_READWRITE, 0, 0, NULL)))
 	{
+		Image5D异常 异常(内存映射失败, GetLastError());
 		CloseHandle(文件句柄);
 		throw 异常;
 	}
@@ -71,11 +34,12 @@ union 分位数
 };
 void 覆盖创建(HANDLE 文件句柄, HANDLE& 映射句柄, LONGLONG 文件大小)
 {
-	检查文件句柄(文件句柄);
+	if (文件句柄 == INVALID_HANDLE_VALUE)
+		throw Image5D异常(文件创建失败, GetLastError());
 	分位数 文件分位{ .全位 = 文件大小 };
-	const Image5D异常 异常 = 检查映射句柄(映射句柄 = CreateFileMapping(文件句柄, NULL, PAGE_READWRITE, 文件分位.高位, 文件分位.低位, NULL));
-	if (异常.类型 != 操作成功)
+	if(!(映射句柄 = CreateFileMapping(文件句柄, NULL, PAGE_READWRITE, 文件分位.高位, 文件分位.低位, NULL)))
 	{
+		Image5D异常 异常(内存映射失败, GetLastError());
 		CloseHandle(文件句柄);
 		throw 异常;
 	}

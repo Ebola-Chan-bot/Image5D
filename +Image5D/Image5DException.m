@@ -1,4 +1,4 @@
-classdef Image5DException<uint8&MATLAB.Lang.IEnumerableException
+classdef Image5DException<uint8&MATLAB.IEnumerableException
 	%适用于Image5D包的异常枚举，指示文件格式无法识别或输入参数有误等异常情况
 	enumeration
 		%Mex抛出的异常
@@ -105,6 +105,10 @@ classdef Image5DException<uint8&MATLAB.Lang.IEnumerableException
 		Disk_is_full(99)
 		File_size_is_0(100)
 		Unsupported_byte_order(101)
+		The_number_of_input_parameters_is_wrong(102)
+		Output_pointer_memory_overflow(103)
+		Input_pointer_access_out_of_bounds(104)
+		The_input_array_has_too_few_elements(105)
 		%MATLAB抛出的异常
 
 		Wrong_number_of_parameters(255)

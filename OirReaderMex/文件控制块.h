@@ -1,5 +1,5 @@
 #pragma once
-#include "Image5D.h"
+#include <文件映射.h>
 class 文件控制块
 {
 	std::unique_ptr<文件映射> i内存映射;

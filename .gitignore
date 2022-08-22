@@ -32,7 +32,6 @@
 *.app
 /.vs
 /Image5D/x64
-/Mex工具/x64
 /OirReaderMex/x64
 /OmeBigTiff5D/x64
 /packages
