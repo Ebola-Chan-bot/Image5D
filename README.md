@@ -132,6 +132,12 @@ classdef OmeTiffRWer<handle
 		function obj=Create(FilePath,PixelTypeOrImageDescription,SizeX,SizeY,ChannelColors,SizeZ,SizeT,DimensionOrder)
 			%覆盖创建 OB5 TIFF 文件
 		end
+		function [Image,DimensionOrder,ChannelColors]=QuickRead(TiffPath)
+			%快速读入Tiff图像
+		end
+		function QuickWrite(TiffPath,Image,DimensionOrder,ChannelColors)
+			%快速写出Tiff图像
+		end
 	end
 	methods
 		function ModifyParameters(obj,PixelType,SizeX,SizeY,SizeC,SizeZ,SizeT,ChannelColors,DimensionOrder,FileName)

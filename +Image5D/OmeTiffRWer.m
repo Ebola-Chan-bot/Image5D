@@ -116,6 +116,53 @@ classdef OmeTiffRWer<handle
 					Image5DException.Wrong_number_of_parameters.Throw;
 			end
 		end
+		function [Image,DimensionOrder,ChannelColors]=QuickRead(TiffPath)
+			%快速读入Tiff图像
+			%本函数直接将Tiff文件读入为5D数组，同时返回维度顺序和通道颜色
+			%# 语法
+			% ```
+			% [Image,DimensionOrder,ChannelColors]=Image5D.OmeTiffRWer.QuickRead(TiffPath);
+			% ```
+			%# 输入参数
+			% TiffPath(1,1)string，Tiff文件路径
+			%# 返回值
+			% Image(:,:,:,:,:)，5D图像数组
+			% DimensionOrder(1,1)Image5D.DimensionOrder，维度顺序
+			% ChannelColors(:,1)Image5D.ChannelColor，各通道颜色
+			%See also Image5D.OmeTiffRWer.QuickWrite Image5D.OmeTiffRWer.OpenRead
+			Image=Image5D.OmeTiffRWer.OpenRead(TiffPath);
+			if nargout>=2
+				DimensionOrder=Image.DimensionOrder;
+				if nargout>=3
+					ChannelColors=Image.ChannelColors;
+				end
+			end
+			Image=Image.ReadPixels;
+		end
+		function QuickWrite(TiffPath,Image,DimensionOrder,ChannelColors)
+			%快速写出Tiff图像
+			%本函数直接将5D数组根据维度顺序写出为Tiff文件，可选指定通道颜色
+			%# 语法
+			% ```
+			% Image5D.OmeTiffRWer.QuickWrite(TiffPath,Image,DimensionOrder)
+			% %以指定维度顺序将图像数据写出到Tiff文件，通道颜色为白色
+			%
+			% Image5D.OmeTiffRWer.QuickWrite(___,ChannelColors)
+			% %与上述语法组合使用，额外指定通道颜色
+			% ```
+			%# 输入参数
+			% TiffPath(1,1)string，要写出的文件路径
+			% Image(:,:,:,:,:)，要写出的数组，最多5维
+			% DimensionOrder(1,1)Image5D.DimensionOrder，维度顺序
+			% ChannelColors(:,1)Image5D.ChannelColor，各通道颜色
+			%See also Image5D.DimensionOrder Image5D.ChannelColor Image5D.OmeTiffRWer.QuickRead
+			[SizeX,SizeY,SizeC,SizeZ,SizeT]=size(Image,DimensionOrder.SizePermute);
+			if nargin<5
+				ChannelColors=Image5D.ChannelColor.New(-ones(SizeC,1,'int32'));
+			end
+			Writer=Image5D.OmeTiffRWer.Create(TiffPath,Image5D.PixelType(class(Image)),SizeX,SizeY,ChannelColors,SizeZ,SizeT,DimensionOrder);
+			Writer.WritePixels(Image);
+		end
 	end
 	methods
 		function V=get.PixelType(obj)

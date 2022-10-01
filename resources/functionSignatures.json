@@ -405,6 +405,74 @@
 			}
 		]
 	},
+	"Image5D.OmeTiffRWer.QuickRead": {
+		"inputs": [
+			{
+				"name": "TiffPath",
+				"kind": "required",
+				"type": [
+					[
+						"file=*.tif,*.tiff"
+					],
+					[
+						"char",
+						"row"
+					],
+					[
+						"string",
+						"scalar"
+					]
+				],
+				"purpose": "Tiff文件路径"
+			}
+		]
+	},
+	"Image5D.OmeTiffRWer.QuickWrite": {
+		"inputs": [
+			{
+				"name": "TiffPath",
+				"kind": "required",
+				"type": [
+					[
+						"file=*.tif,*.tiff"
+					],
+					[
+						"char",
+						"row"
+					],
+					[
+						"string",
+						"scalar"
+					]
+				],
+				"purpose": "要写出的文件路径"
+			},
+			{
+				"name": "Image",
+				"kind": "required",
+				"type": [
+					"size=:,:,:,:,:",
+					"real"
+				],
+				"purpose": "要写出的数组"
+			},
+			{
+				"name": "DimensionOrder",
+				"kind": "required",
+				"type": [
+					"Image5D.DimensionOrder",
+					"scalar"
+				],
+				"purpose": "维度顺序"
+			},
+			{
+				"name": "ChannelColors",
+				"kind": "ordered",
+				"type": "Image5D.ChannelColor",
+				"purpose": "各通道颜色"
+			}
+		]
+	},
 	"Image5D.OmeTiffRWer.ModifyParameters": {
 		"inputs": [
 			{
