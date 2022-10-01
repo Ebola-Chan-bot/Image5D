@@ -564,7 +564,9 @@ classdef OmeTiffRWer<handle
 		function delete(obj)
 			%删除OmeTiffRWer对象。
 			%删除OmeTiffRWer对象变量时会自动关闭相关文件，无需手动操作。
-			Image5D.internal.OmeTiffAPI.Close.Call(obj.Pointer);
+			if obj.Pointer
+				Image5D.internal.OmeTiffAPI.Close.Call(obj.Pointer);
+			end
 		end
 	end
 end
