@@ -35,7 +35,7 @@ classdef OirReader<handle
 		function delete(obj)
 			%删除OirReader对象。
 			%删除OirReader对象变量时会自动关闭相关文件，无需手动操作。
-			if(obj.Pointer)
+			if obj.Pointer
 				Image5D.internal.OirReaderAPI.DestroyOirReader.Call(obj.Pointer);
 			end
 		end
