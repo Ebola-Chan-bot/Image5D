@@ -9,7 +9,14 @@ API声明(CreateOirReader)
 }
 API声明(DestroyOirReader)
 {
-	delete 万能转码<Oir读入器*>(std::move(inputs[1]));
+	try
+	{
+		delete 万能转码<Oir读入器*>(std::move(inputs[1]));
+	}
+	catch (...)
+	{
+		throw Image5D异常(销毁对象失败);
+	}
 }
 API声明(SizeX)
 {

@@ -388,7 +388,14 @@ API声明(WriteFromPointerI)
 }
 API声明(Close)
 {
-	delete 万能转码<IOmeTiff读写器*>(std::move(inputs[1]));
+	try
+	{
+		delete 万能转码<IOmeTiff读写器*>(std::move(inputs[1]));
+	}
+	catch (...)
+	{
+		throw Image5D异常(销毁对象失败);
+	}
 }
 void MexFunction::operator()(ArgumentList& outputs, ArgumentList& inputs)
 {

@@ -109,6 +109,8 @@ classdef Image5DException<uint8&MATLAB.IEnumerableException
 		Output_pointer_memory_overflow(103)
 		Input_pointer_access_out_of_bounds(104)
 		The_input_array_has_too_few_elements(105)
+		File_creation_failed(106)
+		Failed_to_destroy_object(107)
 		%MATLAB抛出的异常
 
 		Wrong_number_of_parameters(255)
