@@ -1,6 +1,6 @@
 classdef OirReader<handle
 	%Olympus OIR 文件快速5D读入器，使用连续内存映射文件实现高速读入
-    properties(GetAccess=private,SetAccess=immutable)
+    properties(GetAccess=private,SetAccess=immutable,Transient)
 		%不同于C++，MATLAB类即使构造出错也会析构，所以必须先置0
 		Pointer(1,1)uint64=0
 	end
