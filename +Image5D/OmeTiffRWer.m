@@ -157,7 +157,7 @@ classdef OmeTiffRWer<handle
 			% ChannelColors(:,1)Image5D.ChannelColor，各通道颜色
 			%See also Image5D.DimensionOrder Image5D.ChannelColor Image5D.OmeTiffRWer.QuickRead
 			[SizeX,SizeY,SizeC,SizeZ,SizeT]=size(Image,DimensionOrder.SizePermute);
-			if nargin<5
+			if nargin<4
 				ChannelColors=Image5D.ChannelColor.New(-ones(SizeC,1,'int32'));
 			end
 			Writer=Image5D.OmeTiffRWer.Create(TiffPath,Image5D.PixelType(class(Image)),SizeX,SizeY,ChannelColors,SizeZ,SizeT,DimensionOrder);
