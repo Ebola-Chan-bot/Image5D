@@ -1,6 +1,7 @@
 classdef Image5DException<uint8&MATLAB.IEnumerableException
 	%适用于Image5D包的异常枚举，指示文件格式无法识别或输入参数有误等异常情况
 	enumeration
+		
 		%Mex抛出的异常
 
 		Successful_operation(0)
@@ -111,8 +112,10 @@ classdef Image5DException<uint8&MATLAB.IEnumerableException
 		The_input_array_has_too_few_elements(105)
 		File_creation_failed(106)
 		Failed_to_destroy_object(107)
+
 		%MATLAB抛出的异常
 
+		DEFAULT_PixelType_cannot_convert_to_MATLAB_datatypes(254)
 		Wrong_number_of_parameters(255)
 	end
 end

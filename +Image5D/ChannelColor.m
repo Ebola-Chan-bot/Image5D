@@ -1,6 +1,6 @@
 classdef ChannelColor<uint32
 	%通道颜色，是将一个uint32从低到高拆分成ABGR四个uint8颜色通道的共用体。
-	%本类不公开构造方法，需要使用静态方法New创建新对象。
+	%本类不公开构造方法，需要使用静态方法New或FromOirColors创建新对象。
 	properties(Dependent)
 		%透明通道
 		A
@@ -46,7 +46,7 @@ classdef ChannelColor<uint32
 			% Value，从int32或uint32形式的ABGR颜色共用体取得ChannelColor对象。可以用数组指定多个颜色。
 			% Matrix，ABGR颜色矩阵，第1维依次排列ABGR通道，第2维是多个颜色。如果为uint8类型，范围0~255；如果为single或double类型，范围0~1
 			%# 返回值
-			% obj，新的ChannelColor对象。如果输入参数指定了多个颜色，obj总是列向量，无论输入数组尺寸为何。
+			% obj(:,1)Image5D.ChannelColor，新的ChannelColor对象。如果输入参数指定了多个颜色，obj总是列向量，无论输入数组尺寸为何。
 			if nargin>=4
 				A=[shiftdim(A,-1);shiftdim(B,-1);shiftdim(G,-1);shiftdim(R,-1)];
 			end
@@ -54,6 +54,28 @@ classdef ChannelColor<uint32
 				A=uint8(A*255);
 			end
 			obj=Image5D.ChannelColor(typecast(A(:),"uint32"));
+		end
+		function obj=FromOirColors(OirColors)
+			%将OIR颜色通道矩阵转换为ChannelColor对象
+			%# 语法
+			% ```
+			% obj=Image5D.ChannelColor.FromOirColors(OirColors);
+			% ```
+			%# 示例
+			% 此方法常用于OIR向TIFF的格式转换：
+			% ```
+			% import Image5D.*
+			% Reader=OirReader('O.oir');
+			% [~,Colors]=Reader.DeviceColors;
+			% OmeTiffRWer.QuickWrite('T.tif',Reader.ReadPixels,DimensionOrder.XYCZT,ChannelColor.FromOirColors(Colors));
+			% ```
+			%# 输入参数
+			% OirColors(3,:)double，Oir颜色矩阵。第1维是RGB，第2维是不同颜色通道，数值范围0~1。可从OirReader.DeviceColors方法获得。
+			%# 返回值
+			% obj(:,1)Image5D.ChannelColor，转换后的ChannelColor对象。如果输入参数指定了多个颜色，obj总是列向量，无论输入数组尺寸为何。
+			OirColors(4,:)=1;
+			OirColors=uint8(flipud(OirColors)*255);
+			obj=Image5D.ChannelColor(typecast(OirColors(:),'uint32'));
 		end
 	end
 	methods
