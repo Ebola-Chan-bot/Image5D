@@ -176,6 +176,69 @@ classdef OmeTiffRWer<handle
 	end
 end
 ```
+## 辅助数据类型
+以下类型定义用于主类的参数或输出结果等
+```MATLAB
+classdef ChannelColor<uint32
+	%通道颜色，是将一个uint32从低到高拆分成ABGR四个uint8颜色通道的共用体。
+	properties(Dependent)
+		%透明通道
+		A
+		%蓝色通道
+		B
+		%绿色通道
+		G
+		%红色通道
+		R
+	end
+	methods(Static)
+		function obj = New(A,B,G,R)
+			%创建新的ChannelColor对象。可以输入数组以一次性构造多个ChannelColor对象
+		end
+		function obj=FromOirColors(OirColors)
+			%将OIR颜色通道矩阵转换为ChannelColor对象
+		end
+	end
+end
+classdef DimensionOrder<uint8
+	%OME TIFF 规范定义了6种维度顺序，再加上一种DEFAULT表示缺省值
+	enumeration
+		XYCZT(0)
+		XYCTZ(1)
+		XYZCT(2)
+		XYZTC(3)
+		XYTCZ(4)
+		XYTZC(5)
+		%此项仅在OmeTiffRWer.ModifyParameters方法中使用，表示不修改维度顺序。
+		DEFAULT(6)
+	end
+	methods
+		function SP=SizePermute(obj)
+			%取得该维度顺序的重排序数
+		end
+	end
+end
+classdef PixelType<uint8
+	%OME TIFF 规范定义的8种像素类型，加上DEFAULT表示缺省值
+	enumeration
+		UINT8(0)
+		UINT16(1)
+		UINT32(2)
+		INT8(3)
+		INT16(4)
+		INT32(5)
+		FLOAT(6)
+		DOUBLE(7)
+		%此项仅在OmeTiffRWer.ModifyParameters方法中使用，表示不修改像素类型。
+		DEFAULT(8)
+	end
+	methods
+		function MT=MatlabType(obj)
+			%将像素类型转换为MATLAB数据类型
+		end
+	end
+end
+```
 ## 已知问题
 本库并不支持标准OME-TIFF规范的全部特性，包括但不限于：
 - 仅支持Windows标准Little-endian字节序，不支持ImageJ输出的Big-endian字节序

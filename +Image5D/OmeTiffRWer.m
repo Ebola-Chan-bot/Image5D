@@ -7,7 +7,7 @@ classdef OmeTiffRWer<handle
 	% - Create，创建新 OB5 TIFF 文件，覆盖现存文件
 	%注意，本读写器并不完全支持TIFF格式的所有特性。为了实现快速5D读入，读写器会假定所有IFD的图像像素尺寸相同，且像素块完整不分条带。不满足此条件的TIFF文件将引发错误。
 	%每次修改属性值都会导致文件结构重新生成，此过程可能造成像素值损坏，且性能较低。因此请勿依次修改多个属性，而是使用ModifyParameters方法一次性修改多个属性值。
-    properties(GetAccess=private,SetAccess=immutable)
+    properties(GetAccess=private,SetAccess=immutable,Transient)
 		%不同于C++，MATLAB类即使构造出错也会析构，所以必须先置0
 		Pointer(1,1)uint64=0
 	end
@@ -157,7 +157,7 @@ classdef OmeTiffRWer<handle
 			% ChannelColors(:,1)Image5D.ChannelColor，各通道颜色
 			%See also Image5D.DimensionOrder Image5D.ChannelColor Image5D.OmeTiffRWer.QuickRead
 			[SizeX,SizeY,SizeC,SizeZ,SizeT]=size(Image,DimensionOrder.SizePermute);
-			if nargin<5
+			if nargin<4
 				ChannelColors=Image5D.ChannelColor.New(-ones(SizeC,1,'int32'));
 			end
 			Writer=Image5D.OmeTiffRWer.Create(TiffPath,Image5D.PixelType(class(Image)),SizeX,SizeY,ChannelColors,SizeZ,SizeT,DimensionOrder);
@@ -564,7 +564,9 @@ classdef OmeTiffRWer<handle
 		function delete(obj)
 			%删除OmeTiffRWer对象。
 			%删除OmeTiffRWer对象变量时会自动关闭相关文件，无需手动操作。
-			Image5D.internal.OmeTiffAPI.Close.Call(obj.Pointer);
+			if obj.Pointer
+				Image5D.internal.OmeTiffAPI.Close.Call(obj.Pointer);
+			end
 		end
 	end
 end

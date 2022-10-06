@@ -123,6 +123,19 @@
 			}
 		]
 	},
+	"Image5D.ChannelColor.FromOirColors": {
+		"inputs": [
+			{
+				"name": "OirColors",
+				"kind": "required",
+				"type": [
+					"size=3,:",
+					"double"
+				],
+				"purpose": "Oir颜色矩阵"
+			}
+		]
+	},
 	"Image5D.OirReader": {
 		"inputs": [
 			{
