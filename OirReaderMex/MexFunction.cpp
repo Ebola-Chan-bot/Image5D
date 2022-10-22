@@ -5,6 +5,7 @@
 API声明(CreateOirReader)
 {
 	const String 文件路径 = 万能转码<String>(std::move(inputs[1]));
+	//throw Image5D异常(调试断点);
 	outputs[1] = 万能转码(new Oir读入器((wchar_t*)文件路径.c_str()));
 }
 API声明(DestroyOirReader)

@@ -112,6 +112,8 @@ classdef Image5DException<uint8&MATLAB.IEnumerableException
 		The_input_array_has_too_few_elements(105)
 		File_creation_failed(106)
 		Failed_to_destroy_object(107)
+		Debug_breakpoint(108)
+		Index_block_offset_failed_to_write_out(109)
 
 		%MATLAB抛出的异常
 

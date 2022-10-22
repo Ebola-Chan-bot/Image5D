@@ -327,8 +327,15 @@ void 创建索引(const 文件列表类& 文件列表, const unique_ptr<文件�
 	for (const uint32_t* const 每块像素尾 = 每块像素头 + 索引->每帧分块数; 每块像素头 < 每块像素尾; 块像素头 += SizeC)
 		*(每块像素头++) = *块像素头;
 	copy_n(通道颜色.get(), SizeC, i通道颜色);
-	for (const uint16_t* 指针 : 块指针)
-		*(块偏移++) = (char*)指针 - 映射指针;
+	try
+	{
+		for (const uint16_t* 指针 : 块指针)
+			*(块偏移++) = (char*)指针 - 映射指针;
+	}
+	catch (...)
+	{
+		throw Image5D异常(索引块偏移写出失败);
+	}
 	索引->哈希签名(文件大小);
 }
 inline void 路径分合(const char* 头文件路径, char* 驱动器号, char* 目录路径, char* 基文件名, char* 文件扩展名, char* 当前路径)noexcept
