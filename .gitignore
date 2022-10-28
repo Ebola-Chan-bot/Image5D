@@ -43,3 +43,4 @@
 *.mexw64
 *.tif
 *.mltbx
+/Image5DMex/x64
