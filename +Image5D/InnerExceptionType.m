@@ -1,7 +1,8 @@
 classdef InnerExceptionType<uint8
 	enumeration
 		NoInner(0)
-		Win32Exception(1)
-		XmlException(2)
+		Image5DException(1)
+		Win32Exception(2)
+		XmlException(3)
 	end
 end
