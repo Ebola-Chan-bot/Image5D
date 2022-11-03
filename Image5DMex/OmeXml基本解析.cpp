@@ -2,7 +2,7 @@
 #include <vector>
 #include "Image5D异常.h"
 #include "OmeXml基本解析.h"
-void OmeXml基本解析(xml_node Pixels, uint8_t& iSizeC, uint8_t& iSizeZ, uint16_t& iSizeT, 维度顺序& iDimensionOrder, 像素类型& iPixelType, 颜色数组& iChannelColors)
+void OmeXml基本解析(xml_node Pixels, uint8_t& iSizeC, uint8_t& iSizeZ, uint32_t& iSizeT, 维度顺序& iDimensionOrder, 像素类型& iPixelType, 颜色数组& iChannelColors)
 {
 	xml_attribute 属性 = Pixels.attribute("SizeC");
 	if (!属性)

@@ -17,7 +17,7 @@ void Tiff读入器::读入像素(char* 缓冲区)const
 		throw 内存异常;
 	}
 }
-void Tiff读入器::读入像素(char* 缓冲区, UINT32 IStart, UINT32 ISize)const
+void Tiff读入器::读入像素I(char* 缓冲区, UINT32 IStart, UINT32 ISize)const
 {
 	if (IStart + ISize > iSizeI)
 		throw 越界异常;

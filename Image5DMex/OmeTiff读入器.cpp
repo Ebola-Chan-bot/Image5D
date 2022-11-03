@@ -2,7 +2,7 @@
 #include "OmeTiff读入器.h"
 #include <vector>
 #include "OmeXml基本解析.h"
-void 预计算参数(维度顺序 iDimensionOrder, UINT8 iSizeC, UINT8 iSizeZ, UINT16 iSizeT, UINT16& 源Size1, UINT32& 源Size21)noexcept
+void 预计算参数(维度顺序 iDimensionOrder, UINT8 iSizeC, UINT8 iSizeZ, uint32_t iSizeT, uint32_t& 源Size1, UINT32& 源Size21)noexcept
 {
 	switch (iDimensionOrder)
 	{
@@ -33,13 +33,13 @@ void 预计算参数(维度顺序 iDimensionOrder, UINT8 iSizeC, UINT8 iSizeZ, U
 	}
 	源Size21 *= 源Size1;
 }
-OmeTiff读入器::OmeTiff读入器(文件指针& 文件, 像素类型 iPixelType, UINT16 iSizeX, UINT16 iSizeY, std::string& 图像描述, IFD数组& IFD像素指针, UINT8 SizeC, UINT8 SizeZ, UINT16 SizeT, 维度顺序 DimensionOrder, 颜色数组& 通道颜色) :
+OmeTiff读入器::OmeTiff读入器(文件指针& 文件, 像素类型 iPixelType, UINT16 iSizeX, UINT16 iSizeY, std::string& 图像描述, IFD数组& IFD像素指针, UINT8 SizeC, UINT8 SizeZ, uint32_t SizeT, 维度顺序 DimensionOrder, 颜色数组& 通道颜色) :
 	Tiff读入器(文件, iPixelType, iSizeX, iSizeY, 图像描述, IFD像素指针),
 	Ome属性读入器(SizeC, SizeZ, SizeT, DimensionOrder, 通道颜色)
 {
 	预计算参数(iDimensionOrder, iSizeC, iSizeZ, iSizeT, 源Size1, 源Size21);
 }
-void OmeTiff读入器::读入像素(char* 缓冲区, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const
+void OmeTiff读入器::读入像素(char* 缓冲区, uint32_t TStart, uint32_t TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const
 {
 
 	if (UINT32(TStart) + TSize > iSizeT || UINT16(ZStart) + ZSize > iSizeZ || UINT16(CStart) + CSize > iSizeC)
@@ -124,7 +124,7 @@ OmeTiff读入器* OmeTiff读入器::只读打开(文件指针& 文件, 像素类
 	const xml_node Pixels = 节点.child("Pixels");
 	if (!Pixels)
 		throw Image5D异常(缺少Pixels节点);
-	UINT8 iSizeC, iSizeZ; uint16_t iSizeT; 维度顺序 iDimensionOrder; 颜色数组 iChannelColors;
+	UINT8 iSizeC, iSizeZ; uint32_t iSizeT; 维度顺序 iDimensionOrder; 颜色数组 iChannelColors;
 	OmeXml基本解析(Pixels, iSizeC, iSizeZ, iSizeT, iDimensionOrder, iPixelType, iChannelColors);
 	if (UINT32(iSizeC) * iSizeZ * iSizeT != IFD像素指针.size())
 		throw Image5D异常(SizeCZT与SizeI不匹配);

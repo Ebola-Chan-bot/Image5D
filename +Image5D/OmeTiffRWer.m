@@ -29,7 +29,7 @@ classdef OmeTiffRWer<handle
 		%Z层数。仅 OME TIFF 支持此属性。
 		SizeZ uint8
 		%采样时点数。仅 OME TIFF 支持此属性。
-		SizeT uint16
+		SizeT uint32
 		%各通道颜色，每个通道对应一个Image5D.ChannelColor对象。仅 OME TIFF 支持此属性。
 		ChannelColors Image5D.ChannelColor
 		%文件名。仅 OME TIFF 支持此属性。此值从 OME XML 中读取，不一定与真实的文件名相同。
@@ -99,7 +99,7 @@ classdef OmeTiffRWer<handle
 			% SizeY(1,1)uint16，图像高度
 			% ChannelColors(:,1)Image5D.ChannelColor，各通道颜色
 			% SizeZ(1,1)uint8，Z层数
-			% SizeT(1,1)uint16，采样时点数
+			% SizeT(1,1)uint32，采样时点数
 			% DimensionOrder(1,1)Image5D.DimensionOrder，维度顺序，不能指定为DEFAULT
 			%# 返回值
 			% obj，OB5 TIFF 读写器，支持读写属性和像素值。
@@ -111,7 +111,7 @@ classdef OmeTiffRWer<handle
 				case 2
 					obj=OmeTiffRWer(internal.Image5DAPI.Tiff_OpenCreate.Call(FilePath,PixelTypeOrImageDescription));
 				case 8
-					obj=OmeTiffRWer(internal.Image5DAPI.Tiff_OpenCreate.Call(FilePath,uint8(PixelTypeOrImageDescription),uint16(SizeX),uint16(SizeY),uint32(ChannelColors),uint8(SizeZ),uint16(SizeT),uint8(DimensionOrder)));
+					obj=OmeTiffRWer(internal.Image5DAPI.Tiff_OpenCreate.Call(FilePath,uint8(PixelTypeOrImageDescription),uint16(SizeX),uint16(SizeY),uint32(ChannelColors),uint8(SizeZ),uint32(SizeT),uint8(DimensionOrder)));
 				otherwise
 					Image5DException.Wrong_number_of_parameters.Throw;
 			end
@@ -250,7 +250,7 @@ classdef OmeTiffRWer<handle
 			% SizeY(1,1)uint16，图像高度。指定0表示不修改此参数。
 			% SizeC(1,1)uint8，颜色通道数。指定0表示不修改此参数。
 			% SizeZ(1,1)uint8，Z层数。指定0表示不修改此参数。
-			% SizeT(1,1)uint16，采样时点数。指定0表示不修改此参数。
+			% SizeT(1,1)uint32，采样时点数。指定0表示不修改此参数。
 			% ChannelColors(:,1)Image5D.ChannelColor，各通道颜色，必须是尺寸等于SizeC的向量。指定[]表示不修改此参数。
 			% DimensionOrder(1,1)Image5D.DimensionOrder，维度顺序。指定DEFAULT表示不修改此参数。
 			% FileName string，文件名。指定""表示不修改此参数。
@@ -267,7 +267,7 @@ classdef OmeTiffRWer<handle
 				DimensionOrder=Image5D.DimensionOrder.DEFAULT
 				FileName=""
 			end
-			Image5D.internal.Image5DAPI.Tiff_ModifyParameters.Call(obj.Pointer,uint8(PixelType),uint16(SizeX),uint16(SizeY),uint8(SizeC),uint8(SizeZ),uint16(SizeT),uint32(ChannelColors),uint8(DimensionOrder),FileName);
+			Image5D.internal.Image5DAPI.Tiff_ModifyParameters.Call(obj.Pointer,uint8(PixelType),uint16(SizeX),uint16(SizeY),uint8(SizeC),uint8(SizeZ),uint32(SizeT),uint32(ChannelColors),uint8(DimensionOrder),FileName);
 		end
 		function Pixels=ReadPixels(obj,TStart,TSize,varargin)
 			%读入指定范围内的像素值。仅 OME TIFF 支持此方法。
@@ -292,8 +292,8 @@ classdef OmeTiffRWer<handle
 			% %注意，Pixels的维度顺序取决于DimensionOrder属性
 			% ```
 			%# 输入参数
-			% TStart(1,1)uint16，要读入的起始时点，从0开始
-			% TSize(1,1)uint16，要读入的时点个数
+			% TStart(1,1)uint32，要读入的起始时点，从0开始
+			% TSize(1,1)uint32，要读入的时点个数
 			% ZStart(1,1)uint8，要读入的起始Z层，从0开始
 			% ZSize(1,1)uint8，要读入的Z层个数
 			% CStart(1,1)uint8，要读入的起始通道，从0开始
@@ -306,7 +306,7 @@ classdef OmeTiffRWer<handle
 					Pixels=Image5D.internal.Image5DAPI.Tiff_ReadPixels.Call(obj.Pointer);
 				case {3,7}
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
-					Pixels=Image5D.internal.Image5DAPI.Tiff_ReadPixels.Call(obj.Pointer,uint16(TStart),uint16(TSize),varargin{:});
+					Pixels=Image5D.internal.Image5DAPI.Tiff_ReadPixels.Call(obj.Pointer,uint32(TStart),uint32(TSize),varargin{:});
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
@@ -353,8 +353,8 @@ classdef OmeTiffRWer<handle
 			% ```
 			%# 输入参数
 			% Pixels(:,:,:,:,:)，要写出的像素值，数据类型取决于PixelType属性，维度顺序取决于DimensionOrder属性
-			% TStart(1,1)uint16，要写出的起始时点，从0开始
-			% TSize(1,1)uint16，要写出的时点个数
+			% TStart(1,1)uint32，要写出的起始时点，从0开始
+			% TSize(1,1)uint32，要写出的时点个数
 			% ZStart(1,1)uint8，要写出的起始Z层，从0开始
 			% ZSize(1,1)uint8，要写出的Z层个数
 			% CStart(1,1)uint8，要写出的起始通道，从0开始
@@ -365,7 +365,7 @@ classdef OmeTiffRWer<handle
 					Image5D.internal.Image5DAPI.Tiff_WritePixels.Call(obj.Pointer,Pixels);
 				case {4,8}
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
-					Image5D.internal.Image5DAPI.Tiff_WritePixels.Call(obj.Pointer,Pixels,uint16(TStart),uint16(TSize),varargin{:});
+					Image5D.internal.Image5DAPI.Tiff_WritePixels.Call(obj.Pointer,Pixels,uint32(TStart),uint32(TSize),varargin{:});
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
@@ -403,7 +403,7 @@ classdef OmeTiffRWer<handle
 			% %返回从指定位置开始的像素头指针
 			% ```
 			%# 输入参数
-			%T(1,1)uint16，像素头起始时间，从0开始
+			%T(1,1)uint32，像素头起始时间，从0开始
 			%Z(1,1)uint8，像素头起始Z层，从0开始
 			%C(1,1)uint8，像素头起始通道，从0开始
 			%# 返回值
@@ -416,9 +416,9 @@ classdef OmeTiffRWer<handle
 				case 1
 					[Pointer,Capacity]=Image5D.internal.Image5DAPI.Tiff_PixelPointer.Call(obj.Pointer);
 				case 2
-					[Pointer,Capacity]=Image5D.internal.Image5DAPI.Tiff_PixelPointer.Call(obj.Pointer,uint16(T));
+					[Pointer,Capacity]=Image5D.internal.Image5DAPI.Tiff_PixelPointer.Call(obj.Pointer,uint32(T));
 				case 4
-					[Pointer,Capacity]=Image5D.internal.Image5DAPI.Tiff_PixelPointer.Call(obj.Pointer,uint16(T),uint8(Z),uint8(C));
+					[Pointer,Capacity]=Image5D.internal.Image5DAPI.Tiff_PixelPointer.Call(obj.Pointer,uint32(T),uint8(Z),uint8(C));
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
@@ -461,8 +461,8 @@ classdef OmeTiffRWer<handle
 			% ```
 			%# 输入参数
 			% Pointer(1,1)Image5D.SafePointer，C++内存指针，应有足够Capacity存储读入的像素值
-			% TStart(1,1)uint16，起始采样时间，从0开始
-			% TSize(1,1)uint16，要读入的像素块时长
+			% TStart(1,1)uint32，起始采样时间，从0开始
+			% TSize(1,1)uint32，要读入的像素块时长
 			% ZStart(1,1)uint8，起始Z层，从0开始
 			% ZSize(1,1)uint8，要读入的像素块Z层数
 			% CStart(1,1)uint8，起始通道号，从0开始
@@ -473,7 +473,7 @@ classdef OmeTiffRWer<handle
 					Image5D.internal.Image5DAPI.Tiff_ReadToPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity);
 				case {4,5,8}
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
-					Image5D.internal.Image5DAPI.Tiff_ReadToPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint16(TStart),uint16(TSize),varargin{:});
+					Image5D.internal.Image5DAPI.Tiff_ReadToPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint32(TStart),uint32(TSize),varargin{:});
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
@@ -519,8 +519,8 @@ classdef OmeTiffRWer<handle
 			% ```
 			%# 输入参数
 			% Pointer(1,1)Image5D.SafePointer，C++内存指针，应有足够Capacity包含要写出的像素值
-			% TStart(1,1)uint16，起始采样时间，从0开始
-			% TSize(1,1)uint16，要写出的像素块时长
+			% TStart(1,1)uint32，起始采样时间，从0开始
+			% TSize(1,1)uint32，要写出的像素块时长
 			% ZStart(1,1)uint8，起始Z层，从0开始
 			% ZSize(1,1)uint8，要写出的像素块Z层数
 			% CStart(1,1)uint8，起始通道号，从0开始
@@ -531,7 +531,7 @@ classdef OmeTiffRWer<handle
 					Image5D.internal.Image5DAPI.Tiff_WriteFromPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity);
 				case {4,5,8}
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
-					Image5D.internal.Image5DAPI.Tiff_WriteFromPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint16(TStart),uint16(TSize),varargin{:});
+					Image5D.internal.Image5DAPI.Tiff_WriteFromPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint32(TStart),uint32(TSize),varargin{:});
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
