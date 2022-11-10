@@ -9,6 +9,7 @@ struct 设备颜色
 	float 不透明度;
 };
 constexpr UINT8 哈希长度 = 32;
+//注意，此类在Debug和Release模式下的尺寸不同，因而生成的索引文件互不兼容。
 class Oir索引
 {
 	//依赖字段
