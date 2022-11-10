@@ -151,21 +151,24 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 			if ((s1指针 = std::search(s1指针 += *((uint32_t*)s1指针 - 1), (const char*)尾指针, XML标头, XML标头尾)) >= 尾指针) //必须带等号，否则可能无限循环
 				throw Image5D异常(找不到帧标头);
 		UID块指针 = (UID块*)(s1指针 + *((uint32_t*)s1指针 - 1));
-		if (UID块指针 + 1 > 尾指针)
+		const char* UID字符串 = (char*)(UID块指针 + 1);
+		if (UID字符串 > 尾指针)
 			throw Image5D异常(UID块不完整);
 		if (UID块指针->Check != 3)
 			throw Image5D异常(空的像素块);
 		std::vector<uint32_t> 每块像素数向量;
+		const bool 有Z = UID字符串[0] == 'z';
 		while (UID块指针->Check == 3)
 		{
-			像素块指针 = (像素块*)((char*)(UID块指针 + 1) + UID块指针->UID长度);
+			像素块指针 = (像素块*)(UID字符串 + UID块指针->UID长度);
 			s1指针 = (char*)(像素块指针 + 1);
 			if (s1指针 > 尾指针)
 				throw Image5D异常(像素块不完整);
 			每块像素数向量.push_back(像素块指针->像素长度 / 2);
 			块指针.push_back((uint16_t*)s1指针);
 			UID块指针 = (UID块*)(s1指针 + 像素块指针->像素长度);
-			if (UID块指针 + 1 > 尾指针)
+			UID字符串 = (char*)(UID块指针 + 1);
+			if (UID字符串 > 尾指针)
 				throw Image5D异常(UID块不完整);
 		}
 		if ((s1指针 = std::search((char*)UID块指针, (char*)尾指针, XML标头, XML标头尾)) >= 尾指针)
@@ -191,18 +194,23 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		xml_attribute 节点属性;
 		xml_text 节点文本;
 		Oir索引 新索引;
-		新索引.SizeZ = 0;
-		for (xml_node 节点 : 节点.children("commonparam:axis"))
-			if ((节点属性 = 节点.attribute("paramEnable")) && 节点属性.as_bool())
-			{
-				if (!((节点 = 节点.child("commonparam:maxSize")) && (节点文本 = 节点.text())))
-					throw Image5D异常(Z层尺寸未定义);
-				//这个属性值只是设定的Z层数，实际拍摄时可能关闭了Z，只拍1层。必须再检查commonparam:z
-				新索引.SizeZ = 节点文本.as_uint();
-				break;
-			}
-		if (!新索引.SizeZ)
-			throw Image5D异常(Z层轴未定义);
+		if (有Z)
+		{
+			新索引.SizeZ = 0;
+			for (xml_node 节点 : 节点.children("commonparam:axis"))
+				if ((节点属性 = 节点.attribute("paramEnable")) && 节点属性.as_bool())
+				{
+					if (!((节点 = 节点.child("commonparam:maxSize")) && (节点文本 = 节点.text())))
+						throw Image5D异常(Z层尺寸未定义);
+					//这个属性值只是设定的Z层数，实际拍摄时可能关闭了Z，只拍1层。必须再检查commonparam:z
+					新索引.SizeZ = 节点文本.as_uint();
+					break;
+				}
+			if (!新索引.SizeZ)
+				throw Image5D异常(Z层轴未定义);
+		}
+		else
+			新索引.SizeZ = 1;
 		if (!(节点 = 父节点.child("commonimage:phase")))
 			throw Image5D异常(图像相位未定义);
 		std::vector<通道设备> 通道设备向量;
@@ -226,11 +234,6 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 			if (!(节点属性 = 通道.attribute("order")))
 				throw Image5D异常(通道order未定义);
 			通道设备对象.顺序 = 节点属性.as_uint();
-			if (!((节点 = 通道.child("commonphase:length")) && (节点 = 节点.child("commonparam:z")) && (节点文本 = 节点.text())))
-				throw Image5D异常(通道长度未定义);
-			//实际拍摄时可能关闭了Z，因此这里需要修正
-			if (节点文本.as_float() == 1)
-				新索引.SizeZ = 1;
 			if (!((节点 = 通道.child("commonphase:deviceName")) && (节点文本 = 节点.text())))
 				throw Image5D异常(通道设备名未定义);
 			通道设备对象.设备 = 节点文本.as_string();
@@ -325,8 +328,18 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 				const UID块* UID块指针 = (UID块*)(s1指针 + *((uint32_t*)s1指针 - 1));
 				if (UID块指针 + 1 > 尾指针)
 					break;
+#ifdef _DEBUG
+				bool 中断 = false;
+#endif
 				while (UID块指针->Check == 3)
 				{
+#ifdef _DEBUG
+					if (中断)
+						throw Image5D异常(调试断点);
+					const char* UID字符串 = (char*)(UID块指针 + 1);
+					if (UID字符串[1] == '9' && UID字符串[2] == '9' && UID字符串[3] == '9')
+						中断 = false;
+#endif
 					const 像素块* 像素块指针 = (像素块*)((char*)(UID块指针 + 1) + UID块指针->UID长度);
 					s1指针 = (char*)(像素块指针 + 1);
 					UID块指针 = (UID块*)(s1指针 + 像素块指针->像素长度);
