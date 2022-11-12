@@ -1,5 +1,5 @@
 #pragma once
+#include<stdint.h>
 void 哈希初始化()noexcept;
-void 哈希输入(ULONG 字节数, PUCHAR 数据)noexcept;
-void 哈希输出(ULONG 缓冲区大小, PUCHAR 哈希值)noexcept;
-void 哈希释放()noexcept;
+constexpr UINT8 哈希长度 = 32;
+void 哈希计算(const void* 输入字节, uint32_t 输入长度, void* 输出字节)noexcept;

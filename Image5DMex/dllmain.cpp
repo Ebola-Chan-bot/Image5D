@@ -17,7 +17,7 @@ BOOL APIENTRY DllMain(HMODULE hModule,
 	case DLL_THREAD_ATTACH:
 	case DLL_THREAD_DETACH:
 	case DLL_PROCESS_DETACH:
-		哈希释放();
+		//C++语法要求必须有一条break
 		break;
 	}
 	return TRUE;

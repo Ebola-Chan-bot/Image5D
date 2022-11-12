@@ -382,6 +382,8 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 			throw Image5D异常(索引块偏移写出失败);
 		}
 		索引->哈希签名(文件大小);
+		if (!索引->验证(文件大小))
+			throw Image5D异常(调试断点);
 	}
 }
 void Oir读入器::读入像素(UINT16* 写出头TZ, UINT16 TStart, UINT16 TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const
