@@ -1,7 +1,6 @@
 #pragma once
 #include <stdint.h>
 #include "哈希计算器.h"
-//以下结构体将被写入Oir索引文件，必须紧密pack，否则字段空隙内在Release模式下会填充未定义值，计算哈希会出错。
 struct 设备颜色
 {
 	char 设备名称[8];

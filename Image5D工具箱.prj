@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="3543678948" file="C:\Users\vhtmf\Documents\MATLAB\Image5D\Image5D工具箱.prj" location="C:\Users\vhtmf\Documents\MATLAB\Image5D" name="Image5D工具箱" target="target.toolbox" target-name="打包为工具箱">
+  <configuration build-checksum="1807838212" file="C:\Users\张天夫\Documents\MATLAB\Image5D\Image5D工具箱.prj" location="C:\Users\张天夫\Documents\MATLAB\Image5D" name="Image5D工具箱" target="target.toolbox" target-name="打包为工具箱">
     <param.appname>Image5D</param.appname>
     <param.authnamewatermark>埃博拉酱</param.authnamewatermark>
     <param.email>vhtmfu@outlook.com</param.email>
@@ -119,19 +119,12 @@ x64
     <fileset.depfun.excluded />
     <fileset.package />
     <build-deliverables>
-      <file location="${PROJECT_ROOT}" name="Image5D.mltbx" optional="false">C:\Users\vhtmf\Documents\MATLAB\Image5D\Image5D.mltbx</file>
+      <file location="${PROJECT_ROOT}" name="Image5D.mltbx" optional="false">C:\Users\张天夫\Documents\MATLAB\Image5D\Image5D.mltbx</file>
     </build-deliverables>
     <workflow />
     <matlab>
       <root>C:\Program Files\MATLAB\R2022b</root>
-      <toolboxes>
-        <toolbox name="matlabcoder" />
-      </toolboxes>
-      <toolbox>
-        <matlabcoder>
-          <enabled>true</enabled>
-        </matlabcoder>
-      </toolbox>
+      <toolboxes />
     </matlab>
     <platform>
       <unix>false</unix>
