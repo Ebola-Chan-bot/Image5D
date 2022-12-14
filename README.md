@@ -4,27 +4,50 @@
 
 本库经过精心设计，将复杂的底层逻辑隐藏，而将整个图像文件抽象成一个5D数组，允许用户随意切片，高速读写。核心是C++代码，提供MATLAB包装接口。后续根据需要可能添加其它语言接口。
 
-依赖：[pugixml](https://pugixml.org/)，AVX2以上指令集，Windows系统（推荐Win11，低版本未测试）
-# 存储库结构
+依赖：[pugixml](https://pugixml.org/)，AVX2以上指令集，Windows系统（推荐Win11，低版本未测试）。本库涉及中文	C++函数名，代码文件采用UTF-8编码，建议将计算机语言编码也设为UTF-8（中国大陆电脑通常默认GB2312，这主要是兼容性包袱造成微软不敢轻易改动，但不建议在新的项目中再使用这种过时的编码了）
+
+# 目录
+- [部署指南](#部署指南)
+- [Olympus OIR](#olympus-oir)
+- [OME-TIFF](#ome-tiff)
+	- [Tiff与BigTiff](#tiff与bigtiff)
+	- [OME-TIFF](#ome-tiff-1)
+	- [OB5-TIFF](#ob5-tiff)
+	- [MATLAB接口类](#matlab接口类)
+	- [辅助数据类型](#辅助数据类型)
+	- [已知问题](#已知问题)
+# 部署指南
+本库的核心逻辑代码以静态库项目形式存在，可以方便地包装成面向各种语言的接口模块。存储库中还提供了面向MATLAB和C++的包装项目示例。
+## 存储库结构
 根目录是一个 Visual Studio 解决方案和一个MATLAB工程公用目录，用一套Git系统管理。
-- +Image5D，MATLAB工具箱包目录，包含MATLAB接口代码，其中的private目录也是 C++ Mex 的编译目标位置
-- 共享库，包含在Image5D核心与MEX之间衔接的代码
-- 内存优化库，Image5D核心与MEX共同依赖的内存优化代码
+
+- +Image5D，MATLAB工具箱包目录，包
 - doc，MATLAB工具箱快速入门文档
-- Image5D，在不同格式之间共享的Image5D核心逻辑
-- Mex工具，C++ Mex 文件函数必须依赖的静态库
-- OirReaderMex，OIR读入核心C++代码
-- OmeBigTiff5D，OME-TIFF读写核心C++代码
+- Image5DLib，包含Image5D核心逻辑的静态库项目
+- Image5DMex，包装Image5DLib，面向MATLAB，可编译为MEX文件函数的项目
+- Image5D测试，包装Image5DLib，提供面向C++的示例项目和代码
 - resources，MATLAB工程定义文件和MATLAB接口签名
 - Image5D.prj，MATLAB工程主文件
 - Image5D.sln，Visual Studio 解决方案主文件
 - Image5D工具箱.prj，MATLAB工具箱打包工程
+## 面向MATLAB的快速部署
+最简单的方法就是直接安装编译好的工具箱。可以在[MATLAB附加功能管理器](https://ww2.mathworks.cn/matlabcentral/fileexchange/114435-image5d-oir-tiff)中搜索。此工具箱已经十分完善地包装好了各种接口。
+## 手动包装静态库
+无论面向MATLAB还是C++，你都需要一个C++项目来包装静态库。你需要对你的项目进行如下基本配置：
+- 将`Image5DLib\include`中的头文件加入外部包含目录。这些头文件定义了使用静态库所必需的接口。
+- 链接`Image5DLib.lib`文件；此外，还要额外再链接Windows提供的`Rpcrt4.lib`和`Bcrypt.lib`
+- 安装`pugixml`依赖库，建议通过NuGet自动配置
+- 使用C++20或更新的语言标准
+- 静态库本身不能包含必要的资源，你需要手动将`Image5DLib\include`中的`TiffData模板.xml` `XML模板.xml`和`资源.rc`添加到你的包装项目中。如果你的包装项目中还有其它资源，不要创建新的rc文件，直接添加到已有rc文件中。
+- 静态库不能自动初始化，使用任何其它API之前，你需要手动初始化。在包装项目的初始化入口处，唯一一次执行`Image5D::哈希初始化();`（包含`哈希计算器.h`）。对于DLL或MEX文件函数来说，这行代码通常应该放在`DllMain`函数的`DLL_PROCESS_ATTACH`分支；对于EXE来说，通常放在`main`函数中。对于单元测试项目，则可以放在测试类的构造函数中。
+- 如果你需要读入OIR，`#include<Oir读入器.h>`；如果需要读写TIFF，`#include<IOmeTiff读写器.h>`。
+- 注意，本库不是无异常的设计，可能会抛出`Image5D异常`。如果你的包装项目要求无异常，你将必须要处理所有的异常。
 # Olympus OIR
 这是Olympus显微镜默认的输出格式，为无限加尾优化。文件为无索引的多块结构，由块头标识其类型为元数据或像素值。因文件内无索引，为了实现快速随机读入，首次启动需要建立索引，并在同目录下保存索引文件，需要一定时间。以后再次打开就比较快了。
 
 本格式为Olympus私有格式，未公开详细文件规范，因此仅支持读入，不支持写出。
 
-C++核心：OirReaderMex
+C++核心：Oir读入器
 
 MATLAB接口类：Image5D.OirReader，可在MATLAB中用`doc Image5D.OirReader`命令查看详细文档，以下简要列出接口：
 ```MATLAB
@@ -91,8 +114,8 @@ OB5是作者在OME-BigTiff基础上进一步严格格式规范：
 - 像素块在IFD块之后，两者之间可以有任意大空隙，便于IFD扩展预留空间。像素块到文件尾之间也可适当留空隙。
 
 本格式的优势是具有高效的随机访问性能，无需遍历即可计算出所需数据的正确位置，一步直达。缺点是需要在写入数据之前预分配足够的文件空间，如果写入过程中发现空间不足，需要将后续数据成员全部向后移动，并更改所有的文件指针，性能开销较大。但这仅限于在写入前无从得知数据量的情况，如果能在写入前得知数据大小并预分配充分大的存储空间，本格式的写入性能仍高于传统TIFF。
-## MATLAB接口类：Image5D.OmeTiffRWer
-可在MATLAB中用`doc Image5D.OmeTiffRWer`命令查看详细文档，以下简要列出接口：
+## MATLAB接口类
+看详细文档，以下简要列出接口：
 ```MATLAB
 classdef OmeTiffRWer<handle
 	%OME TIFF 快速5D读写器，使用内存映射文件和强制像素块连续实现高速读写

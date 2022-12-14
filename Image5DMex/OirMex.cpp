@@ -1,6 +1,6 @@
-#include "pch.h"
 #include "Image5DAPI.h"
 #include"Oir读入器.h"
+using namespace Image5D;
 API声明(Oir_CreateReader)
 {
 	const String 文件路径 = 万能转码<String>(std::move(inputs[1]));
