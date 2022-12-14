@@ -44,3 +44,6 @@
 *.tif
 *.mltbx
 /Image5DMex/x64
+/Image5DLib/include/RCa05692
+/Image5DLib/x64
+/Image5D测试/x64
