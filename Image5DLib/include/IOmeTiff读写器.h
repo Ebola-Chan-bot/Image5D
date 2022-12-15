@@ -4,6 +4,7 @@
 namespace Image5D
 {
 	constexpr Image5D异常 未实现(未实现的方法);
+	//只有符合OB5标准的TIFF文件可以编辑，否则为只读。
 	class IOmeTiff读写器
 	{
 	public:
@@ -47,9 +48,13 @@ namespace Image5D
 		virtual void 写出像素I(const void* 缓冲区, uint32_t IStart, uint32_t ISize)const { throw 未实现; }
 		virtual void 写出像素(const void* 缓冲区, uint32_t TStart, uint32_t TSize, uint8_t ZStart, uint8_t ZSize, uint8_t CStart, uint8_t CSize)const { throw 未实现; }
 		virtual void 写出像素(const void* 缓冲区, uint32_t TStart, uint32_t TSize)const { throw 未实现; }
+		//OB5专用，获取像素数组的起始指针，以及允许读写的字节数
 		virtual void 像素指针(void*& 指针, size_t& 容量)const { throw 未实现; }
+		//OB5专用，获取指定IFD的起始指针，以及允许读写的字节数
 		virtual void 像素指针I(uint32_t I, void*& 指针, size_t& 容量)const { throw 未实现; }
+		//OB5专用，获取指定时点的起始指针，以及允许读写的字节数
 		virtual void 像素指针(uint32_t T, void*& 指针, size_t& 容量)const { throw 未实现; }
+		//OB5专用，获取指定TZC位置的起始指针，以及允许读写的字节数
 		virtual void 像素指针(uint32_t T, uint8_t Z, uint8_t C, void*& 指针, size_t& 容量)const { throw 未实现; }
 		static IOmeTiff读写器* 只读打开(LPCWSTR 文件路径);
 		static IOmeTiff读写器* 读写打开(LPCWSTR 文件路径);
