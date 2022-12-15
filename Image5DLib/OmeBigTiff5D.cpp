@@ -378,6 +378,7 @@ OmeBigTiff5D* OmeBigTiff5D::覆盖创建(LPCWSTR 文件路径, const char* 图�
 	图像描述文档.save(接收器);
 	文件偏移<大, char> 像素头偏移; 文件指针 文件;
 	const UINT32 iSizeI = UINT32(iSizeC) * iSizeZ * iSizeT;
+	//文本结尾会多一个换行符，为了兼容 tifffile Python 库，去掉它
 	构造文件(文本.c_str(), 文本.size() - 1, iSizeI, iPixelType, iSizeX, iSizeY, 文件路径, 像素头偏移, 文件);
 	return new OmeBigTiff5D(文件, iPixelType, iSizeX, iSizeY, iSizeI, 文本, iSizeC, iSizeZ, iSizeT, iDimensionOrder, iChannelColors, i文件名, Pixels, 图像描述文档, 唯一标识符, 像素头偏移(文件->映射指针()));
 }
