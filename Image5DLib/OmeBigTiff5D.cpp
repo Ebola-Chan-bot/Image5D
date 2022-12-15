@@ -342,7 +342,8 @@ OmeBigTiff5D* OmeBigTiff5D::覆盖创建(LPCWSTR 文件路径, 像素类型 Pixe
 	XML文本接收器 接收器(文本);
 	图像描述文档.save(接收器);
 	文件偏移<大, char> 像素头偏移; 文件指针 文件;
-	构造文件(文本.c_str(), 文本.size() + 1, SizeI, PixelType, SizeX, SizeY, 文件路径, 像素头偏移, 文件);
+	//文本结尾会多一个换行符，为了兼容 tifffile Python 库，去掉它
+	构造文件(文本.c_str(), 文本.size() -1, SizeI, PixelType, SizeX, SizeY, 文件路径, 像素头偏移, 文件);
 	颜色数组 通道颜色 = std::make_unique_for_overwrite<颜色[]>(SizeC);
 	std::copy_n(iChannelColors, SizeC, 通道颜色.get());
 	return new OmeBigTiff5D(文件, PixelType, SizeX, SizeY, SizeI, 文本, SizeC, SizeZ, SizeT, DimensionOrder, 通道颜色, i文件名, Pixels, 图像描述文档, 唯一标识符, 像素头偏移(文件->映射指针()));
@@ -370,16 +371,14 @@ OmeBigTiff5D* OmeBigTiff5D::覆盖创建(LPCWSTR 文件路径, const char* 图�
 	解析图像描述(图像描述文档, 唯一标识符, 文件名属性, Pixels, iSizeX, iSizeY, iSizeC, iSizeZ, iSizeT, iDimensionOrder, iPixelType, iChannelColors);
 	文件名属性.set_value(文本.c_str());
 	const char* i文件名 = 文件名属性.as_string();
-	size_t 图像描述字节数 = strlen(图像描述) + 1;
 	检修TiffData(Pixels, i文件名, 唯一标识符, iSizeC, iSizeZ, iSizeT, iDimensionOrder);
 	更新文件名(Pixels, i文件名);
 	文本.clear();
 	XML文本接收器 接收器(文本);
 	图像描述文档.save(接收器);
-	图像描述字节数 = 文本.size() + 1;
 	文件偏移<大, char> 像素头偏移; 文件指针 文件;
 	const UINT32 iSizeI = UINT32(iSizeC) * iSizeZ * iSizeT;
-	构造文件(文本.c_str(), 图像描述字节数, iSizeI, iPixelType, iSizeX, iSizeY, 文件路径, 像素头偏移, 文件);
+	构造文件(文本.c_str(), 文本.size() - 1, iSizeI, iPixelType, iSizeX, iSizeY, 文件路径, 像素头偏移, 文件);
 	return new OmeBigTiff5D(文件, iPixelType, iSizeX, iSizeY, iSizeI, 文本, iSizeC, iSizeZ, iSizeT, iDimensionOrder, iChannelColors, i文件名, Pixels, 图像描述文档, 唯一标识符, 像素头偏移(文件->映射指针()));
 }
 void OmeBigTiff5D::读入像素(void* 缓冲区)const
