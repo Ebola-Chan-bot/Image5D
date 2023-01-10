@@ -86,7 +86,7 @@ classdef OmeTiffRWer<handle
 			% import Image5D.*
 			%
 			% %首先指定基本属性创建第1个图像文件
-			% obj1=OmeTiffRWer.Create('示例图像1.tif',PixelType.UINT16,512,512,4,2,5,[ChannelColor.New(1,1,0,0.Call(ChannelColor.New(1,0,1,0.Call(ChannelColor.New(1,0,0,1.Call(ChannelColor.New(1,1,1,1)],DimensionOrder.XYCZT);
+			% obj1=OmeTiffRWer.Create('示例图像1.tif',PixelType.UINT16,512,512,ChannelColor.New([1 1 1;1 0 0;0 1 0;0 0 1]),DimensionOrder.XYCZT);
 			%
 			% %创建第2个图像文件，和第1个只有文件名不同
 			% obj2=OmeTiffRWer.Create('示例图像2.tif',obj1.ImageDescription);
