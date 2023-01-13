@@ -114,6 +114,7 @@ classdef Image5DException<uint8&MATLAB.IEnumerableException
 		Failed_to_destroy_object(107)
 		Debug_breakpoint(108)
 		Index_block_offset_failed_to_write_out(109)
+		Memory_access_violation(110)
 
 		%MATLAB抛出的异常
 

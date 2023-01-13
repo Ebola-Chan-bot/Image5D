@@ -34,7 +34,11 @@ namespace Image5D
 		uint32_t SizeTZBC;
 		uint32_t SizeYX;
 		uint32_t SizeCYX;
-		bool 验证(uint32_t 文件大小)const noexcept;
+		bool 验证(uint32_t 文件大小)const
+#ifndef _DEBUG
+			noexcept
+#endif
+			;
 		//需要正确设置每帧分块数和SizeC
 		size_t 计算文件大小()const noexcept { return (char*)((设备颜色*)((uint32_t*)(this + 1) + 每帧分块数) + SizeC) - (char*)this; }
 		//需要正确设置每帧分块数和SizeC
@@ -47,9 +51,12 @@ namespace Image5D
 		//需要正确设置所有独立字段
 		void 计算依赖字段(uint32_t 块总数)noexcept;
 		//需要正确设置所有字段
-		void 哈希签名(uint32_t 文件大小)noexcept
+		void 哈希签名(uint32_t 文件大小)
+#ifndef _DEBUG
+			noexcept
+#endif
 		{
-			哈希计算(this + 哈希长度, 文件大小 - 哈希长度, SHA256);
+			哈希计算((char*)this + 哈希长度, 文件大小 - 哈希长度, SHA256);
 		}
 	};
 }
