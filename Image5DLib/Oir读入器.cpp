@@ -5,16 +5,43 @@
 #include <algorithm>
 using namespace Image5D;
 #pragma pack(push,4)
+struct Oir文件头
+{
+	char OLYMPUSFORMAT[16] = { 'O','L','Y','M','P','U','S','R','A','W','F','O','R','M','A','T' };
+	uint32_t 保留[4] = { 12,0,1,2 };
+	uint64_t 文件大小;
+	uint64_t 索引位置;
+};
+enum class Oir基块类型 :uint32_t
+{
+	元数据 = 0,
+	帧属性 = 1,
+	UID = 3,
+	像素 = 4,
+	空 = 5,
+};
+struct Oir基块
+{
+	uint32_t 字节数;
+	Oir基块类型 类型;
+	union
+	{
+		struct
+		{
+
+		};
+	};
+};
 struct 像素块
 {
 	uint32_t 像素长度;
-	int 保留;
+	uint32_t 保留;
 };
 struct UID块
 {
-	int CheckLength;
-	int Check;
-	int 保留[2];
+	uint32_t CheckLength;
+	uint32_t Check;
+	uint32_t 保留[2];
 	uint32_t UID长度;
 };
 #pragma pack(pop)
@@ -33,13 +60,50 @@ constexpr const char* 字符串尾(const char* 字符串)
 constexpr const char* XML标头 = "<?xml version=\"1.0\" encoding=\"ASCII\"?>\r\n";
 constexpr const char* XML标头尾 = 字符串尾(XML标头);
 constexpr uint8_t XML标头长度 = XML标头尾 - XML标头;
-void 扫描XML块(const char*& s1指针, const void*& 尾指针, 文件列表类::const_iterator& 文件头, const 文件列表类::const_iterator& 文件尾)
+//返回扫描是否成功
+bool 扫描XML块(const char*& s1指针, const void*& 尾指针, 文件列表类::const_iterator& 文件头, 文件列表类::const_iterator 文件尾)
 {
 	while ((s1指针 = std::search(s1指针, (const char*)尾指针, XML标头, XML标头尾)) >= 尾指针)
 		if (++文件头 < 文件尾)
 			尾指针 = (s1指针 = (char*)(*文件头)->映射指针()) + (*文件头)->文件大小();
 		else
-			throw;
+			return false;
+	return true;
+}
+//返回是否收集成功
+bool 收集像素块(const char*& s1指针, const void* 尾指针, 块指针类& 块指针, const UID块*& UID块指针)
+{
+	UID块指针 = (UID块*)(s1指针 + *((uint32_t*)s1指针 - 1));
+	if (UID块指针 + 1 > 尾指针)
+		return false;
+	while (UID块指针->Check == 3)
+	{
+		const 像素块* 像素块指针 = (像素块*)((char*)(UID块指针 + 1) + UID块指针->UID长度);
+		s1指针 = (char*)(像素块指针 + 1);
+		UID块指针 = (UID块*)(s1指针 + 像素块指针->像素长度);
+		if (UID块指针 > 尾指针)
+			return false;
+		块指针.push_back((uint16_t*)s1指针);
+		if (UID块指针 + 1 > 尾指针)
+			return false;
+	}
+	return true;
+}
+constexpr const char* 帧属性标头 = "<lsmframe";
+constexpr const char* 帧标头尾 = 字符串尾(帧属性标头);
+void 扫描后续块(const char* s1指针, uint32_t 长度, const void* 尾指针, const 文件列表类& 文件列表, 块指针类& 块指针, const UID块* UID块指针)
+{
+	if ((s1指针 = std::search(s1指针 + 长度, (const char*)尾指针, XML标头, XML标头尾)) >= 尾指针)
+		return;
+	文件列表类::const_iterator 文件头 = 文件列表.cbegin();
+	const 文件列表类::const_iterator 文件尾 = 文件列表.cend();
+	while (!std::equal(帧属性标头, 帧标头尾, s1指针 + XML标头长度))
+		if (!扫描XML块(s1指针 += *((uint32_t*)s1指针 - 1), 尾指针, 文件头, 文件尾))
+			return;
+	if (!收集像素块(s1指针, 尾指针, 块指针, UID块指针) || (s1指针 = std::search((char*)UID块指针, (char*)尾指针, XML标头, XML标头尾)) > 尾指针)
+		return;
+	const uint8_t XML块前缀长 = s1指针 - (char*)UID块指针;
+	while (收集像素块(s1指针, 尾指针, 块指针, UID块指针) && ((s1指针 = (char*)UID块指针 + XML块前缀长) < 尾指针 || 扫描XML块(s1指针 = (char*)UID块指针, 尾指针, 文件头, 文件尾)));
 }
 using namespace pugi;
 Oir读入器::Oir读入器(LPCWSTR 头文件路径)
@@ -124,14 +188,18 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		constexpr const char* 图像标头尾 = 字符串尾(图像属性标头);
 		constexpr const char* 查找表标头 = "<lut";
 		constexpr const char* 查找表标头尾 = 字符串尾(查找表标头);
-		constexpr const char* 帧属性标头 = "<lsmframe";
-		constexpr const char* 帧标头尾 = 字符串尾(帧属性标头);
 		constexpr uint8_t UUID长度 = 36;
 		const 文件控制块& 当前文件 = *文件列表[0];
-		const char* const 映射指针 = (char*)当前文件.映射指针();
+		const Oir文件头* const 文件头 = (Oir文件头*)当前文件.映射指针();
+		const void* 尾指针 = (char*)文件头 + 当前文件.文件大小();
+		if (文件头 + 1 > 尾指针)
+			throw Image5D异常(Oir文件头不完整);
+		const uint64_t* 基块索引 = (uint64_t*)((char*)文件头 + 文件头->索引位置 + 4) + 1;
+		if (基块索引 + 1 > 尾指针)
+			throw Image5D异常(Oir基块索引不完整);
+
 		const UID块* UID块指针 = (UID块*)((char*)映射指针 + 96);
 		//虽然内存映射文件是连续的，但分配粒度导致的文件之间存在空隙不可访问，因此必须用尾指针加以限制
-		const void* 尾指针 = 映射指针 + 当前文件.文件大小();
 		if (UID块指针 + 1 > 尾指针)
 			throw Image5D异常(文件不包含块);
 		const 像素块* 像素块指针;
@@ -316,47 +384,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 					break;
 				}
 		}
-		if ((s1指针 = std::search(s1指针 + 长度, (const char*)尾指针, XML标头, XML标头尾)) >= 尾指针)
-			throw Image5D异常(找不到帧标头);
-		文件列表类::const_iterator 文件头 = 文件列表.cbegin();
-		const 文件列表类::const_iterator 文件尾 = 文件列表.cend();
-		while (true)
-		{
-			try
-			{
-				while (!std::equal(帧属性标头, 帧标头尾, s1指针 + XML标头长度))
-					扫描XML块(s1指针 += *((uint32_t*)s1指针 - 1), 尾指针, 文件头, 文件尾);
-				const UID块* UID块指针 = (UID块*)(s1指针 + *((uint32_t*)s1指针 - 1));
-				if (UID块指针 + 1 > 尾指针)
-					break;
-#ifdef _DEBUG
-				bool 中断 = false;
-#endif
-				while (UID块指针->Check == 3)
-				{
-#ifdef _DEBUG
-					if (中断)
-						throw Image5D异常(调试断点);
-					const char* UID字符串 = (char*)(UID块指针 + 1);
-					if (UID字符串[1] == '9' && UID字符串[2] == '9' && UID字符串[3] == '9')
-						中断 = false;
-#endif
-					const 像素块* 像素块指针 = (像素块*)((char*)(UID块指针 + 1) + UID块指针->UID长度);
-					s1指针 = (char*)(像素块指针 + 1);
-					UID块指针 = (UID块*)(s1指针 + 像素块指针->像素长度);
-					if (UID块指针 > 尾指针)
-						throw;
-					块指针.push_back((uint16_t*)s1指针);
-					if (UID块指针 + 1 > 尾指针)
-						throw;
-				}
-				扫描XML块(s1指针 = (char*)UID块指针, 尾指针, 文件头, 文件尾);
-			}
-			catch (...)
-			{
-				break;
-			}
-		}
+		扫描后续块(s1指针,长度,尾指针,文件列表,块指针,UID块指针);
 		新索引.每帧分块数 = 每块像素数向量.size() / SizeC;
 		const UINT32 块总数 = 块指针.size();
 		const size_t 文件大小 = 新索引.计算文件大小() + 块总数 * sizeof(const UINT16*);
