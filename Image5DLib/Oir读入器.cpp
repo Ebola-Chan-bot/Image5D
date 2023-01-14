@@ -4,14 +4,6 @@
 #include <numeric>
 #include <algorithm>
 using namespace Image5D;
-#pragma pack(push,4)
-struct Oir文件头
-{
-	char OLYMPUSFORMAT[16] = { 'O','L','Y','M','P','U','S','R','A','W','F','O','R','M','A','T' };
-	uint32_t 保留[4] = { 12,0,1,2 };
-	uint64_t 文件大小;
-	uint64_t 索引位置;
-};
 enum class Oir基块类型 :uint32_t
 {
 	元数据 = 0,
@@ -20,29 +12,38 @@ enum class Oir基块类型 :uint32_t
 	像素 = 4,
 	空 = 5,
 };
+enum class 元数据类型 :uint32_t
+{
+	fileinfo = 1,
+	lsmimage,
+	annotation,
+	overlay,
+	lut,
+};
+#pragma pack(push,4)
+struct Oir文件头
+{
+	char OLYMPUSFORMAT[16] = { 'O','L','Y','M','P','U','S','R','A','W','F','O','R','M','A','T' };
+	uint32_t 未知字段[4] = { 12,0,1,2 };
+	uint64_t 文件大小;
+	uint64_t 索引位置;
+};
 struct Oir基块
 {
 	uint32_t 字节数;
 	Oir基块类型 类型;
-	union
-	{
-		struct
-		{
-
-		};
-	};
 };
-struct 像素块
+struct UID块:Oir基块
 {
-	uint32_t 像素长度;
-	uint32_t 保留;
-};
-struct UID块
-{
-	uint32_t CheckLength;
-	uint32_t Check;
-	uint32_t 保留[2];
+	uint32_t 前像素块长度;
+	uint32_t 后像素块长度;
 	uint32_t UID长度;
+};
+struct 元数据块
+{
+	元数据类型 类型;
+	uint32_t 未知字段[8];
+	uint32_t XML长度;
 };
 #pragma pack(pop)
 struct 通道设备
@@ -195,51 +196,40 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		if (文件头 + 1 > 尾指针)
 			throw Image5D异常(Oir文件头不完整);
 		const uint64_t* 基块索引 = (uint64_t*)((char*)文件头 + 文件头->索引位置 + 4) + 1;
-		if (基块索引 + 1 > 尾指针)
-			throw Image5D异常(Oir基块索引不完整);
-
-		const UID块* UID块指针 = (UID块*)((char*)映射指针 + 96);
-		//虽然内存映射文件是连续的，但分配粒度导致的文件之间存在空隙不可访问，因此必须用尾指针加以限制
-		if (UID块指针 + 1 > 尾指针)
-			throw Image5D异常(文件不包含块);
-		const 像素块* 像素块指针;
-		while (UID块指针->Check == 3)
+		const Oir基块* 基块指针;
+		do 
 		{
-			//说明有REF图块，需要跳过
-			像素块指针 = (像素块*)((char*)(UID块指针 + 1) + UID块指针->UID长度);
-			if (像素块指针 + 1 > 尾指针)
-				throw Image5D异常(REF块不完整);
-			UID块指针 = (UID块*)((char*)(像素块指针 + 1) + 像素块指针->像素长度);
-			if (UID块指针 + 1 > 尾指针)
-				throw Image5D异常(REF块不完整);
-		}
-		const char* s1指针;
-		if ((s1指针 = std::search((char*)UID块指针, (char*)尾指针, XML标头, XML标头尾)) >= 尾指针)
-			throw Image5D异常(找不到帧标头);
-		while (!std::equal(帧属性标头, 帧标头尾, s1指针 + XML标头长度))
-			if ((s1指针 = std::search(s1指针 += *((uint32_t*)s1指针 - 1), (const char*)尾指针, XML标头, XML标头尾)) >= 尾指针) //必须带等号，否则可能无限循环
-				throw Image5D异常(找不到帧标头);
-		UID块指针 = (UID块*)(s1指针 + *((uint32_t*)s1指针 - 1));
-		const char* UID字符串 = (char*)(UID块指针 + 1);
+			if (基块索引 + 1 > 尾指针)
+				throw Image5D异常(Oir基块索引错误);
+			if ((基块指针 = (Oir基块*)((char*)文件头 + *(基块索引++)))+1 > 尾指针)
+				throw Image5D异常(Oir基块索引错误);
+		} while (基块指针->类型 != Oir基块类型::帧属性);//此循环用于跳过REF块
+		if (基块索引 + 1 > 尾指针)
+			throw Image5D异常(Oir基块索引错误);
+		const UID块* UID块指针 = (UID块*)((char*)文件头 + *(基块索引++));
+		const char* const UID字符串 = (char*)(UID块指针 + 1);
 		if (UID字符串 > 尾指针)
 			throw Image5D异常(UID块不完整);
-		if (UID块指针->Check != 3)
-			throw Image5D异常(空的像素块);
 		std::vector<uint32_t> 每块像素数向量;
 		const bool 有Z = UID字符串[0] == 'z';
-		while (UID块指针->Check == 3)
+		const uint16_t* 像素指针;
+		do
 		{
-			像素块指针 = (像素块*)(UID字符串 + UID块指针->UID长度);
-			s1指针 = (char*)(像素块指针 + 1);
-			if (s1指针 > 尾指针)
+			if (基块索引 + 1 > 尾指针)
+				throw Image5D异常(Oir基块索引错误);
+			基块指针 = (Oir基块*)((char*)文件头 + *(基块索引++));
+			像素指针 = (uint16_t*)(基块指针 + 1);
+			if (像素指针 > 尾指针)
+				throw Image5D异常(Oir基块索引错误);
+			每块像素数向量.push_back(基块指针->字节数 / 2);
+			if ((char*)像素指针 + 基块指针->字节数 > 尾指针)
 				throw Image5D异常(像素块不完整);
-			每块像素数向量.push_back(像素块指针->像素长度 / 2);
-			块指针.push_back((uint16_t*)s1指针);
-			UID块指针 = (UID块*)(s1指针 + 像素块指针->像素长度);
-			UID字符串 = (char*)(UID块指针 + 1);
-			if (UID字符串 > 尾指针)
-				throw Image5D异常(UID块不完整);
-		}
+			块指针.push_back(像素指针);
+			基块指针 = (Oir基块*)((char*)文件头 + *(基块索引++));
+			if (基块指针 + 1 > 尾指针)
+				throw Image5D异常(Oir基块索引错误);
+		} while (基块指针->类型 == Oir基块类型::UID);
+
 		if ((s1指针 = std::search((char*)UID块指针, (char*)尾指针, XML标头, XML标头尾)) >= 尾指针)
 			throw Image5D异常(找不到图像标头);
 		while (!std::equal(图像属性标头, 图像标头尾, s1指针 + XML标头长度))
