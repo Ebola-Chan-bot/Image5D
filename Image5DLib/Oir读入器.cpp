@@ -6,11 +6,12 @@
 using namespace Image5D;
 enum class Oir基块类型 :uint32_t
 {
-	元数据 = 0,
-	帧属性 = 1,
-	UID = 3,
-	像素 = 4,
-	空 = 5,
+	元数据,
+	帧属性,
+	未知,
+	UID,
+	像素,
+	空,
 };
 enum class 元数据类型 :uint32_t
 {
@@ -30,10 +31,10 @@ struct Oir文件头
 };
 struct Oir基块
 {
-	uint32_t 字节数;
+	uint32_t 长度;
 	Oir基块类型 类型;
 };
-struct UID块:Oir基块
+struct UID块 :Oir基块
 {
 	uint32_t 前像素块长度;
 	uint32_t 后像素块长度;
@@ -43,7 +44,7 @@ struct 元数据块
 {
 	元数据类型 类型;
 	uint32_t 未知字段[8];
-	uint32_t XML长度;
+	uint32_t 长度;
 };
 #pragma pack(pop)
 struct 通道设备
@@ -57,54 +58,6 @@ constexpr const char* 字符串尾(const char* 字符串)
 	while (*字符串)
 		字符串++;
 	return 字符串;
-}
-constexpr const char* XML标头 = "<?xml version=\"1.0\" encoding=\"ASCII\"?>\r\n";
-constexpr const char* XML标头尾 = 字符串尾(XML标头);
-constexpr uint8_t XML标头长度 = XML标头尾 - XML标头;
-//返回扫描是否成功
-bool 扫描XML块(const char*& s1指针, const void*& 尾指针, 文件列表类::const_iterator& 文件头, 文件列表类::const_iterator 文件尾)
-{
-	while ((s1指针 = std::search(s1指针, (const char*)尾指针, XML标头, XML标头尾)) >= 尾指针)
-		if (++文件头 < 文件尾)
-			尾指针 = (s1指针 = (char*)(*文件头)->映射指针()) + (*文件头)->文件大小();
-		else
-			return false;
-	return true;
-}
-//返回是否收集成功
-bool 收集像素块(const char*& s1指针, const void* 尾指针, 块指针类& 块指针, const UID块*& UID块指针)
-{
-	UID块指针 = (UID块*)(s1指针 + *((uint32_t*)s1指针 - 1));
-	if (UID块指针 + 1 > 尾指针)
-		return false;
-	while (UID块指针->Check == 3)
-	{
-		const 像素块* 像素块指针 = (像素块*)((char*)(UID块指针 + 1) + UID块指针->UID长度);
-		s1指针 = (char*)(像素块指针 + 1);
-		UID块指针 = (UID块*)(s1指针 + 像素块指针->像素长度);
-		if (UID块指针 > 尾指针)
-			return false;
-		块指针.push_back((uint16_t*)s1指针);
-		if (UID块指针 + 1 > 尾指针)
-			return false;
-	}
-	return true;
-}
-constexpr const char* 帧属性标头 = "<lsmframe";
-constexpr const char* 帧标头尾 = 字符串尾(帧属性标头);
-void 扫描后续块(const char* s1指针, uint32_t 长度, const void* 尾指针, const 文件列表类& 文件列表, 块指针类& 块指针, const UID块* UID块指针)
-{
-	if ((s1指针 = std::search(s1指针 + 长度, (const char*)尾指针, XML标头, XML标头尾)) >= 尾指针)
-		return;
-	文件列表类::const_iterator 文件头 = 文件列表.cbegin();
-	const 文件列表类::const_iterator 文件尾 = 文件列表.cend();
-	while (!std::equal(帧属性标头, 帧标头尾, s1指针 + XML标头长度))
-		if (!扫描XML块(s1指针 += *((uint32_t*)s1指针 - 1), 尾指针, 文件头, 文件尾))
-			return;
-	if (!收集像素块(s1指针, 尾指针, 块指针, UID块指针) || (s1指针 = std::search((char*)UID块指针, (char*)尾指针, XML标头, XML标头尾)) > 尾指针)
-		return;
-	const uint8_t XML块前缀长 = s1指针 - (char*)UID块指针;
-	while (收集像素块(s1指针, 尾指针, 块指针, UID块指针) && ((s1指针 = (char*)UID块指针 + XML块前缀长) < 尾指针 || 扫描XML块(s1指针 = (char*)UID块指针, 尾指针, 文件头, 文件尾)));
 }
 using namespace pugi;
 Oir读入器::Oir读入器(LPCWSTR 头文件路径)
@@ -190,12 +143,13 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		constexpr const char* 查找表标头 = "<lut";
 		constexpr const char* 查找表标头尾 = 字符串尾(查找表标头);
 		constexpr uint8_t UUID长度 = 36;
-		const 文件控制块& 当前文件 = *文件列表[0];
-		const Oir文件头* const 文件头 = (Oir文件头*)当前文件.映射指针();
-		const void* 尾指针 = (char*)文件头 + 当前文件.文件大小();
+		文件列表类::const_iterator 当前文件 = 文件列表.cbegin();
+		const Oir文件头* 文件头 = (Oir文件头*)(*当前文件)->映射指针();
+		const char* const 全局文件头 = (char*)文件头;
+		const void* 尾指针 = (char*)文件头 + (*当前文件)->文件大小();
 		if (文件头 + 1 > 尾指针)
 			throw Image5D异常(Oir文件头不完整);
-		const uint64_t* 基块索引 = (uint64_t*)((char*)文件头 + 文件头->索引位置 + 4) + 1;
+		const uint64_t* 基块索引 = (uint64_t*)((char*)文件头 + 文件头->索引位置 + 4);
 		const Oir基块* 基块指针;
 		do 
 		{
@@ -207,40 +161,37 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		if (基块索引 + 1 > 尾指针)
 			throw Image5D异常(Oir基块索引错误);
 		const UID块* UID块指针 = (UID块*)((char*)文件头 + *(基块索引++));
-		const char* const UID字符串 = (char*)(UID块指针 + 1);
-		if (UID字符串 > 尾指针)
+		const char* 字符串 = (char*)(UID块指针 + 1);
+		if (字符串 > 尾指针)
 			throw Image5D异常(UID块不完整);
 		std::vector<uint32_t> 每块像素数向量;
-		const bool 有Z = UID字符串[0] == 'z';
+		const bool 有Z = 字符串[0] == 'z';
 		const uint16_t* 像素指针;
 		do
 		{
 			if (基块索引 + 1 > 尾指针)
 				throw Image5D异常(Oir基块索引错误);
-			基块指针 = (Oir基块*)((char*)文件头 + *(基块索引++));
-			像素指针 = (uint16_t*)(基块指针 + 1);
-			if (像素指针 > 尾指针)
+			if ((像素指针 = (uint16_t*)((基块指针 = (Oir基块*)((char*)文件头 + *(基块索引++))) + 1)) > 尾指针)
 				throw Image5D异常(Oir基块索引错误);
-			每块像素数向量.push_back(基块指针->字节数 / 2);
-			if ((char*)像素指针 + 基块指针->字节数 > 尾指针)
+			每块像素数向量.push_back(基块指针->长度 / 2);
+			if ((char*)像素指针 + 基块指针->长度 > 尾指针)
 				throw Image5D异常(像素块不完整);
 			块指针.push_back(像素指针);
-			基块指针 = (Oir基块*)((char*)文件头 + *(基块索引++));
-			if (基块指针 + 1 > 尾指针)
+			if ((基块指针 = (Oir基块*)((char*)文件头 + *(基块索引++))) + 1 > 尾指针)
 				throw Image5D异常(Oir基块索引错误);
 		} while (基块指针->类型 == Oir基块类型::UID);
-
-		if ((s1指针 = std::search((char*)UID块指针, (char*)尾指针, XML标头, XML标头尾)) >= 尾指针)
-			throw Image5D异常(找不到图像标头);
-		while (!std::equal(图像属性标头, 图像标头尾, s1指针 + XML标头长度))
-			if ((s1指针 = std::search(s1指针 += *((uint32_t*)s1指针 - 1), (const char*)尾指针, XML标头, XML标头尾)) >= 尾指针) //必须带等号，否则可能无限循环
-				throw Image5D异常(找不到图像标头);
-		uint32_t 长度;
-		if (s1指针 + (长度 = *((uint32_t*)s1指针 - 1)) > 尾指针)
-			throw Image5D异常(图像属性不完整);
+		//这里的每块像素数可能有C通道上的重复，没关系，后面得到SizeC以后会消掉
+		const 元数据块* 元数据块指针 = (元数据块*)(基块指针 + 1);
+		if ((字符串 = (char*)(元数据块指针 + 1)) > 尾指针)
+			throw Image5D异常(Oir元数据块不完整);
+		if ((字符串 = (char*)((元数据块指针 = (元数据块*)(字符串 + 元数据块指针->长度)) + 1)) > 尾指针)//跳过fileinfo
+			throw Image5D异常(Oir元数据块不完整);
+		uint32_t 长度 = 元数据块指针->长度;
+		if ((元数据块指针 = (元数据块*)(字符串 + 长度)) > 尾指针)
+			throw Image5D异常(Oir图像属性出界);
 		xml_parse_status 解析结果;
 		xml_document 图像属性文档;
-		if ((解析结果 = 图像属性文档.load_buffer(s1指针, 长度).status) != xml_parse_status::status_ok)
+		if ((解析结果 = 图像属性文档.load_buffer(字符串, 长度).status) != xml_parse_status::status_ok)
 			throw Image5D异常(图像属性解析失败, 解析结果);
 		xml_node 节点 = 图像属性文档.child("lsmimage:imageProperties");
 		if (!节点)
@@ -273,7 +224,6 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		if (!(节点 = 父节点.child("commonimage:phase")))
 			throw Image5D异常(图像相位未定义);
 		std::vector<通道设备> 通道设备向量;
-		const char* 属性值;
 		uint8_t 通道组个数 = 0;
 		for (xml_node 节点 : 节点.children("commonphase:group"))
 		{
@@ -285,7 +235,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 				throw Image5D异常(通道enable未定义);
 			if (!节点属性.as_bool())
 				continue;
-			通道设备向量.push_back(通道设备());
+			通道设备向量.emplace_back();
 			通道设备& 通道设备对象 = 通道设备向量.back();
 			if (!(节点属性 = 通道.attribute("id")))
 				throw Image5D异常(通道id未定义);
@@ -299,7 +249,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		}
 		if (通道设备向量.empty())
 			throw Image5D异常(通道未定义);
-		const UINT8 SizeC = 新索引.SizeC = 通道设备向量.size();
+		const uint8_t SizeC = 新索引.SizeC = 通道设备向量.size();
 		std::sort(通道设备向量.begin(), 通道设备向量.end(), [](const 通道设备& 对象1, const 通道设备& 对象2) {return 对象1.顺序 <= 对象2.顺序; });
 		std::unique_ptr<设备颜色[]> 通道颜色 = std::make_unique_for_overwrite<设备颜色[]>(SizeC);
 		for (uint8_t C = 0; C < SizeC; ++C)
@@ -309,13 +259,13 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 			throw Image5D异常(图像配置未定义);
 		if (!((节点 = 节点.child("lsmimage:scannerType")) && (节点文本 = 节点.text())))
 			throw Image5D异常(扫描类型未定义);
-		属性值 = 节点文本.as_string();
+		字符串 = 节点文本.as_string();
 		新索引.SizeX = 0, 新索引.SizeY = 0, 新索引.系列间隔 = 0;
 		for (xml_node 节点 : 父节点.children("lsmimage:scannerSettings"))
 		{
 			if (!(节点属性 = 节点.attribute("type")))
 				throw Image5D异常(扫描类型未定义);
-			if (strcmp(节点属性.value(), 属性值))
+			if (strcmp(节点属性.value(), 字符串))
 				continue;
 			const xml_node 扫描参数 = 节点.child("lsmimage:param");
 			if (!扫描参数)
@@ -342,22 +292,29 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 			throw Image5D异常(扫描设置未定义);
 		//不能复用图像解析文档，会损坏通道设备指针的通道
 		xml_document LUT文档;
+		if ((字符串 = (char*)(元数据块指针 + 1)) > 尾指针)
+			throw Image5D异常(Oir元数据块不完整);
+		if ((字符串 = (char*)((元数据块指针 = (元数据块*)(字符串 + 元数据块指针->长度)) + 1)) > 尾指针)//跳过annotation
+			throw Image5D异常(Oir元数据块不完整);
+		元数据块指针 = (元数据块*)(字符串 + 元数据块指针->长度);//跳过overlay
+		const uint32_t* 长度指针 = (uint32_t*)(元数据块指针 + 1);
 		for (uint8_t C1 = 0; C1 < 通道组个数; ++C1)
 		{
-			if ((s1指针 = std::search(s1指针 + 长度, (const char*)尾指针, XML标头, XML标头尾)) >= 尾指针)
-				throw Image5D异常(找不到查找表);
-			while (!std::equal(查找表标头, 查找表标头尾, s1指针 + XML标头长度))
-				if ((s1指针 = std::search(s1指针 += *((uint32_t*)s1指针 - 1), (const char*)尾指针, XML标头, XML标头尾)) >= 尾指针) //必须带等号，否则可能无限循环
-					throw Image5D异常(找不到查找表);
-			长度 = *((uint32_t*)s1指针 - 1);
-			if ((解析结果 = LUT文档.load_buffer(s1指针, 长度).status) != xml_parse_status::status_ok)
-				throw Image5D异常(找不到查找表, 解析结果);
-			if (!(父节点 = LUT文档.child("lut:LUT")))
-				throw Image5D异常(查找表未定义);
-			属性值 = (char*)((uint32_t*)s1指针 - 1) - UUID长度;
+			if ((字符串 = (char*)(长度指针 + 1)) > 尾指针)
+				throw Image5D异常(LutUid长度出界);
+			if ((长度指针 = (uint32_t*)(字符串 + (长度 = *长度指针))) > 尾指针)
+				throw Image5D异常(LutUid出界);
 			for (uint8_t C2 = 0; C2 < SizeC; ++C2)
-				if (std::equal(属性值, 属性值 + UUID长度, 通道设备向量[C2].通道))
+				if (std::equal(字符串, 字符串 + 长度, 通道设备向量[C2].通道))
 				{
+					if ((字符串 = (char*)(长度指针 + 1)) > 尾指针)
+						throw Image5D异常(LutXml长度出界);
+					if ((长度指针 = (uint32_t*)(字符串 + (长度 = *长度指针))) > 尾指针)
+						throw Image5D异常(LutXml出界);
+					if ((解析结果 = LUT文档.load_buffer(字符串, 长度).status) != xml_parse_status::status_ok)
+						throw Image5D异常(LutXml解析失败, 解析结果);
+					if (!(父节点 = LUT文档.child("lut:LUT")))
+						throw Image5D异常(查找表未定义);
 					设备颜色& 通道 = 通道颜色[C2];
 					if (!((节点 = 父节点.child("lut:red")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
 						throw Image5D异常(红色分量未定义);
@@ -374,7 +331,22 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 					break;
 				}
 		}
-		扫描后续块(s1指针,长度,尾指针,文件列表,块指针,UID块指针);
+		基块索引 += 1;
+		const 文件列表类::const_iterator 文件结束 = 文件列表.cend();
+		while ((基块索引 += 2) + 1 < 尾指针 && (基块指针 = (Oir基块*)((char*)文件头 + *基块索引)) + 1 < 尾指针)
+			if (基块指针->类型 == Oir基块类型::像素)
+				块指针.push_back((uint16_t*)(基块指针 + 1));
+		while (++当前文件 < 文件结束)
+		{
+			文件头 = (Oir文件头*)(*当前文件)->映射指针();
+			尾指针 = (char*)文件头 + (*当前文件)->文件大小();
+			if (文件头 + 1 > 尾指针)
+				continue;
+			基块索引 = (uint64_t*)((char*)文件头 + 文件头->索引位置 + 4);
+			while ((基块索引 += 2) + 1 < 尾指针 && (基块指针 = (Oir基块*)((char*)文件头 + *基块索引)) + 1 < 尾指针)
+				if (基块指针->类型 == Oir基块类型::像素)
+					块指针.push_back((uint16_t*)(基块指针 + 1));
+		}
 		新索引.每帧分块数 = 每块像素数向量.size() / SizeC;
 		const UINT32 块总数 = 块指针.size();
 		const size_t 文件大小 = 新索引.计算文件大小() + 块总数 * sizeof(const UINT16*);
@@ -394,7 +366,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		try
 		{
 			for (const uint16_t* 指针 : 块指针)
-				*(块偏移++) = (char*)指针 - 映射指针;
+				*(块偏移++) = (char*)指针 - 全局文件头;
 		}
 		catch (...)
 		{

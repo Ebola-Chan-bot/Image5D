@@ -121,6 +121,13 @@ namespace Image5D
 		找不到XML块,
 		Oir文件头不完整,
 		Oir基块索引错误,
+		Oir元数据块不完整,
+		Oir图像属性出界,
+		LutUid长度出界,
+		LutUid出界,
+		LutXml长度出界,
+		LutXml出界,
+		LutXml解析失败
 	};
 	enum 内部异常类型
 	{
