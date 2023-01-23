@@ -30,7 +30,7 @@ namespace Image5D
 
 		uint8_t SizeBC;
 		uint8_t SizeZBC;
-		uint16_t SizeT;
+		uint32_t SizeT;
 		uint32_t SizeTZBC;
 		uint32_t SizeYX;
 		uint32_t SizeCYX;
@@ -40,7 +40,7 @@ namespace Image5D
 #endif
 			;
 		//需要正确设置每帧分块数和SizeC
-		size_t 计算文件大小()const noexcept { return (char*)((设备颜色*)((uint32_t*)(this + 1) + 每帧分块数) + SizeC) - (char*)this; }
+		uint32_t 计算文件大小()const noexcept { return (char*)((设备颜色*)((uint32_t*)(this + 1) + 每帧分块数) + SizeC) - (char*)this; }
 		//需要正确设置每帧分块数和SizeC
 		void Get变长成员(uint32_t*& 每块像素数, 设备颜色*& 通道颜色, uint64_t*& 块偏移)const noexcept
 		{

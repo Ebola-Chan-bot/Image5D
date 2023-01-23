@@ -97,8 +97,8 @@ classdef OirReader<handle
 			% ```
 			%# 输入参数
 			% C(1,1)uint8，通道序号，从0开始
-			% TStart(1,1)uint16，起始采样时间，从0开始
-			% TSize(1,1)uint16，要读入的像素块时长
+			% TStart(1,1)uint32，起始采样时间，从0开始
+			% TSize(1,1)uint32，要读入的像素块时长
 			% ZStart(1,1)uint8，起始Z层，从0开始
 			% ZSize(1,1)uint8，要读入的像素块Z层数
 			% CStart(1,1)uint8，起始通道号，从0开始
@@ -110,7 +110,7 @@ classdef OirReader<handle
 					Pixels=Image5D.internal.Image5DAPI.Oir_ReadPixels.Call(obj.Pointer);
 				case {3,4,5,7}
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
-					Pixels=Image5D.internal.Image5DAPI.Oir_ReadPixels.Call(obj.Pointer,uint16(TStart),uint16(TSize),varargin{:});
+					Pixels=Image5D.internal.Image5DAPI.Oir_ReadPixels.Call(obj.Pointer,uint32(TStart),uint32(TSize),varargin{:});
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
