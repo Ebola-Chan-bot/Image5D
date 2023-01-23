@@ -1,17 +1,17 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="1807838212" file="C:\Users\vhtmf\Documents\MATLAB\Image5D\Image5D工具箱.prj" location="C:\Users\vhtmf\Documents\MATLAB\Image5D" name="Image5D工具箱" target="target.toolbox" target-name="打包为工具箱">
+  <configuration build-checksum="2131551320" file="C:\Users\vhtmf\Documents\MATLAB\Image5D\Image5D工具箱.prj" location="C:\Users\vhtmf\Documents\MATLAB\Image5D" name="Image5D工具箱" target="target.toolbox" target-name="打包为工具箱">
     <param.appname>Image5D</param.appname>
     <param.authnamewatermark>埃博拉酱</param.authnamewatermark>
     <param.email>vhtmfu@outlook.com</param.email>
     <param.company>一致行动党</param.company>
-    <param.summary>快速随机读写5D图像格式，目前支持读入 Olympus OIR 和读写 OME-TIFF，比市面上流行的竞品BioFormats要快得多。</param.summary>
+    <param.summary>快速随机读写5D图像格式，目前支持读入 Olympus OIR 和读写 OME-TIFF，比市面上流行的竞品BioFormats要快得多，80多㎇的OIR不到3s就能打开</param.summary>
     <param.description>5D格式泛指逻辑上具有 XYCZT 5 个维度的图像文件格式。在逻辑上，其内部图像文件是一个5D数组。但实现上，文件内部可能缺乏良好的索引，实际上不能根据文件头随机读写，仍然需要先遍历整个文件建立索引。有的格式甚至还会将大文件拆分成多个小文件，进一步增加了索引逻辑的复杂性。
 
 本库经过精心设计，将复杂的底层逻辑隐藏，而将整个图像文件抽象成一个5D数组，允许用户随意切片，高速读写。核心是C++代码，提供MATLAB包装接口。后续根据需要可能添加其它语言接口。
 
 依赖：pugixml，AVX2以上指令集，Windows系统（推荐Win11，低版本未测试）</param.description>
     <param.screenshot>${PROJECT_ROOT}\工具箱图像.png</param.screenshot>
-    <param.version>1.3.4</param.version>
+    <param.version>1.3.6</param.version>
     <param.output>${PROJECT_ROOT}\Image5D.mltbx</param.output>
     <param.products.name />
     <param.products.id />
