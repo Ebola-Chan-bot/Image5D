@@ -11,7 +11,7 @@
 
 依赖：pugixml，AVX2以上指令集，Windows系统（推荐Win11，低版本未测试）</param.description>
     <param.screenshot>${PROJECT_ROOT}\工具箱图像.png</param.screenshot>
-    <param.version>1.3.6</param.version>
+    <param.version>1.4.0</param.version>
     <param.output>${PROJECT_ROOT}\Image5D.mltbx</param.output>
     <param.products.name />
     <param.products.id />
@@ -61,7 +61,7 @@ x64
     <param.exported.on.package>false</param.exported.on.package>
     <param.required.addons>
       <requiredaddons>
-        <requiredAddOn earliest="9.8.0" fromRepository="true" id="b344599a-983e-4a6c-bd99-ed3a1bdd9626" include="true" latest="latest">埃博拉酱 的 MATLAB 扩展 Extension(2)</requiredAddOn>
+        <requiredAddOn downloadURL="" earliest="9.8.0" fromRepository="false" id="b344599a-983e-4a6c-bd99-ed3a1bdd9626" include="true" latest="latest">埃博拉酱 的 MATLAB 扩展 Extension(2)</requiredAddOn>
       </requiredaddons>
     </param.required.addons>
     <param.matlab.project.id />

@@ -158,6 +158,44 @@
 			}
 		]
 	},
+	"Image5D.OirReader.ConcatenateByRename": {
+		"inputs": [
+			{
+				"name": "HeaderPaths",
+				"kind": "required",
+				"type": "string",
+				"purpose": "要合并的OIR头文件路径"
+			}
+		]
+	},
+	"Image5D.OirReader.SplitByRename": {
+		"inputs": [
+			{
+				"name": "HeaderPath",
+				"kind": "required",
+				"type": [
+					[
+						"file=*.oir"
+					],
+					[
+						"string",
+						"scalar"
+					],
+					[
+						"char",
+						"row"
+					]
+				],
+				"purpose": "已合并的文件序列的头文件路径"
+			},
+			{
+				"name": "SplitTable",
+				"kind": "required",
+				"type": "table",
+				"purpose": "拆分表"
+			}
+		]
+	},
 	"Image5D.OirReader.ReadPixels": {
 		"inputs": [
 			{

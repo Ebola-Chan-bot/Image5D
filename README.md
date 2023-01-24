@@ -67,6 +67,14 @@ classdef OirReader<handle
 		%每个采样时点的间隔毫秒数
 		SeriesInterval
 	end
+	methods(Static)
+		function ConcatenateByRename(HeaderPaths)
+			%通过修改文件名的方法串联多个OIR文件序列
+		end
+		function SplitByRename(HeaderPath,SplitTable)
+			%如果使用ConcatenateByRename发生了错误的合并并且已经无法撤销，可以尝试用此方法重新拆分开来
+		end
+	end
 	methods
 		function obj=OirReader(HeaderPath)
 			%构造OirReader对象

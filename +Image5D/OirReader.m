@@ -18,6 +18,87 @@ classdef OirReader<handle
 		%每个采样时点的间隔毫秒数
 		SeriesInterval
 	end
+	methods(Static)
+		function ConcatenateByRename(HeaderPaths)
+			%通过修改文件名的方法串联多个OIR文件序列
+			%OIR文件序列是通过文件名识别的，因此理论上可以通过修改文件名将几个不同的序列串联到一起。但是这种
+			% 方法存在如下限制：
+			% - 这不是标准的OIR串联方法，串联后只有基于Image5D库的应用能够打开这样串联的文件序列，而
+			%  FluoView或ImageJ等其它读入器可能无法查看这样的OIR序列。
+			% - 不会检查不同序列之间是否具有匹配的XYCZ尺寸、设备、通道颜色、序列间隔等，全部以第一个OIR为准
+			%  （包括文件名）。调用方应当保证这些元数据匹配，否则可能产生意外结果。
+			%将直接执行重命名操作，不会复制文件内容。
+			%# 语法
+			% ```
+			% Image5D.OirReader.ConcatenateByRename(HeaderPaths);
+			% ```
+			%# 输入参数
+			% HeaderPaths(:,1)string，要合并的OIR头文件路径。所有元数据和文件名将以第1个文件为准，后续文件被
+			%  重命名。如果这些文件不在同一目录下，所有后续文件将被移动到第1个文件同目录下。
+			[Directory,Filename]=fileparts(HeaderPaths(1));
+			NumFiles=1;
+			UnextendedPath=fullfile(Directory,Filename);
+			while isfile(UnextendedPath+sprintf("_%05u",NumFiles))
+				NumFiles=NumFiles+1;
+			end
+			HeaderPaths(1)=[];
+			NumHeaders=numel(HeaderPaths);
+			Sources=MATLAB.Containers.Vector;
+			Destinations=MATLAB.Containers.Vector;
+			for H=1:NumHeaders
+				Sources.PushBack(HeaderPaths(H));
+				FollowerNF=1;
+				[FollowerDirectory,FollowerFilename]=fileparts(HeaderPaths(H));
+				FollowerUP=fullfile(FollowerDirectory,FollowerFilename);
+				FollowerFollower=FollowerUP+sprintf("_%05u",FollowerNF);
+				while isfile(FollowerFollower)
+					Sources.PushBack(FollowerFollower);
+					FollowerNF=FollowerNF+1;
+					FollowerFollower=FollowerUP+sprintf("_%05u",FollowerNF);
+				end
+				FilesEnd=NumFiles+FollowerNF;
+				Destinations.PushBack(UnextendedPath+compose("_%05u",NumFiles:FilesEnd-1));
+				NumFiles=FilesEnd;
+			end
+			MATLAB.General.MoveFile(Sources.Data,Destinations.Data);
+		end
+		function SplitByRename(HeaderPath,SplitTable)
+			%如果使用ConcatenateByRename发生了错误的合并并且已经无法撤销，可以尝试用此方法重新拆分开来
+			%# 语法
+			% ```
+			% SplitByRename(HeaderPath,SplitTable)
+			% ```
+			%# 输入参数
+			% HeaderPath(1,1)string，已合并的文件序列的头文件路径
+			% SplitTable table，拆分表。应当包含一个从小到大排序的Index列，指示每个拆分位点的索引，那个索
+			%  引处的文件在拆分后将成为新序列的头文件。还包含一个HeaderName列，指示新序列的头文件名。
+			[Directory,Filename]=fileparts(HeaderPath);
+			UnextendedPath=fullfile(Directory,Filename);
+			Sources=MATLAB.Containers.Vector;
+			Destinations=MATLAB.Containers.Vector;
+			for S=1:height(SplitTable)-1
+				StartIndex=SplitTable.Index(S);
+				FollowerUP=fullfile(Directory,SplitTable.HeaderName(S));
+				Destinations.PushBack(FollowerUP+".oir");
+				NumFollowers=SplitTable.Index(S+1)-StartIndex-1;
+				Sources.PushBack(UnextendedPath+compose("_%05u",StartIndex:StartIndex+NumFollowers));
+				Destinations.PushBack(FollowerUP+compose("_%05u",1:NumFollowers));
+			end
+			StartIndex=SplitTable.Index(end);
+			FollowerUP=fullfile(Directory,SplitTable.HeaderName(end));
+			Sources.PushBack(UnextendedPath+sprintf("_%05u",StartIndex));
+			Destinations.PushBack(FollowerUP+".oir");
+			NumFollowers=1;
+			PathToTest=UnextendedPath+sprintf("_%05u",StartIndex+NumFollowers);
+			while isfile(PathToTest)
+				Sources.PushBack(PathToTest);
+				NumFollowers=NumFollowers+1;
+				PathToTest=UnextendedPath+sprintf("_%05u",StartIndex+NumFollowers);
+			end
+			Destinations.PushBack(FollowerUP+compose("_%05u",1:NumFollowers-1));
+			MATLAB.General.MoveFile(Sources.Data,Destinations.Data);
+		end
+	end
     methods
 		function obj=OirReader(HeaderPath)
 			%构造OirReader对象
@@ -147,8 +228,8 @@ classdef OirReader<handle
 			% ```
 			%# 输入参数
 			% Pointer(1,1)Image5D.SafePointer，C++内存指针，应有足够Capacity存储读入的像素值
-			% TStart(1,1)uint16，起始采样时间，从0开始
-			% TSize(1,1)uint16，要读入的像素块时长
+			% TStart(1,1)uint32，起始采样时间，从0开始
+			% TSize(1,1)uint32，要读入的像素块时长
 			% C(1,1)uint8，通道序号，从0开始
 			% ZStart(1,1)uint8，起始Z层，从0开始
 			% ZSize(1,1)uint8，要读入的像素块Z层数
@@ -160,7 +241,7 @@ classdef OirReader<handle
 					Image5D.internal.Image5DAPI.Oir_ReadToPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity);
 				case {4,5,6,8}
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
-					Image5D.internal.Image5DAPI.Oir_ReadToPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint16(TStart),uint16(TSize),varargin{:});
+					Image5D.internal.Image5DAPI.Oir_ReadToPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint32(TStart),uint32(TSize),varargin{:});
 				otherwise
 					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
 			end
