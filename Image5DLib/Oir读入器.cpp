@@ -299,17 +299,20 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		const uint32_t* 长度指针 = (uint32_t*)(元数据块指针 + 1);
 		for (uint8_t C1 = 0; C1 < 通道组个数; ++C1)
 		{
-			if ((字符串 = (char*)(长度指针 + 1)) > 尾指针)
+			const char* const UID头 = (char*)(长度指针 + 1);
+			if (UID头 > 尾指针)
 				throw Image5D异常(LutUid长度出界);
-			if ((长度指针 = (uint32_t*)(字符串 + (长度 = *长度指针))) > 尾指针)
+			const char* const UID尾 = UID头 + *长度指针;
+			if ((长度指针 = (uint32_t*)UID尾) > 尾指针)
 				throw Image5D异常(LutUid出界);
+			if ((字符串 = (char*)(长度指针 + 1)) > 尾指针)
+				throw Image5D异常(LutXml长度出界);
+			if ((长度指针 = (uint32_t*)(字符串 + (长度 = *长度指针))) > 尾指针)
+				throw Image5D异常(LutXml出界);
+			//确保即使没有找到也能正确跳到下一个LutXml指针位置
 			for (uint8_t C2 = 0; C2 < SizeC; ++C2)
-				if (std::equal(字符串, 字符串 + 长度, 通道设备向量[C2].通道))
+				if (std::equal(UID头, UID尾, 通道设备向量[C2].通道))
 				{
-					if ((字符串 = (char*)(长度指针 + 1)) > 尾指针)
-						throw Image5D异常(LutXml长度出界);
-					if ((长度指针 = (uint32_t*)(字符串 + (长度 = *长度指针))) > 尾指针)
-						throw Image5D异常(LutXml出界);
 					if ((解析结果 = LUT文档.load_buffer(字符串, 长度).status) != xml_parse_status::status_ok)
 						throw Image5D异常(LutXml解析失败, 解析结果);
 					if (!(父节点 = LUT文档.child("lut:LUT")))
@@ -395,7 +398,7 @@ void Oir读入器::读入像素(uint16_t* 写出头TZ, uint32_t TStart, uint32_t
 		throw 越界异常;
 	const uint16_t* const* 读入头T = 块指针.data() + (TStart * 索引->SizeZ + ZStart) * 索引->每帧分块数 * 索引->SizeC + CStart;
 	const uint16_t* const* const 读入尾T = 读入头T + TSize * 索引->SizeZBC;
-	const uint8_t 读入ZBC = ZSize * 索引->SizeBC;
+	const uint16_t 读入ZBC = (uint16_t)ZSize * 索引->SizeBC;
 	const uint32_t 写出CYX = uint32_t(CSize) * 索引->SizeYX;
 	try
 	{
@@ -440,7 +443,7 @@ void Oir读入器::读入像素(uint16_t* 写出头TZ, uint32_t TStart, uint32_t
 		throw 越界异常;
 	const uint16_t* const* 读入头T = 块指针.data() + (TStart * 索引->SizeZ + ZStart) * 索引->每帧分块数 * 索引->SizeC;
 	const uint16_t* const* const 读入尾T = 读入头T + TSize * 索引->SizeZBC;
-	const uint8_t 读入ZBC = ZSize * 索引->SizeBC;
+	const uint16_t 读入ZBC = (uint16_t)ZSize * 索引->SizeBC;
 	try
 	{
 		while (读入头T < 读入尾T)

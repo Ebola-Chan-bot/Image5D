@@ -29,7 +29,7 @@ namespace Image5D
 		//依赖字段
 
 		uint8_t SizeBC;
-		uint8_t SizeZBC;
+		uint16_t SizeZBC;
 		uint32_t SizeT;
 		uint32_t SizeTZBC;
 		uint32_t SizeYX;

@@ -1,5 +1,5 @@
 <deployment-project plugin="plugin.toolbox" plugin-version="1.0">
-  <configuration build-checksum="2131551320" file="C:\Users\vhtmf\Documents\MATLAB\Image5D\Image5D工具箱.prj" location="C:\Users\vhtmf\Documents\MATLAB\Image5D" name="Image5D工具箱" target="target.toolbox" target-name="打包为工具箱">
+  <configuration build-checksum="2492683188" file="C:\Users\vhtmf\Documents\MATLAB\Image5D\Image5D工具箱.prj" location="C:\Users\vhtmf\Documents\MATLAB\Image5D" name="Image5D工具箱" target="target.toolbox" target-name="打包为工具箱">
     <param.appname>Image5D</param.appname>
     <param.authnamewatermark>埃博拉酱</param.authnamewatermark>
     <param.email>vhtmfu@outlook.com</param.email>
@@ -11,7 +11,7 @@
 
 依赖：pugixml，AVX2以上指令集，Windows系统（推荐Win11，低版本未测试）</param.description>
     <param.screenshot>${PROJECT_ROOT}\工具箱图像.png</param.screenshot>
-    <param.version>1.4.0</param.version>
+    <param.version>1.4.1</param.version>
     <param.output>${PROJECT_ROOT}\Image5D.mltbx</param.output>
     <param.products.name />
     <param.products.id />
@@ -113,7 +113,6 @@ x64
       <file>${PROJECT_ROOT}\doc</file>
       <file>${PROJECT_ROOT}\README.md</file>
       <file>${PROJECT_ROOT}\resources</file>
-      <file>${PROJECT_ROOT}\UpgradeLog.htm</file>
       <file>${PROJECT_ROOT}\工具箱图像.png</file>
     </fileset.rootfiles>
     <fileset.depfun.included />

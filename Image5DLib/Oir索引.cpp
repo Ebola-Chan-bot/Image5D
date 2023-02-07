@@ -17,7 +17,7 @@ void Oir索引::计算依赖字段(uint32_t 块总数)noexcept
 	if (SizeTZ < SizeZ)
 		SizeZ = SizeTZ;
 	SizeT = SizeTZ / SizeZ;
-	SizeZBC = SizeZ * SizeBC;
+	SizeZBC = (uint16_t)SizeZ * SizeBC;
 	SizeTZBC = SizeT * SizeZBC;
 	SizeYX = (uint32_t)SizeY * SizeX;
 	SizeCYX = SizeC * SizeYX;
