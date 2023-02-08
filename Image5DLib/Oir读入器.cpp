@@ -62,29 +62,21 @@ constexpr const char* 字符串尾(const char* 字符串)
 using namespace pugi;
 Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 {
-	const size_t 长度 = wcslen(头文件路径) + 1;
+	const uint16_t 长度 = wcslen(头文件路径) - 4;
 	//make_unique会对内存初始化，不用于分配POD数组
-	const std::unique_ptr<wchar_t[]> 字符缓冲 = std::make_unique_for_overwrite<wchar_t[]>(长度 * 5 + 6);
-	const LPWSTR 驱动器号 = 字符缓冲.get();
-	const LPWSTR 目录路径 = 驱动器号 + 长度;
-	const LPWSTR 基文件名 = 目录路径 + 长度;
-	const LPWSTR 文件扩展名 = 基文件名 + 长度;
-	const LPWSTR 当前路径 = 文件扩展名 + 长度;
-	_wsplitpath(头文件路径, 驱动器号, 目录路径, 基文件名, 文件扩展名);
-	_wmakepath(当前路径, 驱动器号, 目录路径, 基文件名, nullptr);
-	const LPWSTR 分隔符位置 = 当前路径 + wcslen(当前路径);
-	wcscpy(分隔符位置, 文件扩展名);
-	const LPWSTR 编号位置 = 分隔符位置 + 1;
-	文件列表.push_back(std::make_unique<文件控制块>(当前路径));
-	uint64_t 总映射空间 = 文件列表[0]->文件大小();
+	const std::unique_ptr<wchar_t[]> 字符缓冲 = std::make_unique_for_overwrite<wchar_t[]>(长度 + 7);
+	std::copy_n(头文件路径, 长度, 字符缓冲.get());
+	wchar_t* const 分隔符位置 = 字符缓冲.get() + 长度;
 	*分隔符位置 = L'_';
-	uint8_t 文件数目 = 1;
+	wchar_t* const 编号位置 = 分隔符位置 + 1;
+	文件列表.push_back(std::make_unique<文件控制块>(头文件路径));
+	uint64_t 总映射空间 = 文件列表.back()->粒度大小;
 	while (true)
 	{
-		swprintf(编号位置, L"%05u", 文件数目++);
+		swprintf(编号位置, L"%05u", 文件列表.size());
 		try
 		{
-			文件列表.push_back(std::make_unique<文件控制块>(当前路径));
+			文件列表.push_back(std::make_unique<文件控制块>(字符缓冲.get()));
 		}
 		catch (Image5D异常)
 		{
@@ -110,7 +102,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 	try
 	{
 		//直接throw;无法捕获
-		索引文件 = std::make_unique<文件映射>(当前路径, true);
+		索引文件 = std::make_unique<文件映射>(字符缓冲.get(), true);
 		索引文件->映射指针(nullptr);
 		索引 = (Oir索引*)索引文件->映射指针();
 		if (sizeof(索引) > 索引文件->文件大小() || !索引->验证(索引文件->文件大小()))
@@ -137,7 +129,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 	catch (...)
 	{
 		索引文件.reset();
-		索引文件 = std::make_unique<文件映射>(当前路径, 1ll);
+		索引文件 = std::make_unique<文件映射>(字符缓冲.get(), 1ll); //这里必须1ll，否则重载不明确
 		constexpr const char* 图像属性标头 = "<lsmimage";
 		constexpr const char* 图像标头尾 = 字符串尾(图像属性标头);
 		constexpr const char* 查找表标头 = "<lut";
