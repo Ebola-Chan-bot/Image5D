@@ -146,7 +146,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		if (字符串 > 尾指针)
 			throw Image5D异常(UID块不完整);
 		std::vector<uint32_t> 每块像素数向量;
-		const bool 有Z = 字符串[0] == 'z';
+		const bool 有Z = *字符串 == 'z';
 		const uint16_t* 像素指针;
 		do
 		{
