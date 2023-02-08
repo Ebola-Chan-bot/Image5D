@@ -53,12 +53,6 @@ struct 通道设备
 	const char* 设备;
 	uint8_t 顺序;
 };
-constexpr const char* 字符串尾(const char* 字符串)
-{
-	while (*字符串)
-		字符串++;
-	return 字符串;
-}
 using namespace pugi;
 Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 {
