@@ -130,11 +130,6 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 	{
 		索引文件.reset();
 		索引文件 = std::make_unique<文件映射>(字符缓冲.get(), 1ll); //这里必须1ll，否则重载不明确
-		constexpr const char* 图像属性标头 = "<lsmimage";
-		constexpr const char* 图像标头尾 = 字符串尾(图像属性标头);
-		constexpr const char* 查找表标头 = "<lut";
-		constexpr const char* 查找表标头尾 = 字符串尾(查找表标头);
-		constexpr uint8_t UUID长度 = 36;
 		文件列表类::const_iterator 当前文件 = 文件列表.cbegin();
 		const Oir文件头* 文件头 = (Oir文件头*)(*当前文件)->映射指针();
 		const char* const 全局文件头 = (char*)文件头;
