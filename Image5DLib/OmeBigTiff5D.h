@@ -20,15 +20,15 @@ namespace Image5D
 
 		//预计算参数：无关构造，读写中频繁使用
 
-		UINT64 源Size10;
-		UINT64 源Size210;
-		OmeBigTiff5D(文件指针& 文件, 像素类型 iPixelType, UINT16 iSizeX, UINT16 iSizeY, UINT32 iSizeI, std::string& 图像描述, UINT8 SizeC, UINT8 SizeZ, uint32_t SizeT, 维度顺序 DimensionOrder, 颜色数组& 通道颜色, const char* 文件名, xml_node Pixels, xml_document& 图像描述文档, const char* 唯一标识符, char* 像素头);
+		uint64_t 源Size10;
+		uint64_t 源Size210;
+		OmeBigTiff5D(文件指针& 文件, 像素类型 iPixelType, uint16_t iSizeX, uint16_t iSizeY, uint32_t iSizeI, std::string& 图像描述, uint8_t SizeC, uint8_t SizeZ, uint32_t SizeT, 维度顺序 DimensionOrder, 颜色数组& 通道颜色, const char* 文件名, xml_node Pixels, xml_document& 图像描述文档, const char* 唯一标识符, char* 像素头);
 	public:
 		void PixelType(像素类型)override;
-		void SizeX(UINT16)override;
-		void SizeY(UINT16)override;
-		void SizeC(UINT8)override;
-		void SizeZ(UINT8)override;
+		void SizeX(uint16_t)override;
+		void SizeY(uint16_t)override;
+		void SizeC(uint8_t)override;
+		void SizeZ(uint8_t)override;
 		void SizeT(uint32_t)override;
 		void 通道颜色(const 颜色*)override;
 		void DimensionOrder(维度顺序)override;
@@ -36,22 +36,22 @@ namespace Image5D
 		void 图像描述(std::string&&)override;
 		const char* 文件名()const { return i文件名; }
 		void 文件名(const char*);
-		void 修改参数(像素类型 PT, UINT16 SizeX, UINT16 SizeY, UINT8 SizeC, UINT8 SizeZ, uint32_t SizeT, const 颜色* 通道颜色, 维度顺序 DO, const char* 文件名)override;
+		void 修改参数(像素类型 PT, uint16_t SizeX, uint16_t SizeY, uint8_t SizeC, uint8_t SizeZ, uint32_t SizeT, const 颜色* 通道颜色, 维度顺序 DO, const char* 文件名)override;
 		void 读入像素(void* 缓冲区)const override;
-		void 读入像素I(void* 缓冲区, UINT32 IStart, UINT32 ISize)const override;
-		void 读入像素(void* 缓冲区, uint32_t TStart, uint32_t TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const override;
+		void 读入像素I(void* 缓冲区, uint32_t IStart, uint32_t ISize)const override;
+		void 读入像素(void* 缓冲区, uint32_t TStart, uint32_t TSize, uint8_t ZStart, uint8_t ZSize, uint8_t CStart, uint8_t CSize)const override;
 		void 读入像素(void* 缓冲区, uint32_t TStart, uint32_t TSize)const override { return 读入像素(缓冲区, TStart, TSize, 0, iSizeZ, 0, iSizeC); }
 		void 写出像素(const void* 缓冲区)const override;
-		void 写出像素I(const void* 缓冲区, UINT32 IStart, UINT32 ISize)const override;
-		void 写出像素(const void* 缓冲区, uint32_t TStart, uint32_t TSize, UINT8 ZStart, UINT8 ZSize, UINT8 CStart, UINT8 CSize)const override;
+		void 写出像素I(const void* 缓冲区, uint32_t IStart, uint32_t ISize)const override;
+		void 写出像素(const void* 缓冲区, uint32_t TStart, uint32_t TSize, uint8_t ZStart, uint8_t ZSize, uint8_t CStart, uint8_t CSize)const override;
 		void 写出像素(const void* 缓冲区, uint32_t TStart, uint32_t TSize)const override { return 写出像素(缓冲区, TStart, TSize, 0, iSizeZ, 0, iSizeC); }
 		void 像素指针(void*& 指针, size_t& 容量)const override;
-		void 像素指针I(UINT32 I, void*& 指针, size_t& 容量)const override;
+		void 像素指针I(uint32_t I, void*& 指针, size_t& 容量)const override;
 		void 像素指针(uint32_t T, void*& 指针, size_t& 容量)const override;
-		void 像素指针(uint32_t T, UINT8 Z, UINT8 C, void*& 指针, size_t& 容量)const override;
+		void 像素指针(uint32_t T, uint8_t Z, uint8_t C, void*& 指针, size_t& 容量)const override;
 		static OmeBigTiff5D* 只读打开(文件指针&& 文件);
 		static OmeBigTiff5D* 读写打开(文件指针&& 文件);
-		static OmeBigTiff5D* 覆盖创建(LPCWSTR 文件路径, 像素类型 PixelType, UINT16 SizeX, UINT16 SizeY, UINT8 SizeC, UINT8 SizeZ, uint32_t SizeT, const 颜色* 通道颜色, 维度顺序 DimensionOrder);
+		static OmeBigTiff5D* 覆盖创建(LPCWSTR 文件路径, 像素类型 PixelType, uint16_t SizeX, uint16_t SizeY, uint8_t SizeC, uint8_t SizeZ, uint32_t SizeT, const 颜色* 通道颜色, 维度顺序 DimensionOrder);
 		static OmeBigTiff5D* 覆盖创建(LPCWSTR 文件路径, const char* 图像描述);
 		virtual ~OmeBigTiff5D() {}
 	};
