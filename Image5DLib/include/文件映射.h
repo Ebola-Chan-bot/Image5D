@@ -5,7 +5,7 @@ namespace Image5D
 {
 	class  文件映射
 	{
-		HANDLE 文件句柄;
+		const HANDLE 文件句柄;
 		HANDLE 映射句柄;
 		LPVOID i映射指针 = nullptr;
 		LONGLONG i文件大小;

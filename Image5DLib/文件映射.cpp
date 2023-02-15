@@ -20,6 +20,7 @@ using namespace Image5D;
 	if (文件句柄 == INVALID_HANDLE_VALUE)
 		throw Image5D异常(文件创建失败, GetLastError());
 	LARGE_INTEGER 文件分位{ .QuadPart = 文件大小 };
+	//先调整大小再映射并不能阻止未写入区域被重写入盘
 	if (!(映射句柄 = CreateFileMapping(文件句柄, NULL, PAGE_READWRITE, 文件分位.HighPart, 文件分位.LowPart, NULL)))
 	{
 		Image5D异常 异常(内存映射失败, GetLastError());
