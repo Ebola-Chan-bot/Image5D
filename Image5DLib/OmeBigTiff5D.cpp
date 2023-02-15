@@ -395,7 +395,7 @@ void OmeBigTiff5D::读入像素I(void* 缓冲区, uint32_t IStart, uint32_t ISiz
 		throw 越界异常;
 	安全拷贝(像素头 + uint64_t(IStart) * SizePXY, uint64_t(ISize) * SizePXY, 缓冲区);
 }
-void 读写3D(维度顺序 iDimensionOrder, uint16_t TStart, uint32_t TSize, uint32_t iSizeT, uint8_t ZStart, uint8_t ZSize, uint8_t iSizeZ, uint8_t CStart, uint8_t CSize, uint8_t iSizeC, uint32_t SizePXY, uint64_t 源Size10, uint64_t 源Size210, char* 头3, char* 缓冲区, void(*拷贝)(void*, void*, size_t))
+void 读写3D(维度顺序 iDimensionOrder, uint32_t TStart, uint32_t TSize, uint32_t iSizeT, uint8_t ZStart, uint8_t ZSize, uint8_t iSizeZ, uint8_t CStart, uint8_t CSize, uint8_t iSizeC, uint32_t SizePXY, uint64_t 源Size10, uint64_t 源Size210, char* 头3, char* 缓冲区, void(*拷贝)(void*, void*, size_t))
 {
 	if (uint32_t(TStart) + TSize > iSizeT || uint16_t(ZStart) + ZSize > iSizeZ || uint8_t(CStart) + CSize > iSizeC)
 		throw 越界异常;
