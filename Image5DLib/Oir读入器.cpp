@@ -324,15 +324,28 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 			基块索引 += 2;
 		}
 		const 文件列表类::const_iterator 文件结束 = 文件列表.cend();
+#ifdef _DEBUG
+		uint8_t 文件序号 = 0;
+#endif
 		while (++当前文件 < 文件结束)
 		{
+#ifdef _DEBUG
+			if (++文件序号 == 80)
+				文件序号 = 文件序号;
+#endif
 			文件头 = (Oir文件头*)(*当前文件)->映射指针();
 			尾指针 = (char*)文件头 + (*当前文件)->文件大小();
 			if (文件头 + 1 > 尾指针)
-				continue;
-			基块索引 = (uint64_t*)((char*)文件头 + 文件头->索引位置 + 4); 
-			if (基块索引 + 每层基块数 > 尾指针)
-				continue;
+				[[unlikely]] continue;
+			基块索引 = (uint64_t*)((char*)文件头 + 文件头->索引位置 + 4);
+			do 
+			{
+				if (基块索引 + 1 > 尾指针)
+					[[unlikely]] goto 绝对跳出;
+			}
+			while (((Oir基块*)((char*)文件头 + *(基块索引++)))->类型 != Oir基块类型::帧属性);//跳过REF块
+			if ((基块索引--) + 每层基块数 > 尾指针)
+				[[unlikely]] continue;
 			for (uint8_t a = 0; a < 每层像素块数; ++a)
 				块指针.push_back((uint16_t*)((Oir基块*)((char*)文件头 + *(基块索引 += 2)) + 1));
 			基块索引 += 3;
@@ -342,6 +355,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 					块指针.push_back((uint16_t*)((Oir基块*)((char*)文件头 + *(基块索引 += 2)) + 1));
 				基块索引 += 2;
 			}
+		绝对跳出:;
 		}
 		新索引.每帧分块数 = 每层像素块数 / SizeC;
 		const uint32_t 块总数 = 块指针.size();
