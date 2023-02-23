@@ -1,6 +1,9 @@
 #include "IFD5D.h"
 using namespace Image5D;
+using TagID = 字节序_5D::TagID;
+using TagType = 字节序_5D::TagType;
 IFD5D::IFD5D() :
+	IFD(13),
 	图像描述(Tag{ .Identifier = TagID::ImageDescription, .DataType = TagType::ASCII }),
 	像素偏移(Tag{ .Identifier = TagID::StripOffsets, .DataType = TagType::LONG8, .NoValues = 1 }),
 	图像宽度(Tag{ .Identifier = TagID::ImageWidth, .DataType = TagType::SHORT, .NoValues = 1 }),
@@ -9,16 +12,13 @@ IFD5D::IFD5D() :
 	每条行数(Tag{ .Identifier = TagID::RowsPerStrip, .DataType = TagType::SHORT, .NoValues = 1 }),
 	像素字节数(Tag{ .Identifier = TagID::StripByteCounts, .DataType = TagType::LONG, .NoValues = 1 }),
 	样本格式(Tag{ .Identifier = TagID::SampleFormat, .DataType = TagType::SHORT, .NoValues = 1 }),
-	压缩(Tag{ .Identifier = TagID::Compression, .DataType = TagType::SHORT, .NoValues = 1, .Compression枚举 = Compression::NoCompression }),
-	光度解释(Tag{ .Identifier = TagID::PhotometricInterpretation, .DataType = TagType::SHORT, .NoValues = 1, .PhotometricInterpretation枚举 = PhotometricInterpretation::BlackIsZero }),
-	X分辨率(Tag{ .Identifier = TagID::XResolution, .DataType = TagType::RATIONAL, .NoValues = 1, .RATIONAL值 = Rational{.Numerator = 1,.Denominator = 1 } }),
-	Y分辨率(Tag{ .Identifier = TagID::YResolution, .DataType = TagType::RATIONAL, .NoValues = 1, .RATIONAL值 = Rational{.Numerator = 1,.Denominator = 1 } }),
-	分辨率单位(Tag{ .Identifier = TagID::ResolutionUnit, .DataType = TagType::SHORT, .NoValues = 1, .SHORT值 = uint16_t(ResolutionUnit::NoUnit) }),
-	NextIFD()
-{
-	标签数 = 13;
-}
-IFD5D IFD5D::创建(uint64_t ImageDescription长度, 文件偏移<char>ImageDescription偏移, 文件偏移<char> StripOffsets, uint8_t SizeP, uint16_t SizeX, uint16_t SizeY, SampleFormat SF)
+	压缩(Tag{ .Identifier = TagID::Compression, .DataType = TagType::SHORT, .NoValues = 1, .Compression枚举 = 字节序_5D::Compression::NoCompression }),
+	光度解释(Tag{ .Identifier = TagID::PhotometricInterpretation, .DataType = TagType::SHORT, .NoValues = 1, .PhotometricInterpretation枚举 = 字节序_5D::PhotometricInterpretation::BlackIsZero }),
+	X分辨率(Tag{ .Identifier = TagID::XResolution, .DataType = TagType::RATIONAL, .NoValues = 1, .RATIONAL值 = 字节序_5D::Rational{.Numerator = 1,.Denominator = 1 } }),
+	Y分辨率(Tag{ .Identifier = TagID::YResolution, .DataType = TagType::RATIONAL, .NoValues = 1, .RATIONAL值 = 字节序_5D::Rational{.Numerator = 1,.Denominator = 1 } }),
+	分辨率单位(Tag{ .Identifier = TagID::ResolutionUnit, .DataType = TagType::SHORT, .NoValues = 1, .ResolutionUnit枚举 = 字节序_5D::ResolutionUnit::NoUnit })
+{}
+IFD5D IFD5D::创建(uint64_t ImageDescription长度, 文件偏移<R_s<char>>ImageDescription偏移, 文件偏移<R_s<char>> StripOffsets, uint8_t SizeP, uint16_t SizeX, uint16_t SizeY, 字节序_5D::SampleFormat SF)
 {
 	static IFD5D 模板 = IFD5D();
 	IFD5D 新对象 = 模板;

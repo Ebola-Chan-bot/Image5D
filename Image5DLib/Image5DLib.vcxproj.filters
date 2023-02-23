@@ -66,9 +66,6 @@
     <ClInclude Include="Tiff属性读入器.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="Tiff文件头.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="安全拷贝.h">
       <Filter>头文件</Filter>
     </ClInclude>
