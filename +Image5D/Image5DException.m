@@ -115,6 +115,17 @@ classdef Image5DException<uint8&MATLAB.IEnumerableException
 		Debug_breakpoint(108)
 		Index_block_offset_failed_to_write_out(109)
 		Memory_access_violation(110)
+		XML_block_not_found(111)
+		OIR_file_header_is_incomplete(112)
+		OIR_block_index_error(113)
+		OIR_metadata_block_is_incomplete(114)
+		OIR_image_attribute_out_of_bounds(115)
+		LutUid_length_out_of_bounds(116)
+		LutUid_out_of_bounds(117)
+		LutXml_length_out_of_bounds(118)
+		LutXml_out_of_bounds(119)
+		LutXml_parsing_failed(120)
+		Unexpected_tag_value_type(121)
 
 		%MATLAB抛出的异常
 

@@ -34,7 +34,6 @@
     <ClInclude Include="OmeXml基本解析.h" />
     <ClInclude Include="Ome属性读入器.h" />
     <ClInclude Include="Tiff属性读入器.h" />
-    <ClInclude Include="Tiff文件头.h" />
     <ClInclude Include="Tiff标准.h" />
     <ClInclude Include="Tiff读入器.h" />
     <ClInclude Include="安全拷贝.h" />

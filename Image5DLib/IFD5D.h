@@ -3,11 +3,16 @@
 #pragma pack(push,4)
 namespace Image5D
 {
-	class IFD5D :public IFD<大>
+	using 字节序 = 字节序_s<从低到高>;
+	using 版本 = 字节序::Tiff版本_s<字节序::大>;
+	using Tag = 版本::Tag;
+	template<typename T>
+	using 文件偏移 = 版本::文件偏移<T>;
+	template<typename T>
+	using R_s = 字节序::R_s<T>;
+	class IFD5D :public 版本::IFD
 	{
 		IFD5D();
-		template <typename T>
-		using 文件偏移 = 文件偏移<大, T>;
 	public:
 		Tag 图像描述;
 		Tag 像素偏移;
@@ -23,7 +28,7 @@ namespace Image5D
 		Tag Y分辨率;
 		Tag 分辨率单位;
 		文件偏移<IFD5D> NextIFD;
-		static IFD5D 创建(uint64_t ImageDescription长度, 文件偏移<char>ImageDescription偏移, 文件偏移<char> StripOffsets, uint8_t SizeP, uint16_t SizeX, uint16_t SizeY, SampleFormat SampleFormat);
+		static IFD5D 创建(uint64_t ImageDescription长度, 文件偏移<R_s<char>>ImageDescription偏移, 文件偏移<R_s<char>> StripOffsets, uint8_t SizeP, uint16_t SizeX, uint16_t SizeY, 字节序::SampleFormat SampleFormat);
 	};
 #pragma pack(pop)
 }
