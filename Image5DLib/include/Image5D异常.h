@@ -127,7 +127,8 @@ namespace Image5D
 		LutUid出界,
 		LutXml长度出界,
 		LutXml出界,
-		LutXml解析失败
+		LutXml解析失败,
+		意外的标签值类型,
 	};
 	enum 内部异常类型
 	{

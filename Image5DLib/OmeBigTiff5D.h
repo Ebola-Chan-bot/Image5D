@@ -22,7 +22,7 @@ namespace Image5D
 
 		uint64_t 源Size10;
 		uint64_t 源Size210;
-		OmeBigTiff5D(文件指针& 文件, 像素类型 iPixelType, uint16_t iSizeX, uint16_t iSizeY, uint32_t iSizeI, std::string& 图像描述, uint8_t SizeC, uint8_t SizeZ, uint32_t SizeT, 维度顺序 DimensionOrder, 颜色数组& 通道颜色, const char* 文件名, xml_node Pixels, xml_document& 图像描述文档, const char* 唯一标识符, char* 像素头);
+		OmeBigTiff5D(文件指针&& 文件, 像素类型 iPixelType, uint16_t iSizeX, uint16_t iSizeY, uint32_t iSizeI, std::string&& 图像描述, uint8_t SizeC, uint8_t SizeZ, uint32_t SizeT, 维度顺序 DimensionOrder, 颜色数组&& 通道颜色, const char* 文件名, xml_node Pixels, xml_document&& 图像描述文档, const char* 唯一标识符, char* 像素头);
 	public:
 		void PixelType(像素类型)override;
 		void SizeX(uint16_t)override;

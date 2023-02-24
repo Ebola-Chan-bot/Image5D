@@ -81,6 +81,7 @@ namespace Image5D
 		static constexpr SampleFormat 像素类型采样格式[] = { SAMPLEFORMAT_UINT,SAMPLEFORMAT_UINT,SAMPLEFORMAT_UINT,SAMPLEFORMAT_INT,SAMPLEFORMAT_INT,SAMPLEFORMAT_INT,SAMPLEFORMAT_IEEEFP,SAMPLEFORMAT_IEEEFP };
 		enum class TagID :uint16_t
 		{
+			NewSubfileType = R_v<uint16_t>(254),
 			ImageWidth = R_v<uint16_t>(256),
 			ImageLength = R_v<uint16_t>(257),
 			BitsPerSample = R_v<uint16_t>(258),
@@ -140,6 +141,18 @@ namespace Image5D
 			R_s<int32_t>Denominator;
 		};
 		template<Tiff版本_e V>
+		union 扩展TagValue {};
+		template<>
+		union 扩展TagValue<大>
+		{
+			R_s<double>DOUBLE值;
+			R_s<uint64_t>LONG8值;
+			R_s<int64_t>SLONG8值;
+			R_s<uint64_t>IFD8值;
+			Rational RATIONAL值;
+			SRational SRATIONAL值;
+		};
+		template<Tiff版本_e V>
 		struct Tiff版本_s
 		{
 			using DWord = 字<V>::DWord;
@@ -160,8 +173,6 @@ namespace Image5D
 			};
 			struct Tag
 			{
-				template <typename T>
-				using 文件偏移 = 文件偏移<T>;
 				TagID Identifier;
 				TagType DataType;
 				R_s<DWord>NoValues;
@@ -172,16 +183,10 @@ namespace Image5D
 					R_s<uint16_t>SHORT值;
 					R_s<uint32_t>LONG值;
 					R_s<int8_t>SBYTE值;
-					R_s<DWord>UNDEFINED值;
 					R_s<int16_t>SSHORT值;
 					R_s<int32_t>SLONG值;
 					R_s<float>FLOAT值;
-					R_s<double>DOUBLE值;
-					R_s<uint64_t>LONG8值;
-					R_s<int64_t>SLONG8值;
-					R_s<uint64_t>IFD8值;
-					Rational RATIONAL值;
-					SRational SRATIONAL值;
+					R_s<DWord>UNDEFINED值;
 					SampleFormat SampleFormat枚举;
 					Compression Compression枚举;
 					PhotometricInterpretation PhotometricInterpretation枚举;
@@ -192,7 +197,6 @@ namespace Image5D
 					文件偏移<R_s<uint32_t>> LONG偏移;
 					文件偏移<Rational> RATIONAL偏移;
 					文件偏移<R_s<int8_t>> SBYTE偏移;
-					文件偏移<R_s<DWord>> UNDEFINED偏移;
 					文件偏移<R_s<int16_t>> SSHORT偏移;
 					文件偏移<R_s<int32_t>> SLONG偏移;
 					文件偏移<SRational> SRATIONAL偏移;
@@ -201,6 +205,8 @@ namespace Image5D
 					文件偏移<R_s<uint64_t>> LONG8偏移;
 					文件偏移<R_s<int64_t>> SLONG8偏移;
 					文件偏移<R_s<uint64_t>> IFD8偏移;
+					文件偏移<DWord>UNDEFINED偏移;
+					扩展TagValue<V>扩展值;
 				};
 			};
 			struct IFD;
