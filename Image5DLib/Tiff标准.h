@@ -89,11 +89,14 @@ namespace Image5D
 			PhotometricInterpretation = R_v<uint16_t>(262),
 			ImageDescription = R_v<uint16_t>(270),
 			StripOffsets = R_v<uint16_t>(273),
+			SamplesPerPixel=R_v<uint16_t>(277),
 			RowsPerStrip = R_v<uint16_t>(278),
 			StripByteCounts = R_v<uint16_t>(279),
 			XResolution = R_v<uint16_t>(282),
 			YResolution = R_v<uint16_t>(283),
+			PlanarConfiguration=R_v<uint16_t>(284),
 			ResolutionUnit = R_v<uint16_t>(296),
+			Software=R_v<uint16_t>(305),
 			SampleFormat = R_v<uint16_t>(339)
 		};
 		enum class TagType :uint16_t
@@ -129,6 +132,11 @@ namespace Image5D
 			NoUnit = R_v<uint16_t>(1),
 			Inch = R_v<uint16_t>(2),
 			Centimeter = R_v<uint16_t>(3),
+		};
+		enum PlanarConfiguration :uint16_t
+		{
+			Chunky = R_v<uint16_t>(1),
+			Planar = R_v<uint16_t>(2),
 		};
 		struct Rational
 		{
@@ -191,6 +199,7 @@ namespace Image5D
 					Compression Compression枚举;
 					PhotometricInterpretation PhotometricInterpretation枚举;
 					ResolutionUnit ResolutionUnit枚举;
+					PlanarConfiguration PlanarConfiguration枚举;
 					文件偏移<R_s<uint8_t>> BYTE偏移;
 					文件偏移<R_s<char>> ASCII偏移;
 					文件偏移<R_s<uint16_t>> SHORT偏移;
