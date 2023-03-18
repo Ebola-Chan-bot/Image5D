@@ -1,4 +1,4 @@
-classdef Image5DException<uint8&MATLAB.IEnumerableException
+classdef Image5DException<uint8&MATLAB.Lang.IEnumerableException
 	%适用于Image5D包的异常枚举，指示文件格式无法识别或输入参数有误等异常情况
 	enumeration
 		
