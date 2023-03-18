@@ -272,7 +272,6 @@ end
 ```
 ## 已知问题
 本库并不支持标准OME-TIFF规范的全部特性，包括但不限于：
-- 仅支持Windows标准Little-endian字节序，不支持ImageJ输出的Big-endian字节序
 - 不支持对非OB5-TIFF格式的写出，只能读入
 - 不支持分多条带的TIFF像素块
 - 不支持分多文件的OME-TIFF图像
