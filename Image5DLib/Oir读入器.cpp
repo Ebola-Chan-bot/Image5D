@@ -8,7 +8,7 @@ enum class Oir基块类型 :uint32_t
 {
 	元数据,
 	帧属性,
-	未知,
+	BMP,
 	UID,
 	像素,
 	空,
@@ -317,6 +317,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		const uint8_t 每层像素块数 = 每块像素数向量.size();
 		const uint8_t 每层基块数 = (每层像素块数 + 1) * 2;
 		基块索引 += 1;
+		const uint8_t 每周期像素块数 = 每层像素块数 * 新索引.SizeZ;
 		while (基块索引 + 每层基块数 < 尾指针)
 		{
 			for (uint8_t a = 0; a < 每层像素块数; ++a)
@@ -346,6 +347,9 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 			while (((Oir基块*)((char*)文件头 + *(基块索引++)))->类型 != Oir基块类型::帧属性);//跳过REF块
 			if ((基块索引--) + 每层基块数 > 尾指针)
 				[[unlikely]] continue;
+			//对于拼接的OIR序列，需要检测中间突然遇到的头文件，删除上个文件尾可能存在的多余的不完整周期。头文件的特征是，倒数第二块是BMP。
+			if (((Oir基块*)((char*)文件头 + *((uint64_t*)尾指针 - 2)))->类型 == Oir基块类型::BMP) [[unlikely]]
+				块指针.resize(块指针.size() / 每周期像素块数 * 每周期像素块数);
 			for (uint8_t a = 0; a < 每层像素块数; ++a)
 				块指针.push_back((uint16_t*)((Oir基块*)((char*)文件头 + *(基块索引 += 2)) + 1));
 			基块索引 += 3;
