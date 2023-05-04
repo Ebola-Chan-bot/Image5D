@@ -11,7 +11,7 @@
 
 依赖：pugixml，AVX2以上指令集，Windows系统（推荐Win11，低版本未测试）</param.description>
     <param.screenshot>${PROJECT_ROOT}\工具箱图像.png</param.screenshot>
-    <param.version>1.5.2</param.version>
+    <param.version>1.5.3</param.version>
     <param.output>${PROJECT_ROOT}\Image5D.mltbx</param.output>
     <param.products.name />
     <param.products.id />

@@ -150,6 +150,13 @@ classdef OmeTiffRWer<handle
 			% Image5D.OmeTiffRWer.QuickWrite(___,ChannelColors)
 			% %与上述语法组合使用，额外指定通道颜色
 			% ```
+			%# 示例
+			% ```
+			% import Image5D.*
+			% Reader=OirReader('O.oir');
+			% [~,Colors]=Reader.DeviceColors;
+			% OmeTiffRWer.QuickWrite('T.tif',Reader.ReadPixels,DimensionOrder.XYCZT,ChannelColor.FromOirColors(Colors));
+			% ```
 			%# 输入参数
 			% TiffPath(1,1)string，要写出的文件路径
 			% Image(:,:,:,:,:)，要写出的数组，最多5维
