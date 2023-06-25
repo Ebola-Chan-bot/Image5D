@@ -60,7 +60,7 @@ classdef OirReader<handle
 				Destinations.PushBack(UnextendedPath+compose("_%05u",NumFiles:FilesEnd-1));
 				NumFiles=FilesEnd;
 			end
-			MATLAB.General.MoveFile(Sources.Data,Destinations.Data);
+			MATLAB.IO.MoveFile(Sources.Data,Destinations.Data);
 		end
 		function SplitByRename(HeaderPath,SplitTable)
 			%如果使用ConcatenateByRename发生了错误的合并并且已经无法撤销，可以尝试用此方法重新拆分开来
