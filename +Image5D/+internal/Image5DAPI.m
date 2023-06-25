@@ -60,7 +60,7 @@ classdef Image5DAPI<uint8
 							InnerException.InnerException=II;
 						end
 					case InnerExceptionType.Win32Exception
-						InnerException=MATLAB.WindowsErrorCode(Status.ErrorCode);
+						InnerException=MATLAB.Lang.WindowsErrorCode(Status.ErrorCode);
 					case InnerExceptionType.XmlException
 						InnerException=Image5D.XmlErrorCode(Status.ErrorCode);
 				end

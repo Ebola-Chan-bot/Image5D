@@ -96,7 +96,7 @@ classdef OirReader<handle
 				PathToTest=UnextendedPath+sprintf("_%05u",StartIndex+NumFollowers);
 			end
 			Destinations.PushBack(FollowerUP+compose("_%05u",1:NumFollowers-1));
-			MATLAB.General.MoveFile(Sources.Data,Destinations.Data);
+			MATLAB.IO.MoveFile(Sources.Data,Destinations.Data);
 		end
 	end
     methods
