@@ -15,7 +15,7 @@ namespace Image5D
 			throw 内存异常;
 		}
 	}
-	void 安全拷贝(const void* 源, size_t 数目, void* 目标)
+	inline void 安全拷贝(const void* 源, size_t 数目, void* 目标)
 	{
 		try
 		{

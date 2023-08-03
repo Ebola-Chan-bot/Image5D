@@ -21,4 +21,5 @@ void Oir索引::计算依赖字段(uint32_t 块总数)noexcept
 	SizeTZBC = SizeT * SizeZBC;
 	SizeYX = (uint32_t)SizeY * SizeX;
 	SizeCYX = SizeC * SizeYX;
+	SizeZC = SizeZ * SizeC;
 }

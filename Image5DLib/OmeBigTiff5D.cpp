@@ -1,10 +1,11 @@
-#include "安全拷贝.h"
 #include "OmeBigTiff5D.h"
 #include "IFD5D.h"
 #include "OmeXml基本解析.h"
 #include "Image5D资源.h"
+#include "安全拷贝.h"
 #include <rpc.h>
 #include <vector>
+#pragma comment(lib,"Rpcrt4.lib")
 using namespace Image5D;
 constexpr char 通道ID模板[] = "Channel:0:%u";
 #pragma pack(push,1)

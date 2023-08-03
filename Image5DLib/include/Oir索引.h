@@ -1,5 +1,4 @@
 #pragma once
-#include <stdint.h>
 #include "哈希计算器.h"
 namespace Image5D
 {
@@ -14,21 +13,27 @@ namespace Image5D
 	};
 	class Oir索引
 	{
+
 		//依赖字段
 
 		uint8_t SHA256[哈希长度];
 	public:
+
 		//独立字段
 
 		uint16_t SizeX;
 		uint16_t SizeY;
-		uint8_t SizeC;
 		uint8_t SizeZ;
+		uint8_t SizeC;
 		uint8_t 每帧分块数;
 		float 系列间隔;
+		float Z步长;
+		uint64_t LsmimageXml偏移;
+
 		//依赖字段
 
 		uint8_t SizeBC;
+		uint8_t SizeZC;
 		uint16_t SizeZBC;
 		uint32_t SizeT;
 		uint32_t SizeTZBC;
@@ -39,14 +44,25 @@ namespace Image5D
 			noexcept
 #endif
 			;
+
+		/*
+		变长成员：
+		激光透过率：float*SizeZ
+		通道颜色：设备颜色*SizeC
+		放大电压：uint16_t*SizeZ*SizeC
+		每块像素数：uint32_t*每帧分块数
+		块偏移：uint64_t*SizeTZBC
+		*/
 		//需要正确设置每帧分块数和SizeC
-		uint32_t 计算文件大小()const noexcept { return (char*)((设备颜色*)((uint32_t*)(this + 1) + 每帧分块数) + SizeC) - (char*)this; }
+		uint32_t 计算文件大小()const noexcept { return sizeof(Oir索引) + sizeof(float) * SizeZ + sizeof(设备颜色) * SizeC + sizeof(uint16_t) * SizeZ * SizeC + sizeof(uint32_t) * 每帧分块数 + sizeof(uint64_t) * SizeTZBC; }
 		//需要正确设置每帧分块数和SizeC
-		void Get变长成员(uint32_t*& 每块像素数, 设备颜色*& 通道颜色, uint64_t*& 块偏移)const noexcept
+		void Get变长成员(float*& 激光透过率, 设备颜色*& 通道颜色, uint16_t*& 放大电压, uint32_t*& 每块像素数, uint64_t*& 块偏移)const noexcept
 		{
-			每块像素数 = (uint32_t*)(this + 1);
-			通道颜色 = (设备颜色*)(每块像素数 + 每帧分块数);
-			块偏移 = (uint64_t*)(通道颜色 + SizeC);
+			激光透过率 = (float*)(this + 1);
+			通道颜色 = (设备颜色*)(激光透过率 + SizeZ);
+			放大电压 = (uint16_t*)(通道颜色 + SizeC);
+			每块像素数 = (uint32_t*)(放大电压 + SizeZ * SizeC);
+			块偏移 = (uint64_t*)(每块像素数 + 每帧分块数);
 		}
 		//需要正确设置所有独立字段
 		void 计算依赖字段(uint32_t 块总数)noexcept;

@@ -1,6 +1,5 @@
 #include "OmeTiff读入器.h"
 #include "OmeXml基本解析.h"
-#include <vector>
 using namespace Image5D;
 void 预计算参数(维度顺序 iDimensionOrder, uint8_t iSizeC, uint8_t iSizeZ, uint32_t iSizeT, uint32_t& 源Size1, uint32_t& 源Size21)noexcept
 {

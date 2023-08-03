@@ -1,6 +1,7 @@
-#include "Image5DAPI.h"
-#include "IOmeTiff读写器.h"
+#include <IOmeTiff读写器.h>
+#include<Mex工具.h>
 using namespace Image5D;
+using namespace Mex工具;
 constexpr Image5D异常 指针越界(输入指针访问越界);
 constexpr Image5D异常 元素太少(输入数组元素太少);
 API声明(Tiff_OpenRead)

@@ -1,7 +1,6 @@
 #pragma once
 #include "Tiff属性读入器.h"
 #include "Ome属性读入器.h"
-#include <pugixml.hpp>
 using namespace pugi;
 namespace Image5D
 {

@@ -1,6 +1,7 @@
-#include "Image5DAPI.h"
-#include"Oir读入器.h"
+#include<Oir读入器.h>
+#include<Mex工具.h>
 using namespace Image5D;
+using namespace Mex工具;
 API声明(Oir_CreateReader)
 {
 	const String 文件路径 = 万能转码<String>(std::move(inputs[1]));

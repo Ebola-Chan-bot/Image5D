@@ -1,7 +1,7 @@
 #include "哈希计算器.h"
 #include "Image5D异常.h"
-#include<Windows.h>
 #include <bcrypt.h>
+#pragma comment(lib,"Bcrypt.lib")
 BCRYPT_ALG_HANDLE 算法提供者句柄;
 void Image5D::哈希初始化()noexcept
 {

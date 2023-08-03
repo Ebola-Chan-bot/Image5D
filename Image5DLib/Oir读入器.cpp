@@ -1,7 +1,4 @@
 #include "Oir读入器.h"
-#include <Shlwapi.h>
-#include <stdio.h>
-#include <numeric>
 #include <algorithm>
 using namespace Image5D;
 enum class Oir基块类型 :uint32_t
@@ -102,7 +99,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		if (sizeof(索引) > 索引文件->文件大小() || !索引->验证(索引文件->文件大小()))
 			throw 0;
 		uint64_t* 块偏移;
-		索引->Get变长成员(每块像素数, i通道颜色, 块偏移);
+		索引->Get变长成员(i激光透过率, i通道颜色, i放大电压, 每块像素数, 块偏移);
 		const uint32_t 块总数 = uint32_t(索引->SizeZBC) * 索引->SizeT;
 		if (!块总数)
 			throw 0;
@@ -172,26 +169,35 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 			throw Image5D异常(Oir图像属性出界);
 		xml_parse_status 解析结果;
 		xml_document 图像属性文档;
+		Oir索引 新索引;
+		新索引.LsmimageXml偏移 = 字符串 - 全局文件头;
 		if ((解析结果 = 图像属性文档.load_buffer(字符串, 长度).status) != xml_parse_status::status_ok)
 			throw Image5D异常(图像属性解析失败, 解析结果);
 		xml_node 节点 = 图像属性文档.child("lsmimage:imageProperties");
 		if (!节点)
 			throw Image5D异常(图像属性未定义);
-		xml_node 父节点 = 节点.child("commonimage:acquisition");
-		if (!父节点)
+		const xml_node 采集节点 = 节点.child("commonimage:acquisition");
+		if (!采集节点)
 			throw Image5D异常(图像采集未定义);
-		if (!(节点 = 父节点.child("commonimage:imagingParam")))
+		const xml_node 成像参数节点 = 采集节点.child("commonimage:imagingParam");
+		if (!成像参数节点)
 			throw Image5D异常(成像参数未定义);
 		xml_attribute 节点属性;
 		xml_text 节点文本;
-		Oir索引 新索引;
+		float Z起点 = 0;
 		if (有Z)
 		{
 			新索引.SizeZ = 0;
-			for (xml_node 节点 : 节点.children("commonparam:axis"))
-				if ((节点属性 = 节点.attribute("paramEnable")) && 节点属性.as_bool())
+			for (const xml_node 轴节点 : 成像参数节点.children("commonparam:axis"))
+				if ((节点属性 = 轴节点.attribute("paramEnable")) && 节点属性.as_bool())
 				{
-					if (!((节点 = 节点.child("commonparam:maxSize")) && (节点文本 = 节点.text())))
+					if (!((节点 = 轴节点.child("commonparam:startPosition")) && (节点文本 = 节点.text())))
+						throw Image5D异常(Z层起点未定义);
+					Z起点 = 节点文本.as_float();
+					if (!((节点 = 轴节点.child("commonparam:step")) && (节点文本 = 节点.text())))
+						throw Image5D异常(Z层步长未定义);
+					新索引.Z步长 = 节点文本.as_float();
+					if (!((节点 = 轴节点.child("commonparam:maxSize")) && (节点文本 = 节点.text())))
 						throw Image5D异常(Z层尺寸未定义);
 					新索引.SizeZ = 节点文本.as_uint();
 					break;
@@ -200,8 +206,11 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 				throw Image5D异常(Z层轴未定义);
 		}
 		else
+		{
 			新索引.SizeZ = 1;
-		if (!(节点 = 父节点.child("commonimage:phase")))
+			新索引.Z步长 = 0;
+		}
+		if (!(节点 = 采集节点.child("commonimage:phase")))
 			throw Image5D异常(图像相位未定义);
 		std::vector<通道设备> 通道设备向量;
 		uint8_t 通道组个数 = 0;
@@ -235,13 +244,15 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		for (uint8_t C = 0; C < SizeC; ++C)
 			if (strcpy_s(通道颜色[C].设备名称, 通道设备向量[C].设备))
 				throw Image5D异常(设备名称太长);
-		if (!(节点 = 父节点.child("commonimage:configuration")))
+		if (!(节点 = 采集节点.child("commonimage:configuration")))
 			throw Image5D异常(图像配置未定义);
 		if (!((节点 = 节点.child("lsmimage:scannerType")) && (节点文本 = 节点.text())))
 			throw Image5D异常(扫描类型未定义);
 		字符串 = 节点文本.as_string();
-		新索引.SizeX = 0, 新索引.SizeY = 0, 新索引.系列间隔 = 0;
-		for (xml_node 节点 : 父节点.children("lsmimage:scannerSettings"))
+		新索引.SizeX = 0;
+		新索引.SizeY = 0;
+		新索引.系列间隔 = 0;
+		for (xml_node 节点 : 采集节点.children("lsmimage:scannerSettings"))
 		{
 			if (!(节点属性 = 节点.attribute("type")))
 				throw Image5D异常(扫描类型未定义);
@@ -296,19 +307,20 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 				{
 					if ((解析结果 = LUT文档.load_buffer(字符串, 长度).status) != xml_parse_status::status_ok)
 						throw Image5D异常(LutXml解析失败, 解析结果);
-					if (!(父节点 = LUT文档.child("lut:LUT")))
+					const xml_node LUT节点 = LUT文档.child("lut:LUT");
+					if (!LUT节点)
 						throw Image5D异常(查找表未定义);
 					设备颜色& 通道 = 通道颜色[C2];
-					if (!((节点 = 父节点.child("lut:red")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
+					if (!((节点 = LUT节点.child("lut:red")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
 						throw Image5D异常(红色分量未定义);
 					通道.红 = 节点文本.as_float();
-					if (!((节点 = 父节点.child("lut:green")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
+					if (!((节点 = LUT节点.child("lut:green")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
 						throw Image5D异常(绿色分量未定义);
 					通道.绿 = 节点文本.as_float();
-					if (!((节点 = 父节点.child("lut:blue")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
+					if (!((节点 = LUT节点.child("lut:blue")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
 						throw Image5D异常(蓝色分量未定义);
 					通道.蓝 = 节点文本.as_float();
-					if (!((节点 = 父节点.child("lut:alpha")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
+					if (!((节点 = LUT节点.child("lut:alpha")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
 						throw Image5D异常(不透明度未定义);
 					通道.不透明度 = 节点文本.as_float();
 					break;
@@ -370,7 +382,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		索引->计算依赖字段(块总数);
 		块指针.resize(索引->SizeTZBC);
 		uint64_t* 块偏移;
-		索引->Get变长成员(每块像素数, i通道颜色, 块偏移);
+		索引->Get变长成员(i激光透过率, i通道颜色, i放大电压, 每块像素数, 块偏移);
 		std::vector<uint32_t>::const_iterator 块像素头 = 每块像素数向量.cbegin();
 		uint32_t* 每块像素头 = 每块像素数;
 		//第0块像素数就是真正的第0块像素数，而第1块实际上可能还是第0块（如果索引->SizeC>1）
@@ -379,12 +391,100 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		std::copy_n(通道颜色.get(), SizeC, i通道颜色);
 		try
 		{
-			for (const uint16_t* 指针 : 块指针)
+			for (const uint16_t* const 指针 : 块指针)
 				*(块偏移++) = (char*)指针 - 全局文件头;
 		}
 		catch (...)
 		{
 			throw Image5D异常(索引块偏移写出失败);
+		}
+		std::unique_ptr<float[]>Z深度 = std::make_unique_for_overwrite<float[]>(新索引.SizeZ);
+		float* Z深度指针 = Z深度.get();
+		*Z深度指针 = 0;
+		const float* const Z深度尾 = Z深度指针 + 新索引.SizeZ;
+		while (++Z深度指针 < Z深度尾)
+			*Z深度指针 = *(Z深度指针 - 1) + 新索引.Z步长;
+		if ((节点 = 成像参数节点.child("lsmparam:brightnessAdjustmentParam")) && (节点 = 节点.child("lsmparam:enable")) && (节点文本 = 节点.text()) && 节点文本.as_bool() && (节点 = 节点.child("lsmparam:phaseBrightnessAdjustment")))
+		{
+			struct Z亮度结构
+			{
+				float 深度;
+				float 激光透过率;
+				std::unique_ptr<uint16_t[]>放大电压;
+			};
+			std::optional<Z亮度结构>旧设置;
+			Z深度指针 = Z深度.get();
+			float* 激光指针 = i激光透过率;
+			uint16_t* 实际电压指针 = i放大电压;
+			for (const xml_node Z亮度节点 : 节点.children("lsmparam:zBrightnessAdjustment"))
+			{
+				Z亮度结构 新设置;
+				if ((节点 = Z亮度节点.child("lsmparam:relativeCoordinate")) && (节点文本 = 节点.text()))
+					新设置.深度 = 节点文本.as_float();
+				else
+					throw Image5D异常(Z亮度缺少相对坐标);
+				新设置.放大电压 = std::make_unique_for_overwrite<uint16_t[]>(新索引.SizeC);
+				uint16_t* 设置电压指针 = 新设置.放大电压.get();
+				const uint16_t* const 设置电压尾 = 设置电压指针 + 新索引.SizeC;
+				for (xml_node 节点 : Z亮度节点.children("lsmparam:pmtParam"))
+				{
+					if ((节点 = 节点.child("lsmparam:voltage")) && (节点文本 = 节点.text()))
+						*(设置电压指针++) = 节点文本.as_uint();
+					else
+						throw Image5D异常(Z_PMT缺少放大电压);
+					if (设置电压指针 == 设置电压尾)
+						break;
+				}
+				if (设置电压指针 < 设置电压尾)
+					throw Image5D异常(Z_PMT设置不完整);
+				if (!(节点 = Z亮度节点.child("lsmparam:laserParam")))
+					throw Image5D异常(Z亮度缺少激光参数);
+				if ((节点 = 节点.child("commonparam:transmissivity")) && (节点文本 = 节点.text()))
+					新设置.激光透过率 = 节点文本.as_float();
+				else
+					throw Image5D异常(Z激光缺少透过率);
+				if (新设置.深度 == *Z深度指针) [[likely]]
+				{
+					Z深度指针++;
+					*(激光指针++) = 新设置.激光透过率;
+					实际电压指针 = std::copy_n(新设置.放大电压.get(), 新索引.SizeC, 实际电压指针);
+				}
+				else if (新设置.深度 > *Z深度指针)
+				{
+					if (!旧设置)
+						throw Image5D异常(实拍深度不在BrightZ范围内);
+					const float 偏移率 = (*(Z深度指针++) - 旧设置->深度) / (新设置.深度 - 旧设置->深度);
+					*(激光指针++) = (新设置.激光透过率 - 旧设置->激光透过率) * 偏移率 + 旧设置->激光透过率;
+					for (uint8_t C = 0; C < 新索引.SizeC; ++C)
+						*(实际电压指针++) = (新设置.放大电压[C] - 旧设置->放大电压[C]) * 偏移率 + 旧设置->放大电压[C];
+				}
+				旧设置 = std::move(新设置);
+			}
+			if (Z深度指针 < Z深度尾)
+				throw Image5D异常(实拍深度不在BrightZ范围内);
+		}
+		else
+		{
+			if ((节点 = 成像参数节点.child("lsmparam:mainLaser")) && (节点 = 节点.child("commonparam:transmissivity")) && (节点文本 = 节点.text()))
+				std::fill_n(i激光透过率, 新索引.SizeZ, 节点文本.as_float());
+			else
+				throw Image5D异常(缺少激光参数);
+			uint16_t* 电压指针C = i放大电压;
+			for (xml_node 节点 : 成像参数节点.children("lsmparam:pmt"))
+				if ((节点 = 节点.child("lsmparam:voltage")) && (节点文本 = 节点.text()))
+				{
+					uint16_t* 电压指针Z = 电压指针C++;
+					const uint16_t 电压值 = 节点文本.as_uint();
+					for (uint8_t Z = 0; Z < 新索引.SizeZ; ++Z)
+					{
+						*电压指针Z = 电压值;
+						电压指针Z += 新索引.SizeC;
+					}
+				}
+				else
+					throw Image5D异常(PMT电压未定义);
+			if (电压指针C < i放大电压 + 新索引.SizeC)
+				throw Image5D异常(PMT设置不完整);
 		}
 		索引->哈希签名(文件大小);
 		if (!索引->验证(文件大小))

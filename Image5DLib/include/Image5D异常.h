@@ -1,6 +1,5 @@
 #pragma once
 #include <stdint.h>
-#include <memory>
 #include <pugixml.hpp>
 #include<Windows.h>
 namespace Image5D
@@ -129,6 +128,17 @@ namespace Image5D
 		LutXml出界,
 		LutXml解析失败,
 		意外的标签值类型,
+		Z层步长未定义,
+		Z层起点未定义,
+		Z亮度缺少相对坐标,
+		Z_PMT缺少放大电压,
+		Z亮度缺少激光参数,
+		Z激光缺少透过率,
+		实拍深度不在BrightZ范围内,
+		Z_PMT设置不完整,
+		缺少激光参数,
+		PMT电压未定义,
+		PMT设置不完整,
 	};
 	enum 内部异常类型
 	{
