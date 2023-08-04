@@ -56,7 +56,7 @@ classdef ChannelColor<uint32
 			obj=Image5D.ChannelColor(typecast(A(:),"uint32"));
 		end
 		function obj=FromOirColors(OirColors)
-			%将OIR颜色通道矩阵转换为ChannelColor对象
+			%将OIR颜色表转换为ChannelColor对象
 			%# 语法
 			% ```
 			% obj=Image5D.ChannelColor.FromOirColors(OirColors);
@@ -66,15 +66,13 @@ classdef ChannelColor<uint32
 			% ```
 			% import Image5D.*
 			% Reader=OirReader('O.oir');
-			% [~,Colors]=Reader.DeviceColors;
-			% OmeTiffRWer.QuickWrite('T.tif',Reader.ReadPixels,DimensionOrder.XYCZT,ChannelColor.FromOirColors(Colors));
+			% OmeTiffRWer.QuickWrite('T.tif',Reader.ReadPixels,DimensionOrder.XYCZT,ChannelColor.FromOirColors(Reader.DeviceColors.Color));
 			% ```
 			%# 输入参数
-			% OirColors(3,:)double，Oir颜色矩阵。第1维是RGB，第2维是不同颜色通道，数值范围0~1。可从OirReader.DeviceColors方法获得。
+			% OirColors table，Oir颜色矩阵，具有["Red","Green","Blue"]三列，每行对应一个颜色的三个分量，范围[0,1]。可从OirReader.DeviceColors.Color获得。
 			%# 返回值
 			% obj(:,1)Image5D.ChannelColor，转换后的ChannelColor对象。如果输入参数指定了多个颜色，obj总是列向量，无论输入数组尺寸为何。
-			OirColors(4,:)=1;
-			OirColors=uint8(flipud(OirColors)*255);
+			OirColors=uint8([ones(1,height(OirColors));OirColors{:,["Blue","Green","Red"]}']*255);
 			obj=Image5D.ChannelColor(typecast(OirColors(:),'uint32'));
 		end
 	end
