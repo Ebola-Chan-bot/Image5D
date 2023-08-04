@@ -9,14 +9,11 @@ API声明(Oir_CreateReader)
 }
 API声明(Oir_DeleteReader)
 {
-	try
+	__try
 	{
 		delete 万能转码<Oir读入器*>(inputs[1]);
 	}
-	catch (...)
-	{
-		throw Image5D异常(销毁对象失败);
-	}
+	__except (EXCEPTION_EXECUTE_HANDLER) {}
 }
 API声明(Oir_SizeX)
 {
