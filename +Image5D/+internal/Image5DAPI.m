@@ -1,6 +1,7 @@
 classdef Image5DAPI<uint8
 	enumeration
 		%OirReader
+
 		Oir_CreateReader(0)
 		Oir_DeleteReader(1)
 		Oir_SizeX(2)
@@ -14,6 +15,7 @@ classdef Image5DAPI<uint8
 		Oir_ReadToPointer(10)
 
 		%OmeTiffRWer
+
 		Tiff_OpenRead(11)
 		Tiff_OpenRW(12)
 		Tiff_OpenCreate(13)
@@ -41,6 +43,11 @@ classdef Image5DAPI<uint8
 		Tiff_WriteFromPointer(35)
 		Tiff_WriteFromPointerI(36)
 		Tiff_Close(37)
+
+		%OirReader v1.6.0
+		Oir_LsmimageXml(38)
+		Oir_LaserTransmissivity(39)
+		Oir_PmtVoltage(40)
 	end
 	methods(Static,Access=private)
 		function [Exception,InnerException]=Status2Exception(Status)

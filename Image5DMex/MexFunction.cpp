@@ -13,6 +13,9 @@ API声明(Oir_SeriesInterval);
 API声明(Oir_DeviceColors);
 API声明(Oir_ReadPixels);
 API声明(Oir_ReadToPointer);
+API声明(Oir_LsmimageXml);
+API声明(Oir_LaserTransmissivity);
+API声明(Oir_PmtVoltage);
 
 //OmeTiffRWer
 API声明(Tiff_OpenRead);
@@ -54,60 +57,70 @@ StructArray 异常转结构(const Image5D::Image5D异常& 异常)
 		返回[0]["ErrorCode"] = 数组工厂.createScalar(异常.错误代码);
 	return 返回;
 }
-void MexFunction::operator()(ArgumentList& outputs, ArgumentList& inputs)
+using namespace matlab::mex;
+struct MexFunction :public Function
 {
-	API索引{
-		// OirReader
-		Oir_CreateReader,
-		Oir_DeleteReader,
-		Oir_SizeX,
-		Oir_SizeY,
-		Oir_SizeC,
-		Oir_SizeZ,
-		Oir_SizeT,
-		Oir_SeriesInterval,
-		Oir_DeviceColors,
-		Oir_ReadPixels,
-		Oir_ReadToPointer,
+	void operator()(ArgumentList& outputs, ArgumentList& inputs)
+	{
+		API索引{
+			// OirReader
+			Oir_CreateReader,
+			Oir_DeleteReader,
+			Oir_SizeX,
+			Oir_SizeY,
+			Oir_SizeC,
+			Oir_SizeZ,
+			Oir_SizeT,
+			Oir_SeriesInterval,
+			Oir_DeviceColors,
+			Oir_ReadPixels,
+			Oir_ReadToPointer,
 
-		// OmeTiffRWer
-		Tiff_OpenRead,
-		Tiff_OpenRW,
-		Tiff_OpenCreate,
-		Tiff_PixelType,
-		Tiff_DimensionOrder,
-		Tiff_SizeP,
-		Tiff_SizeX,
-		Tiff_SizeY,
-		Tiff_SizeI,
-		Tiff_SizeC,
-		Tiff_SizeZ,
-		Tiff_SizeT,
-		Tiff_ChannelColors,
-		Tiff_FileName,
-		Tiff_ImageDescription,
-		Tiff_ModifyParameters,
-		Tiff_ReadPixels,
-		Tiff_ReadPixelsI,
-		Tiff_WritePixels,
-		Tiff_WritePixelsI,
-		Tiff_PixelPointer,
-		Tiff_PixelPointerI,
-		Tiff_ReadToPointer,
-		Tiff_ReadToPointerI,
-		Tiff_WriteFromPointer,
-		Tiff_WriteFromPointerI,
-		Tiff_Close,
-	};
-	try
-	{
-		API调用;
-		const StructArray 成功结构 = 异常转结构(Image5D::成功异常);
-		outputs[0] = 成功结构;
+			// OmeTiffRWer
+			Tiff_OpenRead,
+			Tiff_OpenRW,
+			Tiff_OpenCreate,
+			Tiff_PixelType,
+			Tiff_DimensionOrder,
+			Tiff_SizeP,
+			Tiff_SizeX,
+			Tiff_SizeY,
+			Tiff_SizeI,
+			Tiff_SizeC,
+			Tiff_SizeZ,
+			Tiff_SizeT,
+			Tiff_ChannelColors,
+			Tiff_FileName,
+			Tiff_ImageDescription,
+			Tiff_ModifyParameters,
+			Tiff_ReadPixels,
+			Tiff_ReadPixelsI,
+			Tiff_WritePixels,
+			Tiff_WritePixelsI,
+			Tiff_PixelPointer,
+			Tiff_PixelPointerI,
+			Tiff_ReadToPointer,
+			Tiff_ReadToPointerI,
+			Tiff_WriteFromPointer,
+			Tiff_WriteFromPointerI,
+			Tiff_Close,
+
+			//OirReader v1.6.0
+			Oir_LsmimageXml,
+			Oir_LaserTransmissivity,
+			Oir_PmtVoltage,
+		};
+		try
+		{
+			API调用;
+			const StructArray 成功结构 = 异常转结构(Image5D::成功异常);
+			outputs[0] = 成功结构;
+		}
+		catch (const Image5D::Image5D异常& 异常)
+		{
+			outputs[0] = 异常转结构(异常);
+			异常输出补全(outputs);
+		}
 	}
-	catch (const Image5D::Image5D异常& 异常)
-	{
-		outputs[0] = 异常转结构(异常);
-		异常输出补全(outputs);
-	}
-}
+};
+Function* const 函数对象 = new MexFunction();

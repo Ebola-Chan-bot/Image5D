@@ -164,14 +164,14 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 			throw Image5D异常(Oir元数据块不完整);
 		if ((字符串 = (char*)((元数据块指针 = (元数据块*)(字符串 + 元数据块指针->长度)) + 1)) > 尾指针)//跳过fileinfo
 			throw Image5D异常(Oir元数据块不完整);
-		uint32_t 长度 = 元数据块指针->长度;
-		if ((元数据块指针 = (元数据块*)(字符串 + 长度)) > 尾指针)
+		Oir索引 新索引;
+		新索引.LsmimageXml长度 = 元数据块指针->长度;
+		if ((元数据块指针 = (元数据块*)(字符串 + 新索引.LsmimageXml长度)) > 尾指针)
 			throw Image5D异常(Oir图像属性出界);
 		xml_parse_status 解析结果;
 		xml_document 图像属性文档;
-		Oir索引 新索引;
 		新索引.LsmimageXml偏移 = 字符串 - 全局文件头;
-		if ((解析结果 = 图像属性文档.load_buffer(字符串, 长度).status) != xml_parse_status::status_ok)
+		if ((解析结果 = 图像属性文档.load_buffer(字符串, 新索引.LsmimageXml长度).status) != xml_parse_status::status_ok)
 			throw Image5D异常(图像属性解析失败, 解析结果);
 		xml_node 节点 = 图像属性文档.child("lsmimage:imageProperties");
 		if (!节点)
@@ -299,7 +299,8 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 				throw Image5D异常(LutUid出界);
 			if ((字符串 = (char*)(长度指针 + 1)) > 尾指针)
 				throw Image5D异常(LutXml长度出界);
-			if ((长度指针 = (uint32_t*)(字符串 + (长度 = *长度指针))) > 尾指针)
+			const uint32_t 长度 = *长度指针;
+			if ((长度指针 = (uint32_t*)(字符串 + 长度)) > 尾指针)
 				throw Image5D异常(LutXml出界);
 			//确保即使没有找到也能正确跳到下一个LutXml指针位置
 			for (uint8_t C2 = 0; C2 < SizeC; ++C2)

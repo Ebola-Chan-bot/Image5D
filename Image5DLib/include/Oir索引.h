@@ -26,9 +26,10 @@ namespace Image5D
 		uint8_t SizeZ;
 		uint8_t SizeC;
 		uint8_t 每帧分块数;
+		uint64_t LsmimageXml偏移;
+		uint32_t LsmimageXml长度;
 		float 系列间隔;
 		float Z步长;
-		uint64_t LsmimageXml偏移;
 
 		//依赖字段
 

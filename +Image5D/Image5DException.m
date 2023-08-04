@@ -126,6 +126,17 @@ classdef Image5DException<uint8&MATLAB.Lang.IEnumerableException
 		LutXml_out_of_bounds(119)
 		LutXml_parsing_failed(120)
 		Unexpected_tag_value_type(121)
+		Z_step_size_undefined(122)
+		Z_start_position_undefined(123)
+		BrightZ_missing_relative_coordinates(124)
+		BrightZ_PMT_lacks_voltage(125)
+		BrightZ_missing_laser_parameters(126)
+		BrightZ_laser_lacks_transmissivity(127)
+		Imaging_depth_outside_BrightZ_range(128)
+		BrightZ_PMT_settings_incomplete(129)
+		Missing_laser_parameters(130)
+		PMT_voltage_undefined(131)
+		PMT_settings_incomplete(132)
 
 		%MATLAB抛出的异常
 

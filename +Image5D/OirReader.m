@@ -17,6 +17,14 @@ classdef OirReader<handle
 		SizeT
 		%每个采样时点的间隔毫秒数
 		SeriesInterval
+		%图像元数据XML
+		LsmimageXml
+		%各Z层的激光透过率
+		LaserTransmissivity
+		%PMT电压，第1维通道，第2维Z层
+		PmtVoltage
+		%采样设备名称和通道颜色
+		DeviceColors
 	end
 	methods(Static)
 		function ConcatenateByRename(HeaderPaths)
@@ -138,16 +146,19 @@ classdef OirReader<handle
 		function SI=get.SeriesInterval(obj)
 			SI=Image5D.internal.Image5DAPI.Oir_SeriesInterval.Call(obj.Pointer);
 		end
-		function [Devices,Colors]=DeviceColors(obj)
-			%取各通道的采样设备和颜色信息
-			%# 语法
-			% ```
-			% [Devices,Colors]=obj.DeviceColors;
-			% ```
-			%# 返回值
-			% Devices(:,1)string，依次返回每个通道的采样设备名称
-			% Colors(3,:)single，各通道颜色。第1维依次排列红、绿、蓝色分量，数值范围0~1；第2维排列不同的通道.
-			[Devices,Colors]=Image5D.internal.Image5DAPI.Oir_DeviceColors.Call(obj.Pointer);
+		function LX=get.LsmimageXml(obj)
+			LX=Image5D.internal.Image5DAPI.Oir_LsmimageXml.Call(obj.Pointer);
+		end
+		function LT=get.LaserTransmissivity(obj)
+			LT=Image5D.internal.Image5DAPI.Oir_LaserTransmissivity.Call(obj.Pointer);
+		end
+		function PV=get.PmtVoltage(obj)
+			PV=Image5D.internal.Image5DAPI.Oir_PmtVoltage.Call(obj.Pointer);
+		end
+		function DC=get.DeviceColors(obj)
+			[Device,Color]=Image5D.internal.Image5DAPI.Oir_DeviceColors.Call(obj.Pointer);
+			Color=array2table(Color,VariableNames=["Red","Green","Blue"]);
+			DC=table(Device,Color);
 		end
 		function Pixels=ReadPixels(obj,TStart,TSize,varargin)
 			%读入像素块值
