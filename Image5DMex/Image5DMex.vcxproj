@@ -75,16 +75,16 @@
     <CopyLocalDeploymentContent>true</CopyLocalDeploymentContent>
     <Linkage-pugixml>dynamic</Linkage-pugixml>
     <TargetExt>.mexw64</TargetExt>
-    <LibraryPath>$(SolutionDir)x64\$(Configuration);C:\Users\vhtmf\source\repos\MexTools\nuget\build\native\lib;$(LibraryPath)</LibraryPath>
-    <ExternalIncludePath>$(SolutionDir)Image5DLib\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Users\vhtmf\source\repos\MexTools\nuget\build\native\include</ExternalIncludePath>
+    <LibraryPath>$(SolutionDir)x64\$(Configuration);$(LibraryPath)</LibraryPath>
+    <ExternalIncludePath>$(SolutionDir)Image5DLib\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(SolutionDir)+Image5D\+internal\private\</OutDir>
     <CopyLocalDeploymentContent>true</CopyLocalDeploymentContent>
     <Linkage-pugixml>dynamic</Linkage-pugixml>
     <TargetExt>.mexw64</TargetExt>
-    <LibraryPath>$(SolutionDir)x64\$(Configuration);C:\Users\vhtmf\source\repos\MexTools\nuget\build\native\lib;$(LibraryPath)</LibraryPath>
-    <ExternalIncludePath>$(SolutionDir)Image5DLib\include;$(VC_IncludePath);$(WindowsSDK_IncludePath);C:\Users\vhtmf\source\repos\MexTools\nuget\build\native\include</ExternalIncludePath>
+    <LibraryPath>$(SolutionDir)x64\$(Configuration);$(LibraryPath)</LibraryPath>
+    <ExternalIncludePath>$(SolutionDir)Image5DLib\include;$(VC_IncludePath);$(WindowsSDK_IncludePath)</ExternalIncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -140,7 +140,7 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>Image5DLib.lib;Mex工具.$(PlatformToolsetVersion).$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Image5DLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>
@@ -171,7 +171,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableUAC>false</EnableUAC>
-      <AdditionalDependencies>Image5DLib.lib;Mex工具.$(PlatformToolsetVersion).$(Configuration).lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Image5DLib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <ResourceCompile>
       <AdditionalIncludeDirectories>
@@ -182,9 +182,6 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\source\repos\MexTools\Mex工具\Mex工具.vcxproj">
-      <Project>{ce6ce462-a955-46a7-bb11-895054ef51ea}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\Image5DLib\Image5DLib.vcxproj">
       <Project>{f4e56848-cfcb-4f10-ae05-3be7e40423cb}</Project>
     </ProjectReference>
@@ -205,11 +202,13 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\pugixml.1.13.0\build\native\pugixml.targets" Condition="Exists('..\packages\pugixml.1.13.0\build\native\pugixml.targets')" />
+    <Import Project="..\packages\MATLAB.MexTools.5.0.0\build\native\MATLAB.MexTools.targets" Condition="Exists('..\packages\MATLAB.MexTools.5.0.0\build\native\MATLAB.MexTools.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
       <ErrorText>这台计算机上缺少此项目引用的 NuGet 程序包。使用“NuGet 程序包还原”可下载这些程序包。有关更多信息，请参见 http://go.microsoft.com/fwlink/?LinkID=322105。缺少的文件是 {0}。</ErrorText>
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\pugixml.1.13.0\build\native\pugixml.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\pugixml.1.13.0\build\native\pugixml.targets'))" />
+    <Error Condition="!Exists('..\packages\MATLAB.MexTools.5.0.0\build\native\MATLAB.MexTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MATLAB.MexTools.5.0.0\build\native\MATLAB.MexTools.targets'))" />
   </Target>
 </Project>

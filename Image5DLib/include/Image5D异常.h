@@ -139,6 +139,7 @@ namespace Image5D
 		缺少激光参数,
 		PMT电压未定义,
 		PMT设置不完整,
+		无效指针,
 	};
 	enum 内部异常类型
 	{

@@ -46,12 +46,13 @@ API声明(Tiff_WriteFromPointer);
 API声明(Tiff_WriteFromPointerI);
 API声明(Tiff_Close);
 using namespace Mex工具;
-StructArray 异常转结构(const Image5D::Image5D异常& 异常)
+using namespace Image5D;
+StructArray 异常转结构(const Image5D异常& 异常)
 {
 	StructArray 返回 = 数组工厂.createStructArray({ 1 }, { "ExceptionType","InnerException","ErrorCode" });
 	返回[0]["ExceptionType"] = 数组工厂.createScalar<uint8_t>(异常.异常类型);
 	返回[0]["InnerException"] = 数组工厂.createScalar<uint8_t>(异常.内部异常);
-	if (异常.内部异常 == Image5D::Image5D)
+	if (异常.内部异常 == 内部异常类型::Image5D)
 		返回[0]["ErrorCode"] = 异常转结构(*异常.内部Image5D异常);
 	else
 		返回[0]["ErrorCode"] = 数组工厂.createScalar(异常.错误代码);
@@ -113,14 +114,26 @@ struct MexFunction :public Function
 		try
 		{
 			API调用;
-			const StructArray 成功结构 = 异常转结构(Image5D::成功异常);
+			const StructArray 成功结构 = 异常转结构(成功异常);
 			outputs[0] = 成功结构;
 		}
-		catch (const Image5D::Image5D异常& 异常)
+		catch (const Image5D异常& 异常)
 		{
 			outputs[0] = 异常转结构(异常);
 			异常输出补全(outputs);
 		}
+		catch (...)
+		{
+			outputs[0] = 异常转结构(Image5D异常(无效指针));
+			异常输出补全(outputs);
+		}
 	}
 };
-Function* const 函数对象 = new MexFunction();
+Function* 创建Mex函数()
+{
+	return new MexFunction();//必须用new创建此对象指针，因为 clear mex 时将用delete析构
+}
+void 销毁Mex函数(Function* 函数指针)
+{
+	delete 函数指针;
+}

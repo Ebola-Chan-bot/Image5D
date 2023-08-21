@@ -5,13 +5,17 @@ using namespace Mex工具;
 API声明(Oir_CreateReader)
 {
 	const String 文件路径 = 万能转码<String>(inputs[1]);
-	outputs[1] = 万能转码(new Oir读入器((LPCWSTR)文件路径.c_str()));
+	Oir读入器*const 对象指针 = new Oir读入器((LPCWSTR)文件路径.c_str());
+	outputs[1] = 万能转码(对象指针);
+	自动析构(对象指针);
 }
 API声明(Oir_DeleteReader)
 {
+	Oir读入器*const 对象指针 = 万能转码<Oir读入器*>(inputs[1]);
+	手动析构(对象指针);
 	__try
 	{
-		delete 万能转码<Oir读入器*>(inputs[1]);
+		delete 对象指针;
 	}
 	__except (EXCEPTION_EXECUTE_HANDLER) {}
 }

@@ -7,22 +7,27 @@ constexpr Image5D异常 元素太少(输入数组元素太少);
 API声明(Tiff_OpenRead)
 {
 	const String 字符串 = 万能转码<String>(inputs[1]);
-	outputs[1] = 万能转码(IOmeTiff读写器::只读打开((wchar_t*)字符串.c_str()));
+	IOmeTiff读写器* const 对象指针 = IOmeTiff读写器::只读打开((wchar_t*)字符串.c_str());
+	outputs[1] = 万能转码(对象指针);
+	自动析构(对象指针);
 }
 API声明(Tiff_OpenRW)
 {
 	const String 字符串 = 万能转码<String>(inputs[1]);
-	outputs[1] = 万能转码(IOmeTiff读写器::读写打开((wchar_t*)字符串.c_str()));
+	IOmeTiff读写器* const 对象指针 = IOmeTiff读写器::读写打开((wchar_t*)字符串.c_str());
+	outputs[1] = 万能转码(对象指针);
+	自动析构(对象指针);
 }
 API声明(Tiff_OpenCreate)
 {
 	const String 字符串 = 万能转码<String>(inputs[1]);
+	IOmeTiff读写器* 对象指针;
 	switch (inputs.size())
 	{
 	case 3:
 	{
 		const std::string 图像描述 = 万能转码(std::move(inputs[2]));
-		outputs[1] = 万能转码(IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), 图像描述.c_str()));
+		对象指针 = IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), 图像描述.c_str());
 	}
 	break;
 	case 9:
@@ -30,12 +35,14 @@ API声明(Tiff_OpenCreate)
 		TypedArray<uint32_t>颜色数组(std::move(inputs[5]));
 		const uint8_t SizeC = 颜色数组.getNumberOfElements();
 		const buffer_ptr_t<uint32_t> 颜色缓冲 = 颜色数组.release();
-		outputs[1] = 万能转码(IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), (像素类型)万能转码<UINT8>(inputs[2]), 万能转码<UINT16>(inputs[3]), 万能转码<UINT16>(inputs[4]), SizeC, 万能转码<UINT8>(inputs[6]), 万能转码<uint32_t>(inputs[7]), (颜色*)颜色缓冲.get(), (维度顺序)万能转码<UINT8>(inputs[8])));
+		对象指针 = IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), (像素类型)万能转码<UINT8>(inputs[2]), 万能转码<UINT16>(inputs[3]), 万能转码<UINT16>(inputs[4]), SizeC, 万能转码<UINT8>(inputs[6]), 万能转码<uint32_t>(inputs[7]), (颜色*)颜色缓冲.get(), (维度顺序)万能转码<UINT8>(inputs[8]));
 	}
 	break;
 	default:
 		throw 参数异常;
 	}
+	outputs[1] = 万能转码(对象指针);
+	自动析构(对象指针);
 }
 API声明(Tiff_PixelType)
 {
@@ -388,9 +395,11 @@ API声明(Tiff_WriteFromPointerI)
 }
 API声明(Tiff_Close)
 {
+	IOmeTiff读写器* const 对象指针 = 万能转码<IOmeTiff读写器*>(inputs[1]);
+	手动析构(对象指针);
 	__try
 	{
-		delete 万能转码<IOmeTiff读写器*>(inputs[1]);
+		delete 对象指针;
 	}
 	__except (EXCEPTION_EXECUTE_HANDLER) {}
 }

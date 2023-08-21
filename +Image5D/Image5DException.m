@@ -140,6 +140,7 @@ classdef Image5DException<uint8&MATLAB.Lang.IEnumerableException
 
 		%MATLAB抛出的异常
 
+		Unexpected_subsref_type(253)
 		DEFAULT_PixelType_cannot_convert_to_MATLAB_datatypes(254)
 		Wrong_number_of_parameters(255)
 	end

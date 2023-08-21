@@ -11,7 +11,7 @@ classdef ChannelColor<uint32
 		%红色通道
 		R
 	end
-	methods(Access=private)
+	methods(Access=protected)
 		function obj=ChannelColor(Value)
 			obj@uint32(Value);
 		end
@@ -77,17 +77,17 @@ classdef ChannelColor<uint32
 		end
 	end
 	methods
-		function Value=get.A(obj)
-			Value=uint8(bitand(bitshift(uint32(obj),-0),0x000000ff));
+		function obj=get.A(obj)
+			obj=uint8(bitand(bitshift(uint32(obj),-0),0x000000ff));
 		end
-		function Value=get.B(obj)
-			Value=uint8(bitand(bitshift(uint32(obj),-8),0x000000ff));
+		function obj=get.B(obj)
+			obj=uint8(bitand(bitshift(uint32(obj),-8),0x000000ff));
 		end
-		function Value=get.G(obj)
-			Value=uint8(bitand(bitshift(uint32(obj),-16),0x000000ff));
+		function obj=get.G(obj)
+			obj=uint8(bitand(bitshift(uint32(obj),-16),0x000000ff));
 		end
-		function Value=get.R(obj)
-			Value=uint8(bitand(bitshift(uint32(obj),-24),0x000000ff));
+		function obj=get.R(obj)
+			obj=uint8(bitand(bitshift(uint32(obj),-24),0x000000ff));
 		end
 		function obj=set.A(obj,Value)
 			if isfloat(Value)
@@ -113,17 +113,33 @@ classdef ChannelColor<uint32
 			end
 			obj=Image5D.ChannelColor(bitand(uint32(obj),0x00ffffff)+bitshift(uint32(Value),24));
 		end
-		function C=horzcat(obj,varargin)
+		function obj=horzcat(obj,varargin)
 			varargin=cellfun(@uint32,varargin,UniformOutput=false);
-			C=Image5D.ChannelColor(horzcat(uint32(obj),varargin{:}));
+			obj=Image5D.ChannelColor(horzcat(uint32(obj),varargin{:}));
 		end
-		function C=vertcat(obj,varargin)
+		function obj=vertcat(obj,varargin)
 			varargin=cellfun(@uint32,varargin,UniformOutput=false);
-			C=Image5D.ChannelColor(vertcat(uint32(obj),varargin{:}));
+			obj=Image5D.ChannelColor(vertcat(uint32(obj),varargin{:}));
 		end
-		function C=cat(obj,dim,varargin)
+		function obj=cat(obj,dim,varargin)
 			varargin=cellfun(@uint32,varargin,UniformOutput=false);
-			C=Image5D.ChannelColor(cat(dim,uint32(obj),varargin{:}));
+			obj=Image5D.ChannelColor(cat(dim,uint32(obj),varargin{:}));
+		end
+		function obj=subsref(obj,S)
+			switch S.type
+				case "()"
+					obj=uint32(obj);
+					obj=Image5D.ChannelColor(obj(S.subs{:}));
+				case "."
+					obj=obj.(S.subs);
+				otherwise
+					Image5D.Image5DException.Unexpected_subsref_type.Throw;
+			end
+		end
+		function obj=subsasgn(obj,S,V)
+			obj=uint32(obj);
+			obj(S.subs{:})=V;
+			obj=Image5D.ChannelColor(obj);
 		end
 	end
 end

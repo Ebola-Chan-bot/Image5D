@@ -66,6 +66,14 @@ classdef OirReader<handle
 		SizeT
 		%每个采样时点的间隔毫秒数
 		SeriesInterval
+		%图像元数据XML
+		LsmimageXml
+		%各Z层的激光透过率
+		LaserTransmissivity
+		%PMT电压，第1维通道，第2维Z层
+		PmtVoltage
+		%采样设备名称和通道颜色
+		DeviceColors
 	end
 	methods(Static)
 		function ConcatenateByRename(HeaderPaths)
@@ -78,9 +86,6 @@ classdef OirReader<handle
 	methods
 		function obj=OirReader(HeaderPath)
 			%构造OirReader对象
-		end
-		function [Devices,Colors]=DeviceColors(obj)
-			%取各通道的采样设备和颜色信息
 		end
 		function Pixels=ReadPixels(obj,TStart,TSize,ZStart,ZSize,CStart,CSize)
 			%读入像素块值
