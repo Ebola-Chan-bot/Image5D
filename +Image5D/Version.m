@@ -1,5 +1,5 @@
 function V=Version
-V.Me='v2.1.0';
+V.Me='v2.2.0';
 V.MatlabExtension=MATLAB.Version;
 V.MATLAB='R2022b';
 persistent NewVersion

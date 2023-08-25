@@ -141,5 +141,14 @@ classdef ChannelColor<uint32
 			obj(S.subs{:})=V;
 			obj=Image5D.ChannelColor(obj);
 		end
+		function obj=char(obj)
+			obj=['0x',dec2hex(obj,8)];
+		end
+		function obj=string(obj)
+			obj=string(obj.char);
+		end
+		function disp(obj)
+			disp(obj.char);
+		end
 	end
 end
