@@ -24,6 +24,9 @@ classdef OirReader<handle
 		%PMT电压，第1维通道，第2维Z层
 		PmtVoltage
 		%采样设备名称和通道颜色
+		%(:,2)table，每行一个设备通道，包含以下列：
+		% - Device(:,1)string，设备名称
+		% - Color(:,3)table，通道颜色，包含 Red Green Blue 三列
 		DeviceColors
 	end
 	methods(Static)
