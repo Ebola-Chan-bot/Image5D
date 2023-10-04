@@ -338,15 +338,8 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 			基块索引 += 2;
 		}
 		const 文件列表类::const_iterator 文件结束 = 文件列表.cend();
-#ifdef _DEBUG
-		uint8_t 文件序号 = 0;
-#endif
 		while (++当前文件 < 文件结束)
 		{
-#ifdef _DEBUG
-			if (++文件序号 == 80)
-				文件序号 = 文件序号;
-#endif
 			文件头 = (Oir文件头*)(*当前文件)->映射指针();
 			尾指针 = (char*)文件头 + (*当前文件)->文件大小();
 			if (文件头 + 1 > 尾指针)
@@ -375,12 +368,11 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		绝对跳出:;
 		}
 		新索引.每帧分块数 = 每层像素块数 / SizeC;
-		const uint32_t 块总数 = 块指针.size();
-		const uint32_t 文件大小 = 新索引.计算文件大小() + 块总数 * sizeof(const uint16_t*);
+		新索引.计算依赖字段(块指针.size());
+		const uint32_t 文件大小 = 新索引.计算文件大小();
 		索引文件->文件大小(文件大小);
 		索引文件->映射指针(nullptr);
 		*(索引 = (Oir索引*)索引文件->映射指针()) = 新索引;
-		索引->计算依赖字段(块总数);
 		块指针.resize(索引->SizeTZBC);
 		uint64_t* 块偏移;
 		索引->Get变长成员(i激光透过率, i通道颜色, i放大电压, 每块像素数, 块偏移);
@@ -389,6 +381,8 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		//第0块像素数就是真正的第0块像素数，而第1块实际上可能还是第0块（如果索引->SizeC>1）
 		for (const uint32_t* const 每块像素尾 = 每块像素头 + 索引->每帧分块数; 每块像素头 < 每块像素尾; 块像素头 += SizeC)
 			*(每块像素头++) = *块像素头;
+		const uint32_t A = 每块像素数[0];
+		const uint32_t B = 每块像素数[1];
 		std::copy_n(通道颜色.get(), SizeC, i通道颜色);
 		try
 		{
@@ -405,7 +399,8 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		const float* const Z深度尾 = Z深度指针 + 新索引.SizeZ;
 		while (++Z深度指针 < Z深度尾)
 			*Z深度指针 = *(Z深度指针 - 1) + 新索引.Z步长;
-		if ((节点 = 成像参数节点.child("lsmparam:brightnessAdjustmentParam")) && (节点 = 节点.child("lsmparam:enable")) && (节点文本 = 节点.text()) && 节点文本.as_bool() && (节点 = 节点.child("lsmparam:phaseBrightnessAdjustment")))
+		const xml_node 亮度调整参数节点 = 成像参数节点.child("lsmparam:brightnessAdjustmentParam");
+		if (亮度调整参数节点 && (节点 = 亮度调整参数节点.child("lsmparam:enable")) && (节点文本 = 节点.text()) && 节点文本.as_bool() && (节点 = 亮度调整参数节点.child("lsmparam:phaseBrightnessAdjustment")))
 		{
 			struct Z亮度结构
 			{
@@ -488,8 +483,6 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 				throw Image5D异常(PMT设置不完整);
 		}
 		索引->哈希签名(文件大小);
-		if (!索引->验证(文件大小))
-			throw Image5D异常(调试断点);
 	}
 }
 void Oir读入器::读入像素(uint16_t* 写出头TZ, uint32_t TStart, uint32_t TSize, uint8_t ZStart, uint8_t ZSize, uint8_t CStart, uint8_t CSize)const
