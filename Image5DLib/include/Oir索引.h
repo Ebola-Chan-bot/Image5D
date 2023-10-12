@@ -13,10 +13,13 @@ namespace Image5D
 	};
 	class Oir索引
 	{
+		static constexpr uint8_t 库版本号 = 0;
 
-		//依赖字段
+		//隐藏字段
 
 		uint8_t SHA256[哈希长度];
+		uint8_t 文件版本号 = 库版本号;
+
 	public:
 
 		//独立字段
@@ -40,11 +43,7 @@ namespace Image5D
 		uint32_t SizeTZBC;
 		uint32_t SizeYX;
 		uint32_t SizeCYX;
-		bool 验证(uint32_t 文件大小)const
-#ifndef _DEBUG
-			noexcept
-#endif
-			;
+		bool 验证(uint32_t 文件大小)const;
 
 		/*
 		变长成员：
@@ -68,10 +67,7 @@ namespace Image5D
 		//需要正确设置所有独立字段
 		void 计算依赖字段(uint32_t 块总数)noexcept;
 		//需要正确设置所有字段
-		void 哈希签名(uint32_t 文件大小)
-#ifndef _DEBUG
-			noexcept
-#endif
+		void 哈希签名(uint32_t 文件大小)noexcept
 		{
 			哈希计算((char*)this + 哈希长度, 文件大小 - 哈希长度, SHA256);
 		}

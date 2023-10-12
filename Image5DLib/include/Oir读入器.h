@@ -47,5 +47,6 @@ namespace Image5D
 		设备颜色* i通道颜色;
 		float* i激光透过率;
 		uint16_t* i放大电压;
+		void 创建新索引(const wchar_t* 字符缓冲);
 	};
 }

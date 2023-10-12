@@ -11,7 +11,7 @@ API声明(Oir_CreateReader)
 }
 API声明(Oir_DeleteReader)
 {
-	Oir读入器*const 对象指针 = 万能转码<Oir读入器*>(inputs[1]);
+	Oir读入器* const 对象指针 = 万能转码<Oir读入器*>(inputs[1]);
 	手动析构(对象指针);
 	__try
 	{
@@ -21,7 +21,7 @@ API声明(Oir_DeleteReader)
 }
 API声明(Oir_SizeX)
 {
-	outputs[1] = 万能转码(万能转码<const Oir读入器*>(inputs[1])->SizeX());
+	outputs[1] = 万能转码(万能转码<Oir读入器*>(inputs[1])->SizeX());
 }
 API声明(Oir_SizeY)
 {

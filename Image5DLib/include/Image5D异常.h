@@ -140,6 +140,7 @@ namespace Image5D
 		PMT电压未定义,
 		PMT设置不完整,
 		无效指针,
+		库版本低于索引文件版本,
 	};
 	enum 内部异常类型
 	{

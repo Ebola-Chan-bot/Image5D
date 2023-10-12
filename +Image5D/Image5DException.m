@@ -137,6 +137,8 @@ classdef Image5DException<uint8&MATLAB.Lang.IEnumerableException
 		Missing_laser_parameters(130)
 		PMT_voltage_undefined(131)
 		PMT_settings_incomplete(132)
+		Invalid_pointer(133)
+		Library_version_lower_than_index_file_version(134)
 
 		%MATLAB抛出的异常
 
