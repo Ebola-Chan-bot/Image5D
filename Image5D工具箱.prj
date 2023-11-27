@@ -11,7 +11,7 @@
 
 依赖：pugixml，AVX2以上指令集，Windows系统（推荐Win11，低版本未测试）</param.description>
     <param.screenshot>${PROJECT_ROOT}\工具箱图像.png</param.screenshot>
-    <param.version>2.2.1</param.version>
+    <param.version>2.2.2</param.version>
     <param.output>${PROJECT_ROOT}\Image5D.mltbx</param.output>
     <param.products.name />
     <param.products.id />
@@ -111,7 +111,6 @@ x64
     <fileset.rootfiles>
       <file>${PROJECT_ROOT}\+Image5D</file>
       <file>${PROJECT_ROOT}\doc</file>
-      <file>${PROJECT_ROOT}\LsmimageXml.xml</file>
       <file>${PROJECT_ROOT}\README.md</file>
       <file>${PROJECT_ROOT}\resources</file>
       <file>${PROJECT_ROOT}\工具箱图像.png</file>
