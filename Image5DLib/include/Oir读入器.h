@@ -17,6 +17,7 @@ namespace Image5D
 		float 系列间隔()const noexcept { return 索引->系列间隔; }
 		//相邻Z层间距
 		float Z步长()const noexcept { return 索引->Z步长; }
+		const char* Z驱动单元类型()const noexcept { return 索引->Z驱动单元类型; }
 		//数组尺寸为SizeC
 		const 设备颜色* 通道颜色()const noexcept { return i通道颜色; }
 		void LsmimageXml(const char*& 指针, uint32_t& 长度) const noexcept
@@ -26,7 +27,7 @@ namespace Image5D
 		}
 		//数组尺寸为SizeZ
 		const float* 激光透过率()const noexcept { return i激光透过率; }
-		//数组尺寸为SizeZ*SizeC，维度顺序CZ
+		//数组尺寸为SizeZ*SizeC，维度顺序先Z后C
 		const uint16_t* 放大电压()const noexcept { return i放大电压; }
 		void 读入像素(uint16_t* 缓冲区, uint32_t TStart, uint32_t TSize, uint8_t ZStart, uint8_t ZSize, uint8_t CStart, uint8_t CSize)const;
 		void 读入像素(uint16_t* 缓冲区, uint32_t TStart, uint32_t TSize, uint8_t ZStart, uint8_t ZSize)const;

@@ -197,3 +197,8 @@ API声明(Oir_PmtVoltage)
 	const Oir读入器* const 对象指针 = 万能转码<Oir读入器*>(inputs[1]);
 	outputs[1] = 万能转码(对象指针->放大电压(), { 对象指针->SizeC(),对象指针->SizeZ() });
 }
+API声明(Oir_ZDriveUnitType)
+{
+	const Oir读入器* const 对象指针 = 万能转码<Oir读入器*>(inputs[1]);
+	outputs[1] = 万能转码<CharArray>(对象指针->Z驱动单元类型());
+}

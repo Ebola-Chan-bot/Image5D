@@ -13,7 +13,7 @@ namespace Image5D
 	};
 	class Oir索引
 	{
-		static constexpr uint8_t 库版本号 = 0;
+		static constexpr uint8_t 库版本号 = 1;
 
 		//隐藏字段
 
@@ -33,6 +33,7 @@ namespace Image5D
 		uint32_t LsmimageXml长度;
 		float 系列间隔;
 		float Z步长;
+		char Z驱动单元类型[6];
 
 		//依赖字段
 

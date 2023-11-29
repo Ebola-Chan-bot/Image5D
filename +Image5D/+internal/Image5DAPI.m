@@ -48,6 +48,7 @@ classdef Image5DAPI<uint8
 		Oir_LsmimageXml(38)
 		Oir_LaserTransmissivity(39)
 		Oir_PmtVoltage(40)
+		Oir_ZDriveUnitType(41)
 	end
 	methods(Static,Access=private)
 		function [Exception,InnerException]=Status2Exception(Status)

@@ -16,6 +16,7 @@ API声明(Oir_ReadToPointer);
 API声明(Oir_LsmimageXml);
 API声明(Oir_LaserTransmissivity);
 API声明(Oir_PmtVoltage);
+API声明(Oir_ZDriveUnitType);
 
 //OmeTiffRWer
 API声明(Tiff_OpenRead);
@@ -110,6 +111,7 @@ struct MexFunction :public Function
 			Oir_LsmimageXml,
 			Oir_LaserTransmissivity,
 			Oir_PmtVoltage,
+			Oir_ZDriveUnitType,
 		};
 		try
 		{

@@ -21,13 +21,15 @@ classdef OirReader<handle
 		LsmimageXml
 		%各Z层的激光透过率
 		LaserTransmissivity
-		%PMT电压，第1维通道，第2维Z层
+		%PMT电压，第1维Z层，第2维通道
 		PmtVoltage
 		%采样设备名称和通道颜色
 		%(:,2)table，每行一个设备通道，包含以下列：
 		% - Device(:,1)string，设备名称
 		% - Color(:,3)table，通道颜色，包含 Red Green Blue 三列
 		DeviceColors
+		%Z驱动单元类型，通常为Motor或Piezo
+		ZDriveUnitType
 	end
 	methods(Static)
 		function ConcatenateByRename(HeaderPaths)
@@ -162,6 +164,9 @@ classdef OirReader<handle
 			[Device,Color]=Image5D.internal.Image5DAPI.Oir_DeviceColors.Call(obj.Pointer);
 			Color=array2table(Color,VariableNames=["Red","Green","Blue"]);
 			DC=table(Device,Color);
+		end
+		function ZDUT=get.ZDriveUnitType(obj)
+			ZDUT=Image5D.internal.Image5DAPI.Oir_ZDriveUnitType.Call(obj.Pointer);
 		end
 		function Pixels=ReadPixels(obj,TStart,TSize,varargin)
 			%读入像素块值
