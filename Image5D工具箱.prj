@@ -61,7 +61,7 @@ x64
     <param.exported.on.package>false</param.exported.on.package>
     <param.required.addons>
       <requiredaddons>
-        <requiredAddOn downloadURL="" earliest="14.0.0.0" fromRepository="false" id="b344599a-983e-4a6c-bd99-ed3a1bdd9626" include="true" latest="latest">埃博拉酱 的 MATLAB 扩展 Extension(3)</requiredAddOn>
+        <requiredAddOn earliest="14.0.0.0" fromRepository="true" id="b344599a-983e-4a6c-bd99-ed3a1bdd9626" include="true" latest="latest">埃博拉酱 的 MATLAB 扩展 Extension(3)</requiredAddOn>
       </requiredaddons>
     </param.required.addons>
     <param.matlab.project.id />

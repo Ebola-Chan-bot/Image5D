@@ -9,6 +9,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Image5DLib", "Image5DLib\Im
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Image5D测试", "Image5D测试\Image5D测试.vcxproj", "{0D661C84-7BE0-49EA-9B5D-9F1A9B3DC7EF}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{5FFCDC09-24FA-4042-87C8-57C11C1F21BD}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug.本地Mex工具|x64 = Debug.本地Mex工具|x64

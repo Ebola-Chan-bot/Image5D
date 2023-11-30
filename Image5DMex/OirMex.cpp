@@ -2,6 +2,14 @@
 #include<Mex工具.h>
 using namespace Image5D;
 using namespace Mex工具;
+Oir读入器* 取指针(const Array& 指针标量)
+{
+	Oir读入器* const 指针 = 万能转码<Oir读入器*>(指针标量);
+	if (对象存在(指针))
+		return 指针;
+	else
+		throw Image5D异常(无效指针);
+}
 API声明(Oir_CreateReader)
 {
 	const String 文件路径 = 万能转码<String>(inputs[1]);
@@ -11,41 +19,37 @@ API声明(Oir_CreateReader)
 }
 API声明(Oir_DeleteReader)
 {
-	Oir读入器* const 对象指针 = 万能转码<Oir读入器*>(inputs[1]);
-	手动析构(对象指针);
-	__try
-	{
-		delete 对象指针;
-	}
-	__except (EXCEPTION_EXECUTE_HANDLER) {}
+	Oir读入器* const 指针 = 万能转码<Oir读入器*>(inputs[1]);
+	if (手动析构(指针))
+		delete 指针;
 }
 API声明(Oir_SizeX)
 {
-	outputs[1] = 万能转码(万能转码<Oir读入器*>(inputs[1])->SizeX());
+	outputs[1] = 万能转码(取指针(inputs[1])->SizeX());
 }
 API声明(Oir_SizeY)
 {
-	outputs[1] = 万能转码(万能转码<const Oir读入器*>(inputs[1])->SizeY());
+	outputs[1] = 万能转码(取指针(inputs[1])->SizeY());
 }
 API声明(Oir_SizeC)
 {
-	outputs[1] = 万能转码(万能转码<const Oir读入器*>(inputs[1])->SizeC());
+	outputs[1] = 万能转码(取指针(inputs[1])->SizeC());
 }
 API声明(Oir_SizeZ)
 {
-	outputs[1] = 万能转码(万能转码<const Oir读入器*>(inputs[1])->SizeZ());
+	outputs[1] = 万能转码(取指针(inputs[1])->SizeZ());
 }
 API声明(Oir_SizeT)
 {
-	outputs[1] = 万能转码(万能转码<const Oir读入器*>(inputs[1])->SizeT());
+	outputs[1] = 万能转码(取指针(inputs[1])->SizeT());
 }
 API声明(Oir_SeriesInterval)
 {
-	outputs[1] = 万能转码(万能转码<const Oir读入器*>(inputs[1])->系列间隔());
+	outputs[1] = 万能转码(取指针(inputs[1])->系列间隔());
 }
 API声明(Oir_DeviceColors)
 {
-	const Oir读入器* const 指针 = 万能转码<Oir读入器*>(inputs[1]);
+	const Oir读入器* const 指针 = 取指针(inputs[1]);
 	const uint8_t SizeC = 指针->SizeC();
 	const uint8_t 颜色尺寸 = SizeC * 3;
 	buffer_ptr_t<float> 颜色缓冲 = 数组工厂.createBuffer<float>(颜色尺寸);
@@ -66,7 +70,7 @@ API声明(Oir_DeviceColors)
 }
 API声明(Oir_ReadPixels)
 {
-	const Oir读入器* const 指针 = 万能转码<Oir读入器*>(inputs[1]);
+	const Oir读入器* const 指针 = 取指针(inputs[1]);
 	const uint16_t SizeX = 指针->SizeX();
 	const uint16_t SizeY = 指针->SizeY();
 	switch (inputs.size())
@@ -128,7 +132,7 @@ API声明(Oir_ReadPixels)
 }
 API声明(Oir_ReadToPointer)
 {
-	const Oir读入器* const 对象指针 = 万能转码<Oir读入器*>(inputs[1]);
+	const Oir读入器* const 对象指针 = 取指针(inputs[1]);
 	uint16_t* const 输出指针 = 万能转码<uint16_t*>(inputs[2]);
 	const size_t 输出容量 = 万能转码<size_t>(inputs[3]);
 	const uint32_t SizePXY = 2 * 对象指针->SizeX() * 对象指针->SizeY();
@@ -180,7 +184,7 @@ API声明(Oir_ReadToPointer)
 }
 API声明(Oir_LsmimageXml)
 {
-	const Oir读入器* const 对象指针 = 万能转码<Oir读入器*>(inputs[1]);
+	const Oir读入器* const 对象指针 = 取指针(inputs[1]);
 	const char* 指针;
 	uint32_t 长度;
 	对象指针->LsmimageXml(指针, 长度);
@@ -189,16 +193,16 @@ API声明(Oir_LsmimageXml)
 }
 API声明(Oir_LaserTransmissivity)
 {
-	const Oir读入器* const 对象指针 = 万能转码<Oir读入器*>(inputs[1]);
+	const Oir读入器* const 对象指针 = 取指针(inputs[1]);
 	outputs[1] = 万能转码(对象指针->激光透过率(), { 1,对象指针->SizeZ() });
 }
 API声明(Oir_PmtVoltage)
 {
-	const Oir读入器* const 对象指针 = 万能转码<Oir读入器*>(inputs[1]);
+	const Oir读入器* const 对象指针 = 取指针(inputs[1]);
 	outputs[1] = 万能转码(对象指针->放大电压(), { 对象指针->SizeC(),对象指针->SizeZ() });
 }
 API声明(Oir_ZDriveUnitType)
 {
-	const Oir读入器* const 对象指针 = 万能转码<Oir读入器*>(inputs[1]);
+	const Oir读入器* const 对象指针 = 取指针(inputs[1]);
 	outputs[1] = 万能转码<CharArray>(对象指针->Z驱动单元类型());
 }

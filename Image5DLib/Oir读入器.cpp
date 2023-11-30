@@ -53,21 +53,27 @@ struct Z设置
 	T 设置值;
 };
 template<typename T>
-void 深度参数生成(const std::vector<Z设置<T>>&设置向量, float 深度, uint8_t SizeZ, T* 输出指针,float Z步长)
+void 深度参数生成(const std::vector<Z设置<T>>&设置向量, float 深度, uint8_t SizeZ, T* 输出头,float Z步长)
 {
-	if (设置向量.size() < 2 || 设置向量[0].深度 > 深度)
-		throw Image5D异常(实拍深度不在BrightZ范围内);
-	typename std::vector<Z设置<T>>::const_iterator 下一个 = 设置向量.cbegin() + 1;
-	bool 区间切换 = true;
-	typename std::vector<Z设置<T>>::const_iterator 上一个;
+	T* const 输出尾 = 输出头 + SizeZ;
+	typename std::vector<Z设置<T>>::const_iterator 下一个 = 设置向量.cbegin();
+	const int8_t 前余Z = (std::min)(uint8_t((下一个->深度 - 深度) / Z步长 + 1), SizeZ);
+	if (前余Z > 0)
+		输出头 = std::fill_n(输出头, 前余Z, 下一个->设置值);
+	深度 += 前余Z * Z步长;
+	bool 区间切换;
 	float 设置深度比;
-	for (uint8_t Z = 0; Z < SizeZ; ++Z)
+	typename std::vector<Z设置<T>>::const_iterator 上一个;
+	while (输出头 < 输出尾)
 	{
 		while (深度 > 下一个->深度)
 		{
-			区间切换 = true;
 			if (++下一个 == 设置向量.cend())
-				throw Image5D异常(实拍深度不在BrightZ范围内);
+			{
+				std::fill(输出头, 输出尾, (下一个 - 1)->设置值);
+				return;
+			}
+			区间切换 = true;
 		}
 		if (区间切换)
 		{
@@ -75,7 +81,7 @@ void 深度参数生成(const std::vector<Z设置<T>>&设置向量, float 深度
 			设置深度比 = (下一个->设置值 - 上一个->设置值) / (下一个->深度 - 上一个->深度);
 			区间切换 = false;
 		}
-		输出指针[Z] = 设置深度比 * (深度 - 上一个->深度) + 上一个->设置值;
+		*(输出头++) = 设置深度比 * (深度 - 上一个->深度) + 上一个->设置值;
 		深度 += Z步长;
 	}
 }
@@ -198,18 +204,22 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 			continue;
 		通道设备向量.emplace_back();
 		通道设备& 通道设备对象 = 通道设备向量.back();
-		if (!(节点属性 = 通道.attribute("id")))
+		if (节点属性 = 通道.attribute("id"))
+			通道设备对象.通道ID = 节点属性.value();
+		else
 			throw Image5D异常(通道ID未定义);
-		通道设备对象.通道ID = 节点属性.value();
-		if (!(节点属性 = 通道.attribute("order")))
+		if (节点属性 = 通道.attribute("order"))
+			通道设备对象.顺序 = 节点属性.as_uint();
+		else
 			throw Image5D异常(通道顺序未定义);
-		通道设备对象.顺序 = 节点属性.as_uint();
-		if (!(节点属性 = 通道.attribute("detectorId")))
+		if (节点属性 = 通道.attribute("detectorId"))
+			通道设备对象.探测器ID = 节点属性.value();
+		else
 			throw Image5D异常(探测器ID未定义);
-		通道设备对象.探测器ID = 节点属性.value();
-		if (!((节点 = 通道.child("commonphase:deviceName")) && (节点文本 = 节点.text())))
+		if ((节点 = 通道.child("commonphase:deviceName")) && (节点文本 = 节点.text()))
+			通道设备对象.设备名称 = 节点文本.get();
+		else
 			throw Image5D异常(通道设备名未定义);
-		通道设备对象.设备名称 = 节点文本.as_string();
 	}
 	if (通道设备向量.empty())
 		throw Image5D异常(通道未定义);
@@ -219,11 +229,10 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 	for (uint8_t C = 0; C < 新索引.SizeC; ++C)
 		if (strcpy_s(通道颜色[C].设备名称, 通道设备向量[C].设备名称))
 			throw Image5D异常(设备名称太长);
-	if (!(节点 = 采集节点.child("commonimage:configuration")))
-		throw Image5D异常(图像配置未定义);
-	if (!((节点 = 节点.child("lsmimage:scannerType")) && (节点文本 = 节点.text())))
+	if ((节点 = 采集节点.child("commonimage:configuration")) && (节点 = 节点.child("lsmimage:scannerType")) && (节点文本 = 节点.text()))
+		字符串 = 节点文本.as_string();
+	else
 		throw Image5D异常(扫描类型未定义);
-	字符串 = 节点文本.as_string();
 	新索引.SizeX = 0;
 	新索引.SizeY = 0;
 	新索引.系列间隔 = 0;
@@ -239,19 +248,18 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 		const xml_node 图像尺寸 = 扫描参数.child("lsmparam:imageSize");
 		if (!图像尺寸)
 			throw Image5D异常(图像尺寸未定义);
-		if (!((节点 = 图像尺寸.child("commonparam:width")) && (节点文本 = 节点.text())))
+		if ((节点 = 图像尺寸.child("commonparam:width")) && (节点文本 = 节点.text()))
+			新索引.SizeX = 节点文本.as_uint();
+		else
 			throw Image5D异常(扫描宽度未定义);
-		新索引.SizeX = 节点文本.as_uint();
-		if (!((节点 = 图像尺寸.child("commonparam:height")) && (节点文本 = 节点.text())))
+		if ((节点 = 图像尺寸.child("commonparam:height")) && (节点文本 = 节点.text()))
+			新索引.SizeY = 节点文本.as_uint();
+		else
 			throw Image5D异常(扫描高度未定义);
-		新索引.SizeY = 节点文本.as_uint();
-		if (!(节点 = 扫描参数.child("lsmparam:speed")))
+		if ((节点 = 扫描参数.child("lsmparam:speed")) && (节点 = 节点.child("commonparam:speedInformation")) && (节点 = 节点.child("commonparam:seriesInterval")) && (节点文本 = 节点.text()))
+			新索引.系列间隔 = 节点文本.as_float();
+		else
 			throw Image5D异常(扫描速度未定义);
-		if (!(节点 = 节点.child("commonparam:speedInformation")))
-			throw Image5D异常(速度信息未定义);
-		if (!((节点 = 节点.child("commonparam:seriesInterval")) && (节点文本 = 节点.text())))
-			throw Image5D异常(系列间隔未定义);
-		新索引.系列间隔 = 节点文本.as_float();
 		break;
 	}
 	if (!(新索引.SizeX && 新索引.SizeY && 新索引.系列间隔))
@@ -287,18 +295,22 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 				if (!LUT节点)
 					throw Image5D异常(查找表未定义);
 				设备颜色& 通道 = 通道颜色[C2];
-				if (!((节点 = LUT节点.child("lut:red")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
+				if ((节点 = LUT节点.child("lut:red")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text()))
+					通道.红 = 节点文本.as_float();
+				else
 					throw Image5D异常(红色分量未定义);
-				通道.红 = 节点文本.as_float();
-				if (!((节点 = LUT节点.child("lut:green")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
+				if ((节点 = LUT节点.child("lut:green")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text()))
+					通道.绿 = 节点文本.as_float();
+				else
 					throw Image5D异常(绿色分量未定义);
-				通道.绿 = 节点文本.as_float();
-				if (!((节点 = LUT节点.child("lut:blue")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
+				if ((节点 = LUT节点.child("lut:blue")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text()))
+					通道.蓝 = 节点文本.as_float();
+				else
 					throw Image5D异常(蓝色分量未定义);
-				通道.蓝 = 节点文本.as_float();
-				if (!((节点 = LUT节点.child("lut:alpha")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text())))
+				if ((节点 = LUT节点.child("lut:alpha")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text()))
+					通道.不透明度 = 节点文本.as_float();
+				else
 					throw Image5D异常(不透明度未定义);
-				通道.不透明度 = 节点文本.as_float();
 				break;
 			}
 	}

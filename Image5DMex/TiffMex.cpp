@@ -4,6 +4,14 @@ using namespace Image5D;
 using namespace Mex工具;
 constexpr Image5D异常 指针越界(输入指针访问越界);
 constexpr Image5D异常 元素太少(输入数组元素太少);
+IOmeTiff读写器* 取指针(const Array& 指针标量)
+{
+	IOmeTiff读写器* const 指针 = 万能转码<IOmeTiff读写器*>(指针标量);
+	if (对象存在(指针))
+		return 指针;
+	else
+		throw Image5D异常(无效指针);
+}
 API声明(Tiff_OpenRead)
 {
 	const String 字符串 = 万能转码<String>(inputs[1]);
@@ -47,27 +55,27 @@ API声明(Tiff_OpenCreate)
 API声明(Tiff_PixelType)
 {
 	if (inputs.size() > 2)
-		万能转码<IOmeTiff读写器*>(inputs[1])->PixelType((像素类型)万能转码<UINT8>(inputs[2]));
+		取指针(inputs[1])->PixelType((像素类型)万能转码<UINT8>(inputs[2]));
 	else
-		outputs[1] = 万能转码((UINT8)万能转码<const IOmeTiff读写器*>(inputs[1])->PixelType());
+		outputs[1] = 万能转码((UINT8)取指针(inputs[1])->PixelType());
 }
 API声明(Tiff_DimensionOrder)
 {
 	if (inputs.size() > 2)
-		万能转码<IOmeTiff读写器*>(inputs[1])->DimensionOrder((维度顺序)万能转码<UINT8>(inputs[2]));
+		取指针(inputs[1])->DimensionOrder((维度顺序)万能转码<UINT8>(inputs[2]));
 	else
-		outputs[1] = 万能转码((UINT8)万能转码<const IOmeTiff读写器*>(inputs[1])->DimensionOrder());
+		outputs[1] = 万能转码((UINT8)取指针(inputs[1])->DimensionOrder());
 }
 API声明(Tiff_SizeP)
 {
-	outputs[1] = 万能转码(万能转码<const IOmeTiff读写器*>(inputs[1])->SizeP());
+	outputs[1] = 万能转码(取指针(inputs[1])->SizeP());
 }
 #define 尺寸属性(类型,字段) API声明(Tiff_##字段)\
 {\
 	if (inputs.size() > 2)\
-		万能转码<IOmeTiff读写器*>(inputs[1])->字段(万能转码<类型>(inputs[2]));\
+		取指针(inputs[1])->字段(万能转码<类型>(inputs[2]));\
 	else\
-		outputs[1] = 万能转码(万能转码<const IOmeTiff读写器*>(inputs[1])->字段());\
+		outputs[1] = 万能转码(取指针(inputs[1])->字段());\
 }
 尺寸属性(UINT16, SizeX);
 尺寸属性(UINT16, SizeY);
@@ -79,7 +87,7 @@ API声明(Tiff_ChannelColors)
 {
 	if (inputs.size() > 2)
 	{
-		IOmeTiff读写器* 对象指针 = 万能转码<IOmeTiff读写器*>(inputs[1]);
+		IOmeTiff读写器* 对象指针 = 取指针(inputs[1]);
 		TypedArray<uint32_t> 颜色数组(std::move(inputs[2]));
 		if (对象指针->SizeC() > 颜色数组.getNumberOfElements())
 			throw Image5D异常(颜色数与SizeC不匹配);
@@ -88,7 +96,7 @@ API声明(Tiff_ChannelColors)
 	}
 	else
 	{
-		const IOmeTiff读写器* 对象指针 = 万能转码<const IOmeTiff读写器*>(inputs[1]);
+		const IOmeTiff读写器* 对象指针 = 取指针(inputs[1]);
 		const UINT8 SizeC = 对象指针->SizeC();		
 		outputs[1] = 万能转码((UINT32*)对象指针->通道颜色(), { SizeC,1 });
 	}
@@ -98,21 +106,21 @@ API声明(Tiff_FileName)
 	if (inputs.size() > 2)
 	{
 		const std::string 字符串 = 万能转码(std::move(inputs[2]));
-		万能转码<IOmeTiff读写器*>(inputs[1])->文件名(字符串.c_str());
+		取指针(inputs[1])->文件名(字符串.c_str());
 	}
 	else
-		outputs[1] = 万能转码<CharArray>(万能转码<const IOmeTiff读写器*>(inputs[1])->文件名());
+		outputs[1] = 万能转码<CharArray>(取指针(inputs[1])->文件名());
 }
 API声明(Tiff_ImageDescription)
 {
 	if (inputs.size() > 2)
-		万能转码<IOmeTiff读写器*>(inputs[1])->图像描述(万能转码(std::move(inputs[2])));
+		取指针(inputs[1])->图像描述(万能转码(std::move(inputs[2])));
 	else
-		outputs[1] = 万能转码<CharArray>(万能转码<const IOmeTiff读写器*>(inputs[1])->图像描述());
+		outputs[1] = 万能转码<CharArray>(取指针(inputs[1])->图像描述());
 }
 API声明(Tiff_ModifyParameters)
 {
-	IOmeTiff读写器* 对象指针 = 万能转码<IOmeTiff读写器*>(inputs[1]);
+	IOmeTiff读写器* 对象指针 = 取指针(inputs[1]);
 	TypedArray<uint32_t>颜色数组(std::move(inputs[8]));
 	const bool 指定值 = 颜色数组.getNumberOfElements();
 	const buffer_ptr_t<uint32_t>颜色缓冲 = 颜色数组.release();
@@ -144,7 +152,7 @@ ArrayDimensions CZT重排(维度顺序 DO, uint16_t X, uint16_t Y, uint8_t C, ui
 constexpr ArrayType 类型映射[] = { ArrayType::UINT8,ArrayType::UINT16,ArrayType::UINT32,ArrayType::INT8,ArrayType::INT16,ArrayType::INT32,ArrayType::SINGLE,ArrayType::DOUBLE };
 API声明(Tiff_ReadPixels)
 {
-	const IOmeTiff读写器* const 对象指针 = 万能转码<IOmeTiff读写器*>(inputs[1]);
+	const IOmeTiff读写器* const 对象指针 = 取指针(inputs[1]);
 	const ArrayType 类型 = 类型映射[(size_t)对象指针->PixelType()];
 	const uint64_t 图面像素数 = (uint64_t)对象指针->SizeX() * 对象指针->SizeY();
 	switch (inputs.size())
@@ -180,7 +188,7 @@ API声明(Tiff_ReadPixels)
 }
 API声明(Tiff_ReadPixelsI)
 {
-	const IOmeTiff读写器* const 对象指针 = 万能转码<IOmeTiff读写器*>(inputs[1]);
+	const IOmeTiff读写器* const 对象指针 = 取指针(inputs[1]);
 	const UINT32 ISize = 万能转码<UINT32>(inputs[3]);
 	const std::unique_ptr<动态类型缓冲>缓冲 = 动态类型缓冲::创建(类型映射[(size_t)对象指针->PixelType()], (uint64_t)ISize * 对象指针->SizeX() * 对象指针->SizeY());
 	对象指针->读入像素(缓冲->指针, 万能转码<UINT32>(inputs[2]), ISize);
@@ -188,7 +196,7 @@ API声明(Tiff_ReadPixelsI)
 }
 API声明(Tiff_WritePixels)
 {
-	const IOmeTiff读写器* const 对象指针 = 万能转码<const IOmeTiff读写器*>(inputs[1]);
+	const IOmeTiff读写器* const 对象指针 = 取指针(inputs[1]);
 	const std::unique_ptr<动态类型缓冲>缓冲 = 动态类型缓冲::读取(std::move(inputs[2]));
 	const uint64_t 图面字节数 = (uint64_t)对象指针->SizeX() * 对象指针->SizeY() * 对象指针->SizeP();
 	switch (inputs.size())
@@ -224,7 +232,7 @@ API声明(Tiff_WritePixels)
 }
 API声明(Tiff_WritePixelsI)
 {
-	const IOmeTiff读写器* const 对象指针 = 万能转码<const IOmeTiff读写器*>(inputs[1]);
+	const IOmeTiff读写器* const 对象指针 = 取指针(inputs[1]);
 	const std::unique_ptr<动态类型缓冲>缓冲 = 动态类型缓冲::读取(std::move(inputs[2]));
 	const uint32_t ISize = 万能转码<UINT32>(inputs[4]);
 	if (缓冲->字节数 < (size_t)ISize * 对象指针->SizeX() * 对象指针->SizeY() * 对象指针->SizeP())
@@ -233,7 +241,7 @@ API声明(Tiff_WritePixelsI)
 }
 API声明(Tiff_PixelPointer)
 {
-	const IOmeTiff读写器* 对象指针 = 万能转码<const IOmeTiff读写器*>(inputs[1]);
+	const IOmeTiff读写器* 对象指针 = 取指针(inputs[1]);
 	void* 像素指针;
 	size_t 容量;
 	switch (inputs.size())
@@ -255,7 +263,7 @@ API声明(Tiff_PixelPointer)
 }
 API声明(Tiff_PixelPointerI)
 {
-	const IOmeTiff读写器* 对象指针 = 万能转码<const IOmeTiff读写器*>(inputs[1]);
+	const IOmeTiff读写器* 对象指针 = 取指针(inputs[1]);
 	void* 像素指针;
 	size_t 容量;
 	对象指针->像素指针I(万能转码<UINT32>(inputs[2]), 像素指针, 容量);
@@ -264,7 +272,7 @@ API声明(Tiff_PixelPointerI)
 }
 API声明(Tiff_ReadToPointer)
 {
-	const IOmeTiff读写器* const 对象指针 = 万能转码<IOmeTiff读写器*>(inputs[1]);
+	const IOmeTiff读写器* const 对象指针 = 取指针(inputs[1]);
 	void* const 输出指针 = 万能转码<void*>(inputs[2]);
 	const size_t 输出容量 = 万能转码<size_t>(inputs[3]);
 	const size_t SizePXY = 对象指针->SizeP() * 对象指针->SizeX() * 对象指针->SizeY();
@@ -299,7 +307,7 @@ API声明(Tiff_ReadToPointer)
 }
 API声明(Tiff_ReadToPointerI)
 {
-	const IOmeTiff读写器* const 对象指针 = 万能转码<IOmeTiff读写器*>(inputs[1]);
+	const IOmeTiff读写器* const 对象指针 = 取指针(inputs[1]);
 	void* const 输出指针 = 万能转码<void*>(inputs[2]);
 	const size_t 输出容量 = 万能转码<size_t>(inputs[3]);
 	const size_t SizePXY = 对象指针->SizeP() * 对象指针->SizeX() * 对象指针->SizeY();
@@ -310,7 +318,7 @@ API声明(Tiff_ReadToPointerI)
 }
 API声明(Tiff_WriteFromPointer)
 {
-	const IOmeTiff读写器* const 对象指针 = 万能转码<IOmeTiff读写器*>(inputs[1]);
+	const IOmeTiff读写器* const 对象指针 = 取指针(inputs[1]);
 	const void* const 输入指针 = 万能转码<void*>(inputs[2]);
 	const size_t 输入容量 = 万能转码<size_t>(inputs[3]);
 	const size_t SizePXY = 对象指针->SizeP() * 对象指针->SizeX() * 对象指针->SizeY();
@@ -345,7 +353,7 @@ API声明(Tiff_WriteFromPointer)
 }
 API声明(Tiff_WriteFromPointerI)
 {
-	const IOmeTiff读写器* const 对象指针 = 万能转码<IOmeTiff读写器*>(inputs[1]);
+	const IOmeTiff读写器* const 对象指针 = 取指针(inputs[1]);
 	const void* const 输入指针 = 万能转码<void*>(inputs[2]);
 	const size_t 输入容量 = 万能转码<size_t>(inputs[3]);
 	const size_t SizePXY = 对象指针->SizeP() * 对象指针->SizeX() * 对象指针->SizeY();
@@ -357,10 +365,6 @@ API声明(Tiff_WriteFromPointerI)
 API声明(Tiff_Close)
 {
 	IOmeTiff读写器* const 对象指针 = 万能转码<IOmeTiff读写器*>(inputs[1]);
-	手动析构(对象指针);
-	__try
-	{
+	if (手动析构(对象指针))
 		delete 对象指针;
-	}
-	__except (EXCEPTION_EXECUTE_HANDLER) {}
 }
