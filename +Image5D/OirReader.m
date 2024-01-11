@@ -212,7 +212,7 @@ classdef OirReader<handle
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
 					Pixels=Image5D.internal.Image5DAPI.Oir_ReadPixels.Call(obj.Pointer,uint32(TStart),uint32(TSize),varargin{:});
 				otherwise
-					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
+					Image5D.Exceptions.Wrong_number_of_parameters.Throw;
 			end
 		end
 		function ReadToPointer(obj,Pointer,TStart,TSize,varargin)
@@ -262,7 +262,7 @@ classdef OirReader<handle
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
 					Image5D.internal.Image5DAPI.Oir_ReadToPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint32(TStart),uint32(TSize),varargin{:});
 				otherwise
-					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
+					Image5D.Exceptions.Wrong_number_of_parameters.Throw;
 			end
 		end
 	end

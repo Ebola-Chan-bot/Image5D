@@ -133,7 +133,7 @@ classdef ChannelColor<uint32
 				case "."
 					obj=obj.(S.subs);
 				otherwise
-					Image5D.Image5DException.Unexpected_subsref_type.Throw;
+					Image5D.Exceptions.Unexpected_subsref_type.Throw;
 			end
 		end
 		function obj=subsasgn(obj,S,V)

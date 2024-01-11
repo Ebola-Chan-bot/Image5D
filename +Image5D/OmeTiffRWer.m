@@ -113,7 +113,7 @@ classdef OmeTiffRWer<handle
 				case 8
 					obj=OmeTiffRWer(internal.Image5DAPI.Tiff_OpenCreate.Call(FilePath,uint8(PixelTypeOrImageDescription),uint16(SizeX),uint16(SizeY),uint32(ChannelColors),uint8(SizeZ),uint32(SizeT),uint8(DimensionOrder)));
 				otherwise
-					Image5DException.Wrong_number_of_parameters.Throw;
+					Exceptions.Wrong_number_of_parameters.Throw;
 			end
 		end
 		function [Image,DimensionOrder,ChannelColors]=QuickRead(TiffPath)
@@ -315,7 +315,7 @@ classdef OmeTiffRWer<handle
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
 					Pixels=Image5D.internal.Image5DAPI.Tiff_ReadPixels.Call(obj.Pointer,uint32(TStart),uint32(TSize),varargin{:});
 				otherwise
-					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
+					Image5D.Exceptions.Wrong_number_of_parameters.Throw;
 			end
 		end
 		function Pixels=ReadPixelsI(obj,IStart,ISize)
@@ -374,7 +374,7 @@ classdef OmeTiffRWer<handle
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
 					Image5D.internal.Image5DAPI.Tiff_WritePixels.Call(obj.Pointer,Pixels,uint32(TStart),uint32(TSize),varargin{:});
 				otherwise
-					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
+					Image5D.Exceptions.Wrong_number_of_parameters.Throw;
 			end
 		end
 		function WritePixelsI(obj,Pixels,IStart,ISize)
@@ -427,7 +427,7 @@ classdef OmeTiffRWer<handle
 				case 4
 					[Pointer,Capacity]=Image5D.internal.Image5DAPI.Tiff_PixelPointer.Call(obj.Pointer,uint32(T),uint8(Z),uint8(C));
 				otherwise
-					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
+					Image5D.Exceptions.Wrong_number_of_parameters.Throw;
 			end
 			Pointer=Image5D.SafePointer(Pointer,Capacity);
 		end
@@ -482,7 +482,7 @@ classdef OmeTiffRWer<handle
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
 					Image5D.internal.Image5DAPI.Tiff_ReadToPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint32(TStart),uint32(TSize),varargin{:});
 				otherwise
-					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
+					Image5D.Exceptions.Wrong_number_of_parameters.Throw;
 			end
 		end
 		function ReadToPointerI(obj,Pointer,IStart,ISize)
@@ -540,7 +540,7 @@ classdef OmeTiffRWer<handle
 					varargin=cellfun(@uint8,varargin,UniformOutput=false);
 					Image5D.internal.Image5DAPI.Tiff_WriteFromPointer.Call(obj.Pointer,Pointer.Pointer,Pointer.Capacity,uint32(TStart),uint32(TSize),varargin{:});
 				otherwise
-					Image5D.Image5DException.Wrong_number_of_parameters.Throw;
+					Image5D.Exceptions.Wrong_number_of_parameters.Throw;
 			end
 		end
 		function WriteFromPointerI(obj,Pointer,IStart,ISize)

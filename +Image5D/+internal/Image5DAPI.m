@@ -53,8 +53,8 @@ classdef Image5DAPI<uint8
 	methods(Static,Access=private)
 		function [Exception,InnerException]=Status2Exception(Status)
 			import Image5D.InnerExceptionType
-			Exception=Image5D.Image5DException(Status.ExceptionType);
-			if Exception~=Image5D.Image5DException.Successful_operation
+			Exception=Image5D.Exceptions(Status.ExceptionType);
+			if Exception~=Image5D.Exceptions.Successful_operation
 				switch InnerExceptionType(Status.InnerException)
 					case InnerExceptionType.NoInner
 						InnerException=missing;
@@ -82,7 +82,7 @@ classdef Image5DAPI<uint8
 			varargout=cell(1,nargout);
 			[Status,varargout{:}]=Image5DMex(uint8(obj),varargin{:});
 			[Exception,InnerException]=Image5D.internal.Image5DAPI.Status2Exception(Status);
-			if Exception~=Image5D.Image5DException.Successful_operation
+			if Exception~=Image5D.Exceptions.Successful_operation
 				if isequal(InnerException,missing)
 					Exception.Throw;
 				elseif isenum(InnerException)
