@@ -126,7 +126,7 @@ struct MexFunction :public Function
 		}
 		catch (...)
 		{
-			outputs[0] = 异常转结构(Image5D异常(无效指针));
+			outputs[0] = 异常转结构(Image5D异常(未知异常));
 			异常输出补全(outputs);
 		}
 	}

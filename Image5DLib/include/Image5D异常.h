@@ -142,7 +142,8 @@ namespace Image5D
 		库版本低于索引文件版本,
 		探测器ID未定义,
 		Z驱动单元类型太长,
-		pmt缺少detectorId
+		pmt缺少detectorId,
+		未知异常,
 	};
 	enum 内部异常类型
 	{
