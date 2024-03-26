@@ -144,6 +144,7 @@ namespace Image5D
 		Z驱动单元类型太长,
 		pmt缺少detectorId,
 		未知异常,
+		索引加载失败
 	};
 	enum 内部异常类型
 	{

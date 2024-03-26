@@ -142,6 +142,7 @@ classdef Exceptions<uint8&MATLAB.Lang.IEnumerableException
 		ZDriveUnitType_too_long(135)
 		PMT_lacks_DetectorID(136)
         Unknown_exception(137)
+        Index_loading_failure(138)
 
 		%MATLAB抛出的异常
 

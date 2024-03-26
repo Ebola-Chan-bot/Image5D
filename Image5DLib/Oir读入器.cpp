@@ -422,21 +422,20 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 			else
 				throw Image5D异常(PMT电压未定义);
 	}
-	if (激光设置.empty())
-		if ((节点 = 成像参数节点.child("lsmparam:mainLaser")) && (节点 = 节点.child("commonparam:transmissivity")) && (节点文本 = 节点.text()))
-			std::fill_n(i激光透过率, 索引->SizeZ, 节点文本.as_float());
-		else
-			throw Image5D异常(缺少激光参数);
+	if (有Z && 激光设置.size())
+		深度参数生成(激光设置, Z起点, 索引->SizeZ, i激光透过率, 索引->Z步长);
+	else if ((节点 = 成像参数节点.child("lsmparam:mainLaser")) && (节点 = 节点.child("commonparam:transmissivity")) && (节点文本 = 节点.text()))
+		std::fill_n(i激光透过率, 索引->SizeZ, 节点文本.as_float());
 	else
-		深度参数生成(激光设置, Z起点, 索引->SizeZ, i激光透过率,索引->Z步长);
+		throw Image5D异常(缺少激光参数);
 	uint16_t* 输出头 = i放大电压;
 	for (const 通道设备& C : 通道设备向量)
 	{
 		const 电压设置& 通道电压 = 探测器电压[C.探测器ID];
-		if (通道电压.分层设置.empty())
-			std::fill_n(输出头, 索引->SizeZ, 通道电压.固定设置);
-		else
+		if (有Z && 通道电压.分层设置.size())
 			深度参数生成(通道电压.分层设置, Z起点, 索引->SizeZ, 输出头, 索引->Z步长);
+		else
+			std::fill_n(输出头, 索引->SizeZ, 通道电压.固定设置);
 		输出头 += 索引->SizeZ;
 	}
 	索引->哈希签名(文件大小);
@@ -515,6 +514,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 	}
 	catch (...)
 	{
+		//throw Image5D异常(索引加载失败);
 		创建新索引(字符缓冲.get());
 	}
 }
