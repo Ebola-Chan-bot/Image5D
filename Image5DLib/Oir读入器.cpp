@@ -325,6 +325,7 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 		基块索引 += 2;
 	}
 	const 文件列表类::const_iterator 文件结束 = 文件列表.cend();
+	std::vector<uint32_t> 拼接SizeT;
 	while (++当前文件 < 文件结束)
 	{
 		文件头 = (Oir文件头*)(*当前文件)->映射指针();
@@ -341,7 +342,11 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 			[[unlikely]] continue;
 		//对于拼接的OIR序列，需要检测中间突然遇到的头文件，删除上个文件尾可能存在的多余的不完整周期。头文件的特征是，倒数第二块是BMP。
 		if (((Oir基块*)((char*)文件头 + *((uint64_t*)尾指针 - 2)))->类型 == Oir基块类型::BMP) [[unlikely]]
-			块指针.resize(块指针.size() / 每周期像素块数 * 每周期像素块数);
+			{
+				//记录每个拼接的SizeT位置
+				拼接SizeT.push_back(块指针.size() / 每周期像素块数);
+				块指针.resize(拼接SizeT.back() * 每周期像素块数);
+			}
 			for (uint8_t a = 0; a < 每层像素块数; ++a)
 				块指针.push_back((uint16_t*)((Oir基块*)((char*)文件头 + *(基块索引 += 2)) + 1));
 			基块索引 += 3;
@@ -353,6 +358,8 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 			}
 		绝对跳出:;
 	}
+	//如果未发生拼接，拼接SizeT将为空，始终比实际拼接序列数少一个
+	新索引.文件序列拼接数 = 拼接SizeT.size() + 1;
 	新索引.每帧分块数 = 每层像素块数 / 新索引.SizeC;
 	新索引.计算依赖字段(块指针.size());
 	const uint32_t 文件大小 = 新索引.计算文件大小();
@@ -361,8 +368,19 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 	*(索引 = (Oir索引*)索引文件->映射指针()) = 新索引;
 	块指针.resize(索引->SizeTZBC);
 	uint64_t* 块偏移;
-	索引->Get变长成员(i激光透过率, i通道颜色, i放大电压, 每块像素数, 块偏移);
-
+	索引->Get变长成员(i激光透过率, i通道颜色, i放大电压, 每块像素数, 块偏移, _拼接SizeT);
+	uint8_t 序列 = 索引->文件序列拼接数 - 1;
+	if (序列)
+	{
+		//序列不为0意味着发生了拼接。最后一个序列的SizeT不能用拼接SizeT计算出
+		_拼接SizeT[序列] = 索引->SizeT - 拼接SizeT.back();
+		while (--序列)
+			_拼接SizeT[序列] = 拼接SizeT[序列] - 拼接SizeT[序列 - 1];
+		//第一个序列的SizeT不需要减
+		_拼接SizeT[0] = 拼接SizeT[0];
+	}
+	else[[likely]]//序列为0表示未拼接，直接等于SizeT
+		_拼接SizeT[0] = 索引->SizeT;
 	//在此之后才可以读入各种变长成员，而在此之前不知道索引文件的大小所以不能读入
 
 	std::vector<uint32_t>::const_iterator 块像素头 = 每块像素数向量.cbegin();
@@ -488,7 +506,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 		if (sizeof(索引) > 索引文件->文件大小() || !索引->验证(索引文件->文件大小()))
 			throw 0;
 		uint64_t* 块偏移;
-		索引->Get变长成员(i激光透过率, i通道颜色, i放大电压, 每块像素数, 块偏移);
+		索引->Get变长成员(i激光透过率, i通道颜色, i放大电压, 每块像素数, 块偏移, _拼接SizeT);
 		const uint32_t 块总数 = uint32_t(索引->SizeZBC) * 索引->SizeT;
 		if (!块总数)
 			throw 0;

@@ -17,6 +17,7 @@ API声明(Oir_LsmimageXml);
 API声明(Oir_LaserTransmissivity);
 API声明(Oir_PmtVoltage);
 API声明(Oir_ZDriveUnitType);
+API声明(Oir_ConcatenateSizeT);
 
 //OmeTiffRWer
 API声明(Tiff_OpenRead);
@@ -65,7 +66,10 @@ struct MexFunction :public Function
 	void operator()(ArgumentList& outputs, ArgumentList& inputs)
 	{
 		API索引{
+			//这个数组的顺序一般不要轻易修改，只在后面追加，因为会影响MATLAB端的调用
+
 			// OirReader
+
 			Oir_CreateReader,
 			Oir_DeleteReader,
 			Oir_SizeX,
@@ -79,6 +83,7 @@ struct MexFunction :public Function
 			Oir_ReadToPointer,
 
 			// OmeTiffRWer
+
 			Tiff_OpenRead,
 			Tiff_OpenRW,
 			Tiff_OpenCreate,
@@ -108,10 +113,15 @@ struct MexFunction :public Function
 			Tiff_Close,
 
 			//OirReader v1.6.0
+
 			Oir_LsmimageXml,
 			Oir_LaserTransmissivity,
 			Oir_PmtVoltage,
 			Oir_ZDriveUnitType,
+
+			//OirReader v3.1.0
+
+			Oir_ConcatenateSizeT,
 		};
 		try
 		{

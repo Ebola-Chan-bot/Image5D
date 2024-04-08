@@ -1,7 +1,7 @@
 #pragma once
-#include<vector>
 #include"文件控制块.h"
 #include"Oir索引.h"
+#include<vector>
 namespace Image5D
 {
 	using 文件列表类 = std::vector<std::unique_ptr<文件控制块>>;
@@ -29,6 +29,9 @@ namespace Image5D
 		const float* 激光透过率()const noexcept { return i激光透过率; }
 		//数组尺寸为SizeZ*SizeC，维度顺序先Z后C
 		const uint16_t* 放大电压()const noexcept { return i放大电压; }
+		uint8_t 文件序列拼接数()const noexcept { return 索引->文件序列拼接数; }
+		//数组尺寸为文件序列拼接数。将多OIR序列拼接成单个序列时，此数组指出每个序列的SizeT
+		const uint16_t* 拼接SizeT()const noexcept { return _拼接SizeT; }
 		void 读入像素(uint16_t* 缓冲区, uint32_t TStart, uint32_t TSize, uint8_t ZStart, uint8_t ZSize, uint8_t CStart, uint8_t CSize)const;
 		void 读入像素(uint16_t* 缓冲区, uint32_t TStart, uint32_t TSize, uint8_t ZStart, uint8_t ZSize)const;
 		void 读入像素(uint16_t* 缓冲区, uint32_t TStart, uint32_t TSize, uint8_t C)const;
@@ -48,6 +51,7 @@ namespace Image5D
 		设备颜色* i通道颜色;
 		float* i激光透过率;
 		uint16_t* i放大电压;
+		uint16_t* _拼接SizeT;
 		void 创建新索引(const wchar_t* 字符缓冲);
 	};
 }

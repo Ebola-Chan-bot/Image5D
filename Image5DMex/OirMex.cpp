@@ -206,3 +206,8 @@ API声明(Oir_ZDriveUnitType)
 	const Oir读入器* const 对象指针 = 取指针(inputs[1]);
 	outputs[1] = 万能转码<CharArray>(对象指针->Z驱动单元类型());
 }
+API声明(Oir_ConcatenateSizeT)
+{
+	const Oir读入器* const 对象指针 = 取指针(inputs[1]);
+	outputs[1] = 万能转码(对象指针->拼接SizeT(), { 对象指针->文件序列拼接数(),1 });
+}

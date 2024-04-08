@@ -30,6 +30,8 @@ classdef OirReader<handle
 		DeviceColors
 		%Z驱动单元类型，通常为Motor或Piezo
 		ZDriveUnitType
+		%列出每个拼接序列的SizeT。如果只有一个序列，未发生拼接，则此值等于SizeT
+		ConcatenateSizeT
 	end
 	methods(Static)
 		function ConcatenateByRename(HeaderPaths)
@@ -167,6 +169,9 @@ classdef OirReader<handle
 		end
 		function ZDUT=get.ZDriveUnitType(obj)
 			ZDUT=Image5D.internal.Image5DAPI.Oir_ZDriveUnitType.Call(obj.Pointer);
+		end
+		function CST=get.ConcatenateSizeT(obj)
+			CST=Image5D.internal.Image5DAPI.Oir_ConcatenateSizeT.Call(obj.Pointer);
 		end
 		function Pixels=ReadPixels(obj,TStart,TSize,varargin)
 			%读入像素块值
