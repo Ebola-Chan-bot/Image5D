@@ -1,9 +1,5 @@
-classdef OirReader<handle
+classdef OirReader<Image5D.CommonReader
 	%Olympus OIR 文件快速5D读入器，使用连续内存映射文件实现高速读入
-    properties(GetAccess=private,SetAccess=immutable,Transient)
-		%不同于C++，MATLAB类即使构造出错也会析构，所以必须先置0
-		Pointer(1,1)uint64=0
-	end
 	properties(Dependent)
 		%图像宽度
 		SizeX
@@ -26,12 +22,20 @@ classdef OirReader<handle
 		%采样设备名称和通道颜色
 		%(:,2)table，每行一个设备通道，包含以下列：
 		% - Device(:,1)string，设备名称
-		% - Color(:,3)table，通道颜色，包含 Red Green Blue 三列
+		% - Color(:,4)table，通道颜色，包含 Alpha Blue Green Red 4 列
 		DeviceColors
 		%Z驱动单元类型，通常为Motor或Piezo
 		ZDriveUnitType
 		%列出每个拼接序列的SizeT。如果只有一个序列，未发生拼接，则此值等于SizeT
 		ConcatenateSizeT
+		%像素字节数
+		SizeP
+		%像素类型
+		PixelType
+		%各通道颜色
+		ChannelColors
+		%维度顺序
+		DimensionOrder
 	end
 	methods(Static)
 		function ConcatenateByRename(HeaderPaths)
@@ -126,7 +130,7 @@ classdef OirReader<handle
 			%# 提示
 			% OIR文件的像素值是在文件中间断存储的数据块，且没有内置索引。为了实现快速读入，首次构造时需要遍历文件建立索引。遍历算法尽可能优化过，但对于大Oir文件仍可能需要等待相当长时间。
 			% 建立的索引需要保存在Oir文件同目录下，这样下次可以快速打开，无需重新建立索引。但也因此要求该目录具有写入权限，暂不支持打开只读目录下的Oir文件。
-			obj.Pointer=Image5D.internal.Image5DAPI.Oir_CreateReader.Call(HeaderPath);
+			obj@Image5D.CommonReader(Image5D.internal.Image5DAPI.Oir_CreateReader.Call(HeaderPath));
 		end
 		function delete(obj)
 			%删除OirReader对象。
@@ -164,7 +168,7 @@ classdef OirReader<handle
 		end
 		function DC=get.DeviceColors(obj)
 			[Device,Color]=Image5D.internal.Image5DAPI.Oir_DeviceColors.Call(obj.Pointer);
-			Color=array2table(Color,VariableNames=["Red","Green","Blue"]);
+			Color=array2table(Color,VariableNames=["Alpha","Blue","Green","Red"]);
 			DC=table(Device,Color);
 		end
 		function ZDUT=get.ZDriveUnitType(obj)
@@ -172,6 +176,18 @@ classdef OirReader<handle
 		end
 		function CST=get.ConcatenateSizeT(obj)
 			CST=Image5D.internal.Image5DAPI.Oir_ConcatenateSizeT.Call(obj.Pointer);
+		end
+		function Size=get.SizeP(~)
+			Size=2;
+		end
+		function PT=get.PixelType(~)
+			PT=Image5D.PixelType.UINT16;
+		end
+		function CC=get.ChannelColors(obj)
+			CC=Image5D.ChannelColor.New(Image5D.internal.Image5DAPI.Oir_ChannelColors.Call(obj.Pointer));
+		end
+		function DO=get.DimensionOrder(~)
+			DO=Image5D.DimensionOrder.XYCZT;
 		end
 		function Pixels=ReadPixels(obj,TStart,TSize,varargin)
 			%读入像素块值

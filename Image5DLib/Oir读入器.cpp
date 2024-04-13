@@ -308,7 +308,7 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 				else
 					throw Image5D异常(蓝色分量未定义);
 				if ((节点 = LUT节点.child("lut:alpha")) && (节点 = 节点.child("lut:contrast")) && (节点文本 = 节点.text()))
-					通道.不透明度 = 节点文本.as_float();
+					通道.不透明度 = 1 - 节点文本.as_float();
 				else
 					throw Image5D异常(不透明度未定义);
 				break;

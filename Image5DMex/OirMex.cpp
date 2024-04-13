@@ -51,7 +51,7 @@ API声明(Oir_DeviceColors)
 {
 	const Oir读入器* const 指针 = 取指针(inputs[1]);
 	const uint8_t SizeC = 指针->SizeC();
-	const uint8_t 颜色尺寸 = SizeC * 3;
+	const uint8_t 颜色尺寸 = SizeC * 4;
 	buffer_ptr_t<float> 颜色缓冲 = 数组工厂.createBuffer<float>(颜色尺寸);
 	float* 颜色缓冲头 = 颜色缓冲.get();
 	StringArray 设备缓冲 = 数组工厂.createArray<MATLABString>({ SizeC });
@@ -61,12 +61,13 @@ API声明(Oir_DeviceColors)
 	{
 		*(设备缓冲头++) = 万能转码<MATLABString>(通道颜色->设备名称);
 		float* 分量头 = 颜色缓冲头++;
-		*分量头 = 通道颜色->红;
+		*分量头 = 通道颜色->不透明度;
+		*(分量头 += SizeC) = 通道颜色->蓝;
 		*(分量头 += SizeC) = 通道颜色->绿;
-		*(分量头 + SizeC) = 通道颜色->蓝;
+		*(分量头 + SizeC) = 通道颜色->红;
 	}
 	outputs[1] = 设备缓冲;
-	outputs[2] = 数组工厂.createArrayFromBuffer({ SizeC,3 }, std::move(颜色缓冲));
+	outputs[2] = 数组工厂.createArrayFromBuffer({ SizeC,4 }, std::move(颜色缓冲));
 }
 API声明(Oir_ReadPixels)
 {
@@ -210,4 +211,19 @@ API声明(Oir_ConcatenateSizeT)
 {
 	const Oir读入器* const 对象指针 = 取指针(inputs[1]);
 	outputs[1] = 万能转码(对象指针->拼接SizeT(), { 对象指针->文件序列拼接数(),1 });
+}
+API声明(Oir_ChannelColors)
+{
+	const Oir读入器* const 对象指针 = 取指针(inputs[1]);
+	const 设备颜色* 当前通道 = 对象指针->通道颜色();
+	TypedArray<uint32_t>颜色数组 = 数组工厂.createArray<uint32_t>({ 对象指针->SizeC(),1 });
+	for (uint32_t& 颜色 : 颜色数组)
+	{
+		uint8_t* 透蓝绿红 = (uint8_t*)&颜色;
+		透蓝绿红[0] = 当前通道->不透明度 * 255;
+		透蓝绿红[1] = 当前通道->蓝 * 255;
+		透蓝绿红[2] = 当前通道->绿 * 255;
+		透蓝绿红[3] = 当前通道++->红 * 255;
+	}
+	outputs[1] = 颜色数组;
 }

@@ -52,6 +52,7 @@ classdef Image5DAPI<uint8
 
 		%OirReader v3.1.0
 		Oir_ConcatenateSizeT(42)
+		Oir_ChannelColors(43)
 	end
 	methods(Static,Access=private)
 		function [Exception,InnerException]=Status2Exception(Status)

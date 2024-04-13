@@ -18,6 +18,7 @@ API声明(Oir_LaserTransmissivity);
 API声明(Oir_PmtVoltage);
 API声明(Oir_ZDriveUnitType);
 API声明(Oir_ConcatenateSizeT);
+API声明(Oir_ChannelColors);
 
 //OmeTiffRWer
 API声明(Tiff_OpenRead);
@@ -122,6 +123,7 @@ struct MexFunction :public Function
 			//OirReader v3.1.0
 
 			Oir_ConcatenateSizeT,
+			Oir_ChannelColors,
 		};
 		try
 		{
@@ -132,6 +134,11 @@ struct MexFunction :public Function
 		catch (const Image5D异常& 异常)
 		{
 			outputs[0] = 异常转结构(异常);
+			异常输出补全(outputs);
+		}
+		catch (Mex异常 异常)
+		{
+			outputs[0] = 异常转结构(异常 == Mex异常::不能从空数组取得标量 ? Image5D异常(输入了空数组) : Image5D异常(未知异常));
 			异常输出补全(outputs);
 		}
 		catch (...)

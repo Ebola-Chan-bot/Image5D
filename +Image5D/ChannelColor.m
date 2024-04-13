@@ -72,6 +72,7 @@ classdef ChannelColor<uint32
 			% OirColors table，Oir颜色矩阵，具有["Red","Green","Blue"]三列，每行对应一个颜色的三个分量，范围[0,1]。可从OirReader.DeviceColors.Color获得。
 			%# 返回值
 			% obj(:,1)Image5D.ChannelColor，转换后的ChannelColor对象。如果输入参数指定了多个颜色，obj总是列向量，无论输入数组尺寸为何。
+			Image5D.Exceptions.Method_deprecated.Warn('此方法将在未来版本中删除。建议改用OirReader.ChannelColors属性。')
 			OirColors=uint8([ones(1,height(OirColors));OirColors{:,["Blue","Green","Red"]}']*255);
 			obj=Image5D.ChannelColor(typecast(OirColors(:),'uint32'));
 		end
@@ -142,10 +143,10 @@ classdef ChannelColor<uint32
 			obj=Image5D.ChannelColor(obj);
 		end
 		function obj=char(obj)
-			obj=['0x',dec2hex(obj,8)];
+			obj=char(obj.string);
 		end
 		function obj=string(obj)
-			obj=string(obj.char);
+			obj="0x"+dec2hex(obj,8);
 		end
 		function disp(obj)
 			disp(obj.char);

@@ -43,7 +43,7 @@ API声明(Tiff_OpenCreate)
 		TypedArray<uint32_t>颜色数组(std::move(inputs[5]));
 		const uint8_t SizeC = 颜色数组.getNumberOfElements();
 		const buffer_ptr_t<uint32_t> 颜色缓冲 = 颜色数组.release();
-		对象指针 = IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), (像素类型)万能转码<UINT8>(inputs[2]), 万能转码<UINT16>(inputs[3]), 万能转码<UINT16>(inputs[4]), SizeC, 万能转码<UINT8>(inputs[6]), 万能转码<uint32_t>(inputs[7]), (颜色*)颜色缓冲.get(), (维度顺序)万能转码<UINT8>(inputs[8]));
+		对象指针 = IOmeTiff读写器::覆盖创建((wchar_t*)字符串.c_str(), (像素类型)万能转码<uint8_t>(inputs[2]), 万能转码<uint16_t>(inputs[3]), 万能转码<uint16_t>(inputs[4]), SizeC, 万能转码<uint16_t>(inputs[6]), 万能转码<uint32_t>(inputs[7]), (颜色*)颜色缓冲.get(), (维度顺序)万能转码<uint8_t>(inputs[8]));
 	}
 	break;
 	default:
@@ -55,16 +55,16 @@ API声明(Tiff_OpenCreate)
 API声明(Tiff_PixelType)
 {
 	if (inputs.size() > 2)
-		取指针(inputs[1])->PixelType((像素类型)万能转码<UINT8>(inputs[2]));
+		取指针(inputs[1])->PixelType((像素类型)万能转码<uint8_t>(inputs[2]));
 	else
-		outputs[1] = 万能转码((UINT8)取指针(inputs[1])->PixelType());
+		outputs[1] = 万能转码((uint8_t)取指针(inputs[1])->PixelType());
 }
 API声明(Tiff_DimensionOrder)
 {
 	if (inputs.size() > 2)
-		取指针(inputs[1])->DimensionOrder((维度顺序)万能转码<UINT8>(inputs[2]));
+		取指针(inputs[1])->DimensionOrder((维度顺序)万能转码<uint8_t>(inputs[2]));
 	else
-		outputs[1] = 万能转码((UINT8)取指针(inputs[1])->DimensionOrder());
+		outputs[1] = 万能转码((uint8_t)取指针(inputs[1])->DimensionOrder());
 }
 API声明(Tiff_SizeP)
 {
@@ -80,8 +80,8 @@ API声明(Tiff_SizeP)
 尺寸属性(UINT16, SizeX);
 尺寸属性(UINT16, SizeY);
 尺寸属性(UINT32, SizeI);
-尺寸属性(UINT8, SizeC);
-尺寸属性(UINT8, SizeZ);
+尺寸属性(uint8_t, SizeC);
+尺寸属性(uint8_t, SizeZ);
 尺寸属性(uint32_t, SizeT);
 API声明(Tiff_ChannelColors)
 {
@@ -97,7 +97,7 @@ API声明(Tiff_ChannelColors)
 	else
 	{
 		const IOmeTiff读写器* 对象指针 = 取指针(inputs[1]);
-		const UINT8 SizeC = 对象指针->SizeC();		
+		const uint8_t SizeC = 对象指针->SizeC();		
 		outputs[1] = 万能转码((UINT32*)对象指针->通道颜色(), { SizeC,1 });
 	}
 }
@@ -129,7 +129,7 @@ API声明(Tiff_ModifyParameters)
 	const char* 文件名指针 = 文件名.c_str();
 	if (!*文件名指针)
 		文件名指针 = nullptr;
-	对象指针->修改参数((像素类型)万能转码<UINT8>(inputs[2]), 万能转码<UINT16>(inputs[3]), 万能转码<UINT16>(inputs[4]), 万能转码<UINT8>(inputs[5]), 万能转码<UINT8>(inputs[6]), 万能转码<uint32_t>(inputs[7]), 颜色指针, (维度顺序)万能转码<UINT8>(inputs[9]), 文件名指针);
+	对象指针->修改参数((像素类型)万能转码<uint8_t>(inputs[2]), 万能转码<UINT16>(inputs[3]), 万能转码<UINT16>(inputs[4]), 万能转码<uint8_t>(inputs[5]), 万能转码<uint8_t>(inputs[6]), 万能转码<uint32_t>(inputs[7]), 颜色指针, (维度顺序)万能转码<uint8_t>(inputs[9]), 文件名指针);
 }
 ArrayDimensions CZT重排(维度顺序 DO, uint16_t X, uint16_t Y, uint8_t C, uint8_t Z, uint32_t T)
 {
@@ -175,10 +175,10 @@ API声明(Tiff_ReadPixels)
 	case 8:
 	{
 		const uint32_t TSize = 万能转码<uint32_t>(inputs[3]);
-		const UINT8 ZSize = 万能转码<UINT8>(inputs[5]);
-		const UINT8 CSize = 万能转码<UINT8>(inputs[7]);
+		const uint8_t ZSize = 万能转码<uint8_t>(inputs[5]);
+		const uint8_t CSize = 万能转码<uint8_t>(inputs[7]);
 		const std::unique_ptr<动态类型缓冲>缓冲 = 动态类型缓冲::创建(类型, 图面像素数 * TSize * ZSize * CSize );
-		对象指针->读入像素(缓冲->指针, 万能转码<uint32_t>(inputs[2]), TSize, 万能转码<UINT8>(inputs[4]), ZSize, 万能转码<UINT8>(inputs[6]), CSize);
+		对象指针->读入像素(缓冲->指针, 万能转码<uint32_t>(inputs[2]), TSize, 万能转码<uint8_t>(inputs[4]), ZSize, 万能转码<uint8_t>(inputs[6]), CSize);
 		outputs[1] = 缓冲->打包(CZT重排(对象指针->DimensionOrder(), 对象指针->SizeX(), 对象指针->SizeY(), CSize, ZSize, TSize));
 	}
 	break;
@@ -219,11 +219,11 @@ API声明(Tiff_WritePixels)
 	case 9:
 	{
 		const uint32_t TSize = 万能转码<uint32_t>(inputs[4]);
-		const uint8_t ZSize = 万能转码<UINT8>(inputs[6]);
-		const uint8_t CSize = 万能转码<UINT8>(inputs[8]);
+		const uint8_t ZSize = 万能转码<uint8_t>(inputs[6]);
+		const uint8_t CSize = 万能转码<uint8_t>(inputs[8]);
 		if (缓冲->字节数 < 图面字节数 * TSize * ZSize * CSize)
 			throw 元素太少;
-		对象指针->写出像素(缓冲->指针, 万能转码<uint32_t>(inputs[3]), TSize, 万能转码<UINT8>(inputs[5]), ZSize, 万能转码<UINT8>(inputs[7]), CSize);
+		对象指针->写出像素(缓冲->指针, 万能转码<uint32_t>(inputs[3]), TSize, 万能转码<uint8_t>(inputs[5]), ZSize, 万能转码<uint8_t>(inputs[7]), CSize);
 	}
 	break;
 	default:
@@ -253,7 +253,7 @@ API声明(Tiff_PixelPointer)
 		对象指针->像素指针(万能转码<uint32_t>(inputs[2]), 像素指针, 容量);
 		break;
 	case 5:
-		对象指针->像素指针(万能转码<uint32_t>(inputs[2]), 万能转码<UINT8>(inputs[3]), 万能转码<UINT8>(inputs[4]), 像素指针, 容量);
+		对象指针->像素指针(万能转码<uint32_t>(inputs[2]), 万能转码<uint8_t>(inputs[3]), 万能转码<uint8_t>(inputs[4]), 像素指针, 容量);
 		break;
 	default:
 		throw 参数异常;

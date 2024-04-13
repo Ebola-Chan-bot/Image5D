@@ -15,6 +15,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决�
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Mex工具", "..\..\..\source\repos\MexTools\Mex工具\Mex工具.vcxproj", "{CE6CE462-A955-46A7-BB11-895054EF51EA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug.本地Mex工具|x64 = Debug.本地Mex工具|x64
@@ -75,6 +77,22 @@ Global
 		{0D661C84-7BE0-49EA-9B5D-9F1A9B3DC7EF}.Release|x64.Build.0 = Release|x64
 		{0D661C84-7BE0-49EA-9B5D-9F1A9B3DC7EF}.Release|x86.ActiveCfg = Release|Win32
 		{0D661C84-7BE0-49EA-9B5D-9F1A9B3DC7EF}.Release|x86.Build.0 = Release|Win32
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Debug.本地Mex工具|x64.ActiveCfg = Debug|x64
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Debug.本地Mex工具|x64.Build.0 = Debug|x64
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Debug.本地Mex工具|x86.ActiveCfg = Debug|Win32
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Debug.本地Mex工具|x86.Build.0 = Debug|Win32
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Debug|x64.ActiveCfg = Debug|x64
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Debug|x64.Build.0 = Debug|x64
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Debug|x86.ActiveCfg = Debug|Win32
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Debug|x86.Build.0 = Debug|Win32
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Release.本地Mex工具|x64.ActiveCfg = Release|x64
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Release.本地Mex工具|x64.Build.0 = Release|x64
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Release.本地Mex工具|x86.ActiveCfg = Release|Win32
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Release.本地Mex工具|x86.Build.0 = Release|Win32
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Release|x64.ActiveCfg = Release|x64
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Release|x64.Build.0 = Release|x64
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Release|x86.ActiveCfg = Release|Win32
+		{CE6CE462-A955-46A7-BB11-895054EF51EA}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

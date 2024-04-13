@@ -1,4 +1,4 @@
-classdef OmeTiffRWer<handle
+classdef OmeTiffRWer<Image5D.CommonReader
 	%OME TIFF 快速5D读写器，使用内存映射文件和强制像素块连续实现高速读写
 	%为了实现高速读写，读写器写出的是自研的OB5格式的 OME TIFF，完全符合 OME TIFF 基本标准，因此可以被任何标准 OME TIFF 读入器读入（ImageJ, BioFormats等）。但是，其它应用程序创建的TIFF文件不一定符合OB5格式规范，因此本读写器仅支持对那些文件的只读功能，不支持修改。
 	%读写器对象不能直接构造，需要从以下静态方法中取得：
@@ -7,10 +7,6 @@ classdef OmeTiffRWer<handle
 	% - Create，创建新 OB5 TIFF 文件，覆盖现存文件
 	%注意，本读写器并不完全支持TIFF格式的所有特性。为了实现快速5D读入，读写器会假定所有IFD的图像像素尺寸相同，且像素块完整不分条带。不满足此条件的TIFF文件将引发错误。
 	%每次修改属性值都会导致文件结构重新生成，此过程可能造成像素值损坏，且性能较低。因此请勿依次修改多个属性，而是使用ModifyParameters方法一次性修改多个属性值。
-    properties(GetAccess=private,SetAccess=immutable,Transient)
-		%不同于C++，MATLAB类即使构造出错也会析构，所以必须先置0
-		Pointer(1,1)uint64=0
-	end
 	properties(Dependent)
 		%像素类型。如果文件符合OME标准，从 OME XML 中读入此属性；否则从首IFD中取得。假定所有IFD的像素类型与首IFD相同。
 		PixelType Image5D.PixelType
@@ -39,7 +35,7 @@ classdef OmeTiffRWer<handle
 	end
 	methods(Access=private)
 		function obj = OmeTiffRWer(Pointer)
-			obj.Pointer=Pointer;
+			obj@Image5D.CommonReader(Pointer);
 		end
 	end
 	methods(Static)
@@ -111,7 +107,7 @@ classdef OmeTiffRWer<handle
 				case 2
 					obj=OmeTiffRWer(internal.Image5DAPI.Tiff_OpenCreate.Call(FilePath,PixelTypeOrImageDescription));
 				case 8
-					obj=OmeTiffRWer(internal.Image5DAPI.Tiff_OpenCreate.Call(FilePath,uint8(PixelTypeOrImageDescription),uint16(SizeX),uint16(SizeY),uint32(ChannelColors),uint8(SizeZ),uint32(SizeT),uint8(DimensionOrder)));
+					obj=OmeTiffRWer(internal.Image5DAPI.Tiff_OpenCreate.Call(FilePath,uint8(PixelTypeOrImageDescription),SizeX,SizeY,uint32(ChannelColors),SizeZ,SizeT,uint8(DimensionOrder)));
 				otherwise
 					Exceptions.Wrong_number_of_parameters.Throw;
 			end

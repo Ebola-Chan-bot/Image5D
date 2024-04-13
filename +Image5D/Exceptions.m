@@ -143,9 +143,12 @@ classdef Exceptions<uint8&MATLAB.Lang.IEnumerableException
 		PMT_lacks_DetectorID(136)
         Unknown_exception(137)
         Index_loading_failure(138)
+		Empty_array_specified(139)
 
 		%MATLAB抛出的异常
 
+		Method_deprecated(251)
+		Unexpected_file_extension(252)
 		Unexpected_subsref_type(253)
 		DEFAULT_PixelType_cannot_convert_to_MATLAB_datatypes(254)
 		Wrong_number_of_parameters(255)
