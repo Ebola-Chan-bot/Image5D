@@ -9,25 +9,25 @@ classdef OmeTiffRWer<Image5D.CommonReader
 	%每次修改属性值都会导致文件结构重新生成，此过程可能造成像素值损坏，且性能较低。因此请勿依次修改多个属性，而是使用ModifyParameters方法一次性修改多个属性值。
 	properties(Dependent)
 		%像素类型。如果文件符合OME标准，从 OME XML 中读入此属性；否则从首IFD中取得。假定所有IFD的像素类型与首IFD相同。
-		PixelType Image5D.PixelType
+		PixelType
 		%维度顺序。仅 OME TIFF 支持此属性。
-		DimensionOrder Image5D.DimensionOrder
+		DimensionOrder
 		%像素字节数，根据PixelType计算得到。不能直接修改此属性，请修改PixelType。
 		SizeP
 		%图像宽度。如果文件符合OME标准，从 OME XML 中读入此属性；否则从首IFD中取得。假定所有IFD的图像宽度与首IFD相同。
-		SizeX uint16
+		SizeX
 		%图像高度。如果文件符合OME标准，从 OME XML 中读入此属性；否则从首IFD中取得。假定所有IFD的图像高度与首IFD相同。
-		SizeY uint16
+		SizeY
 		%IFD总数。如果文件符合OME标准，此值必等于SizeC*SizeZ*SizeT。不能直接修改此属性，请修改SizeC、SizeZ或SizeT。
 		SizeI
 		%颜色通道数。仅 OME TIFF 支持此属性。
-		SizeC uint8
+		SizeC
 		%Z层数。仅 OME TIFF 支持此属性。
-		SizeZ uint8
+		SizeZ
 		%采样时点数。仅 OME TIFF 支持此属性。
-		SizeT uint32
+		SizeT
 		%各通道颜色，每个通道对应一个Image5D.ChannelColor对象。仅 OME TIFF 支持此属性。
-		ChannelColors Image5D.ChannelColor
+		ChannelColors
 		%文件名。仅 OME TIFF 支持此属性。此值从 OME XML 中读取，不一定与真实的文件名相同。
 		FileName string
 		%图像描述。只包含首IFD的图像描述。如果文件符合OME标准，此图像描述即为 OME XML 元数据。修改此属性将可能导致其它基本属性也被修改。
