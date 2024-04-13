@@ -123,16 +123,25 @@
 			}
 		]
 	},
-	"Image5D.ChannelColor.FromOirColors": {
+	"Image5D.CommonReader.Open": {
 		"inputs": [
 			{
-				"name": "OirColors",
+				"name": "FilePath",
 				"kind": "required",
 				"type": [
-					"size=3,:",
-					"double"
+					[
+						"file=*.oir,*.tif"
+					],
+					[
+						"char",
+						"row"
+					],
+					[
+						"string",
+						"scalar"
+					]
 				],
-				"purpose": "Oir颜色矩阵"
+				"purpose": "要打开的文件路径"
 			}
 		]
 	},

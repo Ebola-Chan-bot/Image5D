@@ -28,13 +28,13 @@ classdef OirReader<Image5D.CommonReader
 		ZDriveUnitType
 		%列出每个拼接序列的SizeT。如果只有一个序列，未发生拼接，则此值等于SizeT
 		ConcatenateSizeT
-		%像素字节数
+		%像素字节数，恒为2
 		SizeP
-		%像素类型
+		%像素类型，恒为PixelType.UINT16
 		PixelType
 		%各通道颜色
 		ChannelColors
-		%维度顺序
+		%维度顺序，恒为DimenionOrder.XYCZT
 		DimensionOrder
 	end
 	methods(Static)

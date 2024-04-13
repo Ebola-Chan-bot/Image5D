@@ -16,6 +16,7 @@
 	- [MATLAB接口类](#matlab接口类)
 	- [辅助数据类型](#辅助数据类型)
 	- [已知问题](#已知问题)
+- [CommonReader](#commonreader)
 # 部署指南
 本库的核心逻辑代码以静态库项目形式存在，可以方便地包装成面向各种语言的接口模块。存储库中还提供了面向MATLAB和C++的包装项目示例。
 ## 存储库结构
@@ -76,6 +77,16 @@ classdef OirReader<handle
 		DeviceColors
 		%Z驱动单元类型，通常为Motor或Piezo
 		ZDriveUnitType
+		%列出每个拼接序列的SizeT。如果只有一个序列，未发生拼接，则此值等于SizeT
+		ConcatenateSizeT
+		%像素字节数，恒为2
+		SizeP
+		%像素类型，恒为PixelType.UINT16
+		PixelType
+		%各通道颜色
+		ChannelColors
+		%维度顺序，恒为DimenionOrder.XYCZT
+		DimensionOrder
 	end
 	methods(Static)
 		function ConcatenateByRename(HeaderPaths)
@@ -282,3 +293,40 @@ end
 - 不支持对非OB5-TIFF格式的写出，只能读入
 - 不支持分多条带的TIFF像素块
 - 不支持分多文件的OME-TIFF图像
+# CommonReader
+如果你不关心图像具体格式，只希望使用通用的5D读入功能，可以使用此抽象工厂类的Open方法打开oir或tif文件，将根据扩展名自动选择正确的实现。
+```MATLAB
+classdef CommonReader<handle
+	%通用格式读入器，可用于读入tif或oir图像文件
+	%此对象不能直接构造。使用静态方法Open获取对象。
+	properties(Dependent,Abstract)
+		%图像宽度
+		SizeX
+		%图像高度
+		SizeY
+		%颜色通道数
+		SizeC
+		%Z层数
+		SizeZ
+		%采样时点数
+		SizeT
+		%像素字节数
+		SizeP
+		%像素类型
+		PixelType
+		%各通道颜色
+		ChannelColors
+		%维度顺序
+		DimensionOrder
+	end
+	methods(Static)
+		function obj=Open(FilePath)
+			%打开文件
+		end
+	end
+	methods(Abstract)
+		%读入指定范围内的像素值。
+		Pixels=ReadPixels(obj,TStart,TSize,varargin)
+	end
+end
+```
