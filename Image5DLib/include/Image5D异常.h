@@ -148,4 +148,9 @@ namespace Image5D
 		Entered_an_empty_array,
 		Parsing_the_index_file_failed,
 	};
+	struct Win32异常
+	{
+		Exception Image5D异常;
+		DWORD Win32错误码;
+	};
 }

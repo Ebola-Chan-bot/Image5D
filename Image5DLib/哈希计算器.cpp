@@ -22,7 +22,7 @@ noexcept
 	}
 	catch (...)
 	{
-		throw Image5D::Image5D异常(内存访问冲突);
+		throw Exception::Memory_access_conflict;
 	}
 #else
 	BCryptHashData(哈希句柄, (PUCHAR)输入字节, 输入长度, 0);

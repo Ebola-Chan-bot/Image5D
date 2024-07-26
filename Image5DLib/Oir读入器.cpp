@@ -472,14 +472,7 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 	while (true)
 	{
 		swprintf(编号位置, L"%05u", 文件列表.size());
-		try
-		{
-			文件列表.push_back(std::make_unique<文件控制块>(字符缓冲.get()));
-		}
-		catch (Image5D::Exception)
-		{
-			break;
-		}
+		文件列表.push_back(std::make_unique<文件控制块>(字符缓冲.get()));
 		总映射空间 += 文件列表.back()->粒度大小;
 	}
 	void* 尾指针 = VirtualAlloc(nullptr, 总映射空间 + 分配粒度, MEM_RESERVE, PAGE_READONLY);
@@ -571,13 +564,13 @@ void Oir读入器::读入像素(uint16_t* 写出头TZ, uint32_t TStart, uint32_t
 	}
 	catch (...)
 	{
-		throw 内存异常;
+		throw Exception::Memory_copy_failed;
 	}
 }
 void Oir读入器::读入像素(uint16_t* 写出头TZ, uint32_t TStart, uint32_t TSize, uint8_t ZStart, uint8_t ZSize)const
 {
 	if (TStart + TSize > 索引->SizeT || ZStart + ZSize > 索引->SizeZ)
-		throw 越界异常;
+		throw Exception::Specified_dimension_out_of_bounds;
 	const uint16_t* const* 读入头T = 块指针.data() + (TStart * 索引->SizeZ + ZStart) * 索引->每帧分块数 * 索引->SizeC;
 	const uint16_t* const* const 读入尾T = 读入头T + TSize * 索引->SizeZBC;
 	const uint16_t 读入ZBC = (uint16_t)ZSize * 索引->SizeBC;
@@ -612,13 +605,13 @@ void Oir读入器::读入像素(uint16_t* 写出头TZ, uint32_t TStart, uint32_t
 	}
 	catch (...)
 	{
-		throw 内存异常;
+		throw Exception::Memory_copy_failed;
 	}
 }
 void Oir读入器::读入像素(uint16_t* 写出头, uint32_t TStart, uint32_t TSize, uint8_t C)const
 {
 	if (TStart + TSize > 索引->SizeT || C >= 索引->SizeC)
-		throw 越界异常;
+		throw Exception::Specified_dimension_out_of_bounds;
 	const uint16_t* const* 读入头 = 块指针.data() + TStart * 索引->SizeZBC + C;
 	const uint16_t* const* const 读入尾T = 读入头 + TSize * 索引->SizeZBC;
 	try
@@ -638,13 +631,13 @@ void Oir读入器::读入像素(uint16_t* 写出头, uint32_t TStart, uint32_t T
 	}
 	catch (...)
 	{
-		throw 内存异常;
+		throw Exception::Memory_copy_failed;
 	}
 }
 void Oir读入器::读入像素(uint16_t* 写出头TZ, uint32_t TStart, uint32_t TSize)const
 {
 	if (TStart + TSize > 索引->SizeT)
-		throw 越界异常;
+		throw Exception::Specified_dimension_out_of_bounds;
 	const uint16_t* const* 读入头 = 块指针.data() + TStart * 索引->SizeZBC;
 	const uint16_t* const* const 读入尾T = 读入头 + TSize * 索引->SizeZBC;
 	try
@@ -673,7 +666,7 @@ void Oir读入器::读入像素(uint16_t* 写出头TZ, uint32_t TStart, uint32_t
 	}
 	catch (...)
 	{
-		throw 内存异常;
+		throw Exception::Memory_copy_failed;
 	}
 }
 void Oir读入器::读入像素(uint16_t* 写出头TZ)const
@@ -706,6 +699,6 @@ void Oir读入器::读入像素(uint16_t* 写出头TZ)const
 	}
 	catch (...)
 	{
-		throw 内存异常;
+		throw Exception::Memory_copy_failed;
 	}
 }

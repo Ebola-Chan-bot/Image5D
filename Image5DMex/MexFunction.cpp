@@ -123,5 +123,9 @@ Mex工具API(Mex工具::执行)
 	{
 		EnumThrow(异常.status, 异常.description());
 	}
+	catch(const Image5D::Win32异常& 异常)
+	{
+		EnumThrow(异常.Image5D异常, WindowsErrorMessage(异常.Win32错误码).get());
+	}
 }
 void Mex工具::清理()noexcept {}

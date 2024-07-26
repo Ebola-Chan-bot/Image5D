@@ -32,13 +32,13 @@ void Tiff读入器::读入像素(void* 缓冲区)const
 	}
 	catch (...)
 	{
-		throw 内存异常;
+		throw Exception::Memory_copy_failed;
 	}
 }
 void Tiff读入器::读入像素I(void* 缓冲区, uint32_t IStart, uint32_t ISize)const
 {
 	if (IStart + ISize > iSizeI)
-		throw 越界异常;
+		throw Exception::Specified_dimension_out_of_bounds;
 	IFD数组::const_iterator 像素头 = IFD像素指针.cbegin() + IStart;
 	const IFD数组::const_iterator 像素尾 = 像素头 + ISize;
 	try
@@ -51,7 +51,7 @@ void Tiff读入器::读入像素I(void* 缓冲区, uint32_t IStart, uint32_t ISi
 	}
 	catch (...)
 	{
-		throw 内存异常;
+		throw Exception::Memory_copy_failed;
 	}
 }
 template<typename T, uint8_t N>

@@ -42,7 +42,7 @@ void OmeTiff读入器::读入像素(void* 缓冲区, uint32_t TStart, uint32_t T
 {
 
 	if (uint32_t(TStart) + TSize > iSizeT || uint16_t(ZStart) + ZSize > iSizeZ || uint16_t(CStart) + CSize > iSizeC)
-		throw Image5D异常(指定维度越界);
+		throw Exception::Specified_dimension_out_of_bounds;
 	uint64_t 库Size10; uint64_t 库Size210;
 	using 迭代器 = IFD数组::const_iterator;
 	迭代器 头3 = IFD像素指针.cbegin();
@@ -108,7 +108,7 @@ void OmeTiff读入器::读入像素(void* 缓冲区, uint32_t TStart, uint32_t T
 	}
 	catch (...)
 	{
-		throw 内存异常;
+		throw Exception::Memory_copy_failed;
 	}
 }
 OmeTiff读入器* OmeTiff读入器::只读打开(文件指针&& 文件, 像素类型 iPixelType, uint16_t iSizeX, uint16_t iSizeY, std::string&& 图像描述, IFD数组&& IFD像素指针, bool 字节反转)
@@ -117,15 +117,15 @@ OmeTiff读入器* OmeTiff读入器::只读打开(文件指针&& 文件, 像素�
 	图像描述文档.load_string(图像描述.c_str());
 	xml_node 节点 = 图像描述文档.child("OME");
 	if (!(节点))
-		throw Image5D异常(缺少OME节点);
+		throw Exception::Missing_OME_node;
 	if (!(节点 = 节点.child("Image")))
-		throw Image5D异常(缺少Image节点);
+		throw Exception::Missing_Image_node;
 	const xml_node Pixels = 节点.child("Pixels");
 	if (!Pixels)
-		throw Image5D异常(缺少Pixels节点);
+		throw Exception::Without_Pixels_nodes;
 	uint8_t iSizeC, iSizeZ; uint32_t iSizeT; 维度顺序 iDimensionOrder; 颜色数组 iChannelColors;
 	OmeXml基本解析(Pixels, iSizeC, iSizeZ, iSizeT, iDimensionOrder, iPixelType, iChannelColors);
 	if (uint32_t(iSizeC) * iSizeZ * iSizeT != IFD像素指针.size())
-		throw Image5D异常(SizeCZT与SizeI不匹配);
+		throw Exception::SizeCZT_does_not_match_SizeI;
 	return new OmeTiff读入器(std::move(文件), iPixelType, iSizeX, iSizeY, std::move(图像描述), std::move(IFD像素指针), iSizeC, iSizeZ, iSizeT, iDimensionOrder, std::move(iChannelColors), 字节反转);
 }
