@@ -1,8 +1,8 @@
 #include<Oir读入器.h>
-#include<Mex工具.h>
+#include<Mex工具.hpp>
 using namespace Image5D;
 using namespace Mex工具;
-Oir读入器* 取指针(const Array& 指针标量)
+Oir读入器* 取指针(Array&& 指针标量)
 {
 	Oir读入器* const 指针 = 万能转码<Oir读入器*>(指针标量);
 	if (对象存在(指针))

@@ -6,7 +6,7 @@ IOmeTiff读写器* IOmeTiff读写器::只读打开(LPCWSTR 文件路径)
 	文件指针 映射 = std::make_unique<文件映射>(文件路径, true);
 	映射->映射指针(nullptr);
 	try { return OmeBigTiff5D::只读打开(std::move(映射)); }
-	catch (const Image5D异常&) {}
+	catch (Image5D::Exception) {}
 	return Tiff读入器::只读打开(std::move(映射));
 }
 

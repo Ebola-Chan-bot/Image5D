@@ -36,7 +36,6 @@
     <ClInclude Include="Tiff属性读入器.h" />
     <ClInclude Include="Tiff标准.h" />
     <ClInclude Include="Tiff读入器.h" />
-    <ClInclude Include="动态聚合.h" />
     <ClInclude Include="安全拷贝.h" />
   </ItemGroup>
   <ItemGroup>

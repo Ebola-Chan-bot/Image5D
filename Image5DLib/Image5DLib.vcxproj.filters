@@ -72,9 +72,6 @@
     <ClInclude Include="include\Image5D资源.h">
       <Filter>include</Filter>
     </ClInclude>
-    <ClInclude Include="动态聚合.h">
-      <Filter>include</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="IFD5D.cpp">

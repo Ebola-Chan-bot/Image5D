@@ -1,74 +1,60 @@
 #include <Image5D异常.h>
-#include <Mex工具.h>
-#include <Mex实现.h>
+#include <Mex工具.hpp>
 //OirReader
-API声明(Oir_CreateReader);
-API声明(Oir_DeleteReader);
-API声明(Oir_SizeX);
-API声明(Oir_SizeY);
-API声明(Oir_SizeC);
-API声明(Oir_SizeZ);
-API声明(Oir_SizeT);
-API声明(Oir_SeriesInterval);
-API声明(Oir_DeviceColors);
-API声明(Oir_ReadPixels);
-API声明(Oir_ReadToPointer);
-API声明(Oir_LsmimageXml);
-API声明(Oir_LaserTransmissivity);
-API声明(Oir_PmtVoltage);
-API声明(Oir_ZDriveUnitType);
-API声明(Oir_ConcatenateSizeT);
-API声明(Oir_ChannelColors);
+Mex工具API(Oir_CreateReader);
+Mex工具API(Oir_DeleteReader);
+Mex工具API(Oir_SizeX);
+Mex工具API(Oir_SizeY);
+Mex工具API(Oir_SizeC);
+Mex工具API(Oir_SizeZ);
+Mex工具API(Oir_SizeT);
+Mex工具API(Oir_SeriesInterval);
+Mex工具API(Oir_DeviceColors);
+Mex工具API(Oir_ReadPixels);
+Mex工具API(Oir_ReadToPointer);
+Mex工具API(Oir_LsmimageXml);
+Mex工具API(Oir_LaserTransmissivity);
+Mex工具API(Oir_PmtVoltage);
+Mex工具API(Oir_ZDriveUnitType);
+Mex工具API(Oir_ConcatenateSizeT);
+Mex工具API(Oir_ChannelColors);
 
 //OmeTiffRWer
-API声明(Tiff_OpenRead);
-API声明(Tiff_OpenRW);
-API声明(Tiff_OpenCreate);
-API声明(Tiff_PixelType);
-API声明(Tiff_DimensionOrder);
-API声明(Tiff_SizeP);
-API声明(Tiff_SizeX);
-API声明(Tiff_SizeY);
-API声明(Tiff_SizeI);
-API声明(Tiff_SizeC);
-API声明(Tiff_SizeZ);
-API声明(Tiff_SizeT);
-API声明(Tiff_ChannelColors);
-API声明(Tiff_FileName);
-API声明(Tiff_ImageDescription);
-API声明(Tiff_ModifyParameters);
-API声明(Tiff_ReadPixels);
-API声明(Tiff_ReadPixelsI);
-API声明(Tiff_WritePixels);
-API声明(Tiff_WritePixelsI);
-API声明(Tiff_PixelPointer);
-API声明(Tiff_PixelPointerI);
-API声明(Tiff_ReadToPointer);
-API声明(Tiff_ReadToPointerI);
-API声明(Tiff_WriteFromPointer);
-API声明(Tiff_WriteFromPointerI);
-API声明(Tiff_Close);
+Mex工具API(Tiff_OpenRead);
+Mex工具API(Tiff_OpenRW);
+Mex工具API(Tiff_OpenCreate);
+Mex工具API(Tiff_PixelType);
+Mex工具API(Tiff_DimensionOrder);
+Mex工具API(Tiff_SizeP);
+Mex工具API(Tiff_SizeX);
+Mex工具API(Tiff_SizeY);
+Mex工具API(Tiff_SizeI);
+Mex工具API(Tiff_SizeC);
+Mex工具API(Tiff_SizeZ);
+Mex工具API(Tiff_SizeT);
+Mex工具API(Tiff_ChannelColors);
+Mex工具API(Tiff_FileName);
+Mex工具API(Tiff_ImageDescription);
+Mex工具API(Tiff_ModifyParameters);
+Mex工具API(Tiff_ReadPixels);
+Mex工具API(Tiff_ReadPixelsI);
+Mex工具API(Tiff_WritePixels);
+Mex工具API(Tiff_WritePixelsI);
+Mex工具API(Tiff_PixelPointer);
+Mex工具API(Tiff_PixelPointerI);
+Mex工具API(Tiff_ReadToPointer);
+Mex工具API(Tiff_ReadToPointerI);
+Mex工具API(Tiff_WriteFromPointer);
+Mex工具API(Tiff_WriteFromPointerI);
+Mex工具API(Tiff_Close);
 using namespace Mex工具;
 using namespace Image5D;
-StructArray 异常转结构(const Image5D异常& 异常)
+using namespace matlab::data;
+void Mex工具::初始化()noexcept {}
+Mex工具API(Mex工具::执行)
 {
-	StructArray 返回 = 数组工厂.createStructArray({ 1 }, { "ExceptionType","InnerException","ErrorCode" });
-	返回[0]["ExceptionType"] = 数组工厂.createScalar<uint8_t>(异常.异常类型);
-	返回[0]["InnerException"] = 数组工厂.createScalar<uint8_t>(异常.内部异常);
-	if (异常.内部异常 == 内部异常类型::Image5D)
-		返回[0]["ErrorCode"] = 异常转结构(*异常.内部Image5D异常);
-	else
-		返回[0]["ErrorCode"] = 数组工厂.createScalar(异常.错误代码);
-	return 返回;
-}
-using namespace matlab::mex;
-struct MexFunction :public Function
-{
-	void operator()(ArgumentList& outputs, ArgumentList& inputs)
-	{
-		API索引{
 			//这个数组的顺序一般不要轻易修改，只在后面追加，因为会影响MATLAB端的调用
-
+	constexpr Mex工具::API 跳转表[]={
 			// OirReader
 
 			Oir_CreateReader,
@@ -125,34 +111,17 @@ struct MexFunction :public Function
 			Oir_ConcatenateSizeT,
 			Oir_ChannelColors,
 		};
-		try
-		{
-			API调用;
-			const StructArray 成功结构 = 异常转结构(成功异常);
-			outputs[0] = 成功结构;
-		}
-		catch (const Image5D异常& 异常)
-		{
-			outputs[0] = 异常转结构(异常);
-			异常输出补全(outputs);
-		}
-		catch (Mex异常 异常)
-		{
-			outputs[0] = 异常转结构(异常 == Mex异常::不能从空数组取得标量 ? Image5D异常(输入了空数组) : Image5D异常(未知异常));
-			异常输出补全(outputs);
-		}
-		catch (...)
-		{
-			outputs[0] = 异常转结构(Image5D异常(未知异常));
-			异常输出补全(outputs);
-		}
+	try
+	{
+		跳转表[万能转码<size_t>(std::move(输入[0]))](输出, 输入);
 	}
-};
-Function* 创建Mex函数()
-{
-	return new MexFunction();//必须用new创建此对象指针，因为 clear mex 时将用delete析构
+	catch (Image5D::Exception 异常)
+	{
+		EnumThrow(异常);
+	}
+	catch (const pugi::xml_parse_result& 异常)
+	{
+		EnumThrow(异常.status, 异常.description());
+	}
 }
-void 销毁Mex函数(Function* 函数指针)
-{
-	delete 函数指针;
-}
+void Mex工具::清理()noexcept {}

@@ -12,7 +12,7 @@ namespace Image5D
 		}
 		catch (...)
 		{
-			throw 内存异常;
+			throw Image5D::Exception::Memory_copy_failed;
 		}
 	}
 	inline void 安全拷贝(const void* 源, size_t 数目, void* 目标)
@@ -23,7 +23,7 @@ namespace Image5D
 		}
 		catch (...)
 		{
-			throw 内存异常;
+			throw Image5D::Exception::Memory_copy_failed;
 		}
 	}
 }

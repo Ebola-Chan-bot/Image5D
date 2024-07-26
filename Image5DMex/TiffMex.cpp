@@ -1,5 +1,5 @@
 #include <IOmeTiff读写器.h>
-#include<Mex工具.h>
+#include<Mex工具.hpp>
 using namespace Image5D;
 using namespace Mex工具;
 constexpr Image5D异常 指针越界(输入指针访问越界);
