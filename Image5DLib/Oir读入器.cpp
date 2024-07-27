@@ -471,8 +471,19 @@ Oir读入器::Oir读入器(LPCWSTR 头文件路径)
 	uint64_t 总映射空间 = 文件列表.back()->粒度大小;
 	while (true)
 	{
+		//无限循环查找下一个文件，直到因文件不存在而出错被捕获break
 		swprintf(编号位置, L"%05u", 文件列表.size());
-		文件列表.push_back(std::make_unique<文件控制块>(字符缓冲.get()));
+		try
+		{
+			文件列表.push_back(std::make_unique<文件控制块>(字符缓冲.get()));
+		}
+		catch (const Win32异常&ex)
+		{
+			if (ex.Image5D异常 == Exception::File_opening_failed)[[likely]]
+				break;
+			else
+				throw;
+		}
 		总映射空间 += 文件列表.back()->粒度大小;
 	}
 	void* 尾指针 = VirtualAlloc(nullptr, 总映射空间 + 分配粒度, MEM_RESERVE, PAGE_READONLY);
