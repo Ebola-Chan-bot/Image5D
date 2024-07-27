@@ -198,6 +198,7 @@ Mex工具API(Tiff_WritePixels)
 	const IOmeTiff读写器* const 对象指针 = 取指针(std::move(输入[1]));
 	const size_t 字节数 = 数组字节数(输入[2]);
 	const uint64_t 图面字节数 = (uint64_t)对象指针->SizeX() * 对象指针->SizeY() * 对象指针->SizeP();
+	std::unique_ptr<动态类型缓冲> 缓冲 = 动态类型缓冲::创建(std::move(输入[2]));
 	switch (输入.size())
 	{
 	case 3:
@@ -210,8 +211,8 @@ Mex工具API(Tiff_WritePixels)
 	case 5:
 	{
 		const uint32_t TSize = 万能转码<uint32_t>(std::move(输入[4]));
-		if (缓冲->字节数 < 图面字节数 * TSize * 对象指针->SizeZ() * 对象指针->SizeC())
-			throw 元素太少;
+		if (字节数 < 图面字节数 * TSize * 对象指针->SizeZ() * 对象指针->SizeC())
+			throw Exception::Input_array_elements_too_few;
 		对象指针->写出像素(缓冲->get(), 万能转码<uint32_t>(std::move(输入[3])), TSize);
 	}
 	break;
@@ -220,8 +221,8 @@ Mex工具API(Tiff_WritePixels)
 		const uint32_t TSize = 万能转码<uint32_t>(std::move(输入[4]));
 		const uint8_t ZSize = 万能转码<uint8_t>(std::move(输入[6]));
 		const uint8_t CSize = 万能转码<uint8_t>(std::move(输入[8]));
-		if (缓冲->字节数 < 图面字节数 * TSize * ZSize * CSize)
-			throw 元素太少;
+		if (字节数 < 图面字节数 * TSize * ZSize * CSize)
+			throw Exception::Input_array_elements_too_few;
 		对象指针->写出像素(缓冲->get(), 万能转码<uint32_t>(std::move(输入[3])), TSize, 万能转码<uint8_t>(std::move(输入[5])), ZSize, 万能转码<uint8_t>(std::move(输入[7])), CSize);
 	}
 	break;
@@ -232,10 +233,11 @@ Mex工具API(Tiff_WritePixels)
 Mex工具API(Tiff_WritePixelsI)
 {
 	const IOmeTiff读写器* const 对象指针 = 取指针(std::move(输入[1]));
-	const std::unique_ptr<动态类型缓冲>缓冲 = 动态类型缓冲::读取(std::move(输入[2]));
+	const size_t 字节数 = 数组字节数(输入[2]);
+	const std::unique_ptr<动态类型缓冲>缓冲 = 动态类型缓冲::创建(std::move(输入[2]));
 	const uint32_t ISize = 万能转码<UINT32>(std::move(输入[4]));
-	if (缓冲->字节数 < (size_t)ISize * 对象指针->SizeX() * 对象指针->SizeY() * 对象指针->SizeP())
-		throw 元素太少;
+	if (字节数 < (size_t)ISize * 对象指针->SizeX() * 对象指针->SizeY() * 对象指针->SizeP())
+		throw Exception::Input_array_elements_too_few;
 	对象指针->写出像素I(缓冲->get(), 万能转码<UINT32>(std::move(输入[3])), ISize);
 }
 Mex工具API(Tiff_PixelPointer)
@@ -279,14 +281,14 @@ Mex工具API(Tiff_ReadToPointer)
 	{
 	case 4:
 		if (SizePXY * 对象指针->SizeT() * 对象指针->SizeZ() * 对象指针->SizeC() > 输出容量)
-			throw 内存溢出;
+			throw Exception::Output_pointer_memory_overflow;
 		对象指针->读入像素(输出指针);
 		break;
 	case 6:
 	{
 		const uint32_t TSize = 万能转码<uint32_t>(std::move(输入[5]));
 		if (SizePXY * TSize * 对象指针->SizeZ() * 对象指针->SizeC() > 输出容量)
-			throw 内存溢出;
+			throw Exception::Output_pointer_memory_overflow;
 		对象指针->读入像素(输出指针, 万能转码<uint32_t>(std::move(输入[4])), TSize);
 	}
 	break;
@@ -296,7 +298,7 @@ Mex工具API(Tiff_ReadToPointer)
 		const uint8_t ZSize = 万能转码<uint8_t>(std::move(输入[7]));
 		const uint8_t CSize = 万能转码<uint8_t>(std::move(输入[9]));
 		if (SizePXY * TSize * ZSize * CSize > 输出容量)
-			throw 内存溢出;
+			throw Exception::Output_pointer_memory_overflow;
 		对象指针->读入像素(输出指针, 万能转码<uint32_t>(std::move(输入[4])), TSize, 万能转码<uint8_t>(std::move(输入[6])), ZSize, 万能转码<uint8_t>(std::move(输入[8])), CSize);
 	}
 	break;
@@ -312,7 +314,7 @@ Mex工具API(Tiff_ReadToPointerI)
 	const size_t SizePXY = 对象指针->SizeP() * 对象指针->SizeX() * 对象指针->SizeY();
 	const uint32_t ISize = 万能转码<uint32_t>(std::move(输入[5]));
 	if (SizePXY * ISize > 输出容量)
-		throw 内存溢出;
+		throw Exception::Output_pointer_memory_overflow;
 	对象指针->读入像素I(输出指针, 万能转码<uint32_t>(std::move(输入[4])), ISize);
 }
 Mex工具API(Tiff_WriteFromPointer)
@@ -325,14 +327,14 @@ Mex工具API(Tiff_WriteFromPointer)
 	{
 	case 4:
 		if (SizePXY * 对象指针->SizeT() * 对象指针->SizeZ() * 对象指针->SizeC() > 输入容量)
-			throw 指针越界;
+			throw Exception::Input_pointer_access_out_of_bounds;
 		对象指针->写出像素(输入指针);
 		break;
 	case 6:
 	{
 		const uint32_t TSize = 万能转码<uint32_t>(std::move(输入[5]));
 		if (SizePXY * TSize * 对象指针->SizeZ() * 对象指针->SizeC() > 输入容量)
-			throw 指针越界;
+			throw Exception::Input_pointer_access_out_of_bounds;
 		对象指针->写出像素(输入指针, 万能转码<uint32_t>(std::move(输入[4])), TSize);
 	}
 	break;
@@ -342,7 +344,7 @@ Mex工具API(Tiff_WriteFromPointer)
 		const uint8_t ZSize = 万能转码<uint8_t>(std::move(输入[7]));
 		const uint8_t CSize = 万能转码<uint8_t>(std::move(输入[9]));
 		if (SizePXY * TSize * ZSize * CSize > 输入容量)
-			throw 指针越界;
+			throw Exception::Input_pointer_access_out_of_bounds;
 		对象指针->写出像素(输入指针, 万能转码<uint32_t>(std::move(输入[4])), TSize, 万能转码<uint8_t>(std::move(输入[6])), ZSize, 万能转码<uint8_t>(std::move(输入[8])), CSize);
 	}
 	break;
@@ -358,7 +360,7 @@ Mex工具API(Tiff_WriteFromPointerI)
 	const size_t SizePXY = 对象指针->SizeP() * 对象指针->SizeX() * 对象指针->SizeY();
 	const uint32_t ISize = 万能转码<uint32_t>(std::move(输入[5]));
 	if (SizePXY * ISize > 输入容量)
-		throw 指针越界;
+		throw Exception::Input_pointer_access_out_of_bounds;
 	对象指针->写出像素I(输入指针, 万能转码<uint32_t>(std::move(输入[4])), ISize);
 }
 Mex工具API(Tiff_Close)

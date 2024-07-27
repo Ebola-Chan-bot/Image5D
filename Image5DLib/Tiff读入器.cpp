@@ -67,14 +67,14 @@ Tiff读入器* 只读打开模板(文件指针&& 文件)
 	const 字节序::template Tiff文件头<V>* 文件头 = (字节序::template Tiff文件头<V>*)(文件->映射指针());
 	const void* 尾指针 = (char*)文件头 + 文件->文件大小();
 	if (文件头 + 1 > 尾指针)
-		throw Image5D异常(文件头不完整);
+		throw Exception::File_header_is_incomplete;
 	typename 版本::IFD迭代器 当前IFD = 文件头->begin();
 	if (当前IFD + 1 > 尾指针)
-		throw Image5D异常(头IFD不完整);
+		throw Exception::Head_IFD_incomplete;
 	const 版本::Tag* 当前标签 = 当前IFD->begin();
 	const 版本::Tag* 标签尾 = 当前IFD->end();
 	if (标签尾 > 尾指针)
-		throw Image5D异常(头IFD不完整);
+		throw Exception::Head_IFD_incomplete;
 	uint8_t 完成进度 = 0;
 	IFD数组 IFD像素向量;	uint8_t iSizeP;	像素类型 iPixelType;	uint16_t iSizeX;	uint16_t iSizeY;	std::string 图像描述; const void* 像素指针;
 	using TagID = 字节序::TagID;
@@ -86,7 +86,7 @@ Tiff读入器* 只读打开模板(文件指针&& 文件)
 		case TagID::StripOffsets:
 			像素指针 = 当前标签->ASCII偏移(文件头);
 			if (像素指针 > 尾指针)
-				throw Image5D异常(像素偏移超出文件范围);
+				throw Exception::Pixel_offset_out_of_file_range;
 			IFD像素向量.push_back(像素指针);
 			完成进度++;
 			break;
@@ -110,7 +110,7 @@ Tiff读入器* 只读打开模板(文件指针&& 文件)
 				iSizeY = 当前标签->LONG值;
 				break;
 			default:
-				throw Image5D异常(意外的标签值类型);
+				throw Exception::Unexpected_label_value_type;
 			}
 			完成进度++;
 			break;
@@ -124,7 +124,7 @@ Tiff读入器* 只读打开模板(文件指针&& 文件)
 				iSizeX = 当前标签->LONG值;
 				break;
 			default:
-				throw Image5D异常(意外的标签值类型);
+				throw Exception::Unexpected_label_value_type;
 			}
 			完成进度++;
 			break;
@@ -133,7 +133,7 @@ Tiff读入器* 只读打开模板(文件指针&& 文件)
 			const char* const ImageDescription = (char*)当前标签->ASCII偏移(文件头);
 			const uint32_t 图像描述字节数 = 当前标签->NoValues;
 			if (ImageDescription + 图像描述字节数 > 尾指针)
-				throw Image5D异常(图像描述不完整);
+				throw Exception::The_image_description_is_incomplete;
 			图像描述.assign(ImageDescription, 图像描述字节数);
 		}
 		break;
@@ -142,9 +142,9 @@ Tiff读入器* 只读打开模板(文件指针&& 文件)
 	}
 	const uint32_t SizePXY = uint32_t(iSizeP) * iSizeX * iSizeY;
 	if ((char*)像素指针 + SizePXY > 尾指针)
-		throw Image5D异常(像素块不完整);
+		throw Exception::The_pixel_block_is_incomplete;
 	if (完成进度 < 4)
-		throw Image5D异常(缺少必需标签);
+		throw Exception::Missing_required_labels;
 	while (++当前IFD && 当前IFD + 1 <= 尾指针)
 	{
 		当前标签 = 当前IFD->begin();
@@ -156,7 +156,7 @@ Tiff读入器* 只读打开模板(文件指针&& 文件)
 			if (当前标签->Identifier == TagID::StripOffsets)
 			{
 				if ((char*)(像素指针 = 当前标签->BYTE偏移(文件头)) + SizePXY > 尾指针)
-					throw Image5D异常(像素块不完整);
+					throw Exception::The_pixel_block_is_incomplete;
 				IFD像素向量.push_back(像素指针);
 				break;
 			}
@@ -167,7 +167,7 @@ Tiff读入器* 只读打开模板(文件指针&& 文件)
 	{
 		return OmeTiff读入器::只读打开(std::move(文件), iPixelType, iSizeX, iSizeY, std::move(图像描述), std::move(IFD像素向量), O == 从高到低);
 	}
-	catch (Image5D异常)
+	catch (Image5D::Exception)
 	{
 		return new Tiff读入器(std::move(文件), iPixelType, iSizeX, iSizeY, std::move(图像描述), std::move(IFD像素向量), O == 从高到低);
 	}
