@@ -18,7 +18,7 @@ struct OmeBigTiff5D文件头 :public 字节序::Tiff文件头<字节序::基本>
 	OmeBigTiff5D文件头() :字节序::Tiff文件头<字节序::基本>(字节序::大) {}
 };
 #pragma pack(pop)
-void 预计算参数(维度顺序 iDimensionOrder, uint8_t iSizeC, uint8_t iSizeZ, uint32_t iSizeT, uint64_t SizePXY, uint64_t& 源Size10, uint64_t& 源Size210)noexcept
+static void 预计算参数(维度顺序 iDimensionOrder, uint8_t iSizeC, uint8_t iSizeZ, uint32_t iSizeT, uint64_t SizePXY, uint64_t& 源Size10, uint64_t& 源Size210)noexcept
 {
 	switch (iDimensionOrder)
 	{
@@ -56,40 +56,40 @@ OmeBigTiff5D::OmeBigTiff5D(文件指针&& 文件, 像素类型 iPixelType, uint1
 	预计算参数(iDimensionOrder, iSizeC, iSizeZ, iSizeT, SizePXY, 源Size10, 源Size210);
 }
 //调用方负责释放iChannelColors；如果异常则无需释放
-void 解析图像描述(const xml_document& 图像描述文档, const char*& 唯一标识符, xml_attribute& 文件名属性, xml_node& Pixels, uint16_t& iSizeX, uint16_t& iSizeY, uint8_t& iSizeC, uint8_t& iSizeZ, uint32_t& iSizeT, 维度顺序& iDimensionOrder, 像素类型& iPixelType, 颜色数组& iChannelColors)
+static void 解析图像描述(const xml_document& 图像描述文档, const char*& 唯一标识符, xml_attribute& 文件名属性, xml_node& Pixels, uint16_t& iSizeX, uint16_t& iSizeY, uint8_t& iSizeC, uint8_t& iSizeZ, uint32_t& iSizeT, 维度顺序& iDimensionOrder, 像素类型& iPixelType, 颜色数组& iChannelColors)
 {
 	xml_node 节点 = 图像描述文档.child("OME");
 	if (!(节点))
-		throw Image5D异常(缺少OME节点);
+		throw Exception::Missing_OME_node;
 	xml_attribute 属性;
 	if (!(属性 = 节点.attribute("UUID")))
-		throw Image5D异常(缺少UUID属性);
+		throw Exception::Missing_UUID_attribute;
 	唯一标识符 = 属性.as_string();
 	if (!(节点 = 节点.child("Image")))
-		throw Image5D异常(缺少Image节点);
+		throw Exception::Missing_Image_node;
 	if (!(文件名属性 = 节点.attribute("Name")))
-		throw Image5D异常(缺少Name属性);
+		throw Exception::Missing_the_Name_attribute;
 	Pixels = 节点.child("Pixels");
 	if (!Pixels)
-		throw Image5D异常(缺少Pixels节点);
+		throw Exception::Without_Pixels_nodes;
 	if (!(属性 = Pixels.attribute("SizeX")))
-		throw Image5D异常(缺少SizeX属性);
+		throw Exception::Missing_SizeX_attribute;
 	if (!(iSizeX = 属性.as_uint()))
-		throw Image5D异常(SizeX为0);
+		throw Exception::SizeX_is_0;
 	if (!(属性 = Pixels.attribute("SizeY")))
-		throw Image5D异常(缺少SizeY属性);
+		throw Exception::Missing_SizeY_attribute;
 	if (!(iSizeY = 属性.as_uint()))
-		throw Image5D异常(SizeY为0);
+		throw Exception::SizeY_is_0;
 	OmeXml基本解析(Pixels, iSizeC, iSizeZ, iSizeT, iDimensionOrder, iPixelType, iChannelColors);
 }
-inline void 设置TiffData(xml_node& TiffData, xml_node Pixels, xml_node 模板, const char* First, uint32_t I, uint32_t& Index)noexcept
+static inline void 设置TiffData(xml_node& TiffData, xml_node Pixels, xml_node 模板, const char* First, uint32_t I, uint32_t& Index)noexcept
 {
 	TiffData = Pixels.append_copy(模板);
 	TiffData.attribute(First).set_value(I);
 	TiffData.attribute("IFD").set_value(++Index);
 }
 //输入的Pixels节点应当只有首个TiffData子节点并包含无需修改的必要信息
-void 填充TiffData(xml_node Pixels, uint8_t SizeC, uint8_t SizeZ, uint32_t SizeT, 维度顺序 iDimensionOrder)noexcept
+static void 填充TiffData(xml_node Pixels, uint8_t SizeC, uint8_t SizeZ, uint32_t SizeT, 维度顺序 iDimensionOrder)noexcept
 {
 	xml_node 模板 = Pixels.child("TiffData");
 	uint32_t Size0, Size1, Size2; const char* First0, * First1, * First2;
@@ -138,13 +138,13 @@ void 填充TiffData(xml_node Pixels, uint8_t SizeC, uint8_t SizeZ, uint32_t Size
 	}
 }
 //返回TiffData是否被修复
-const HMODULE 模块句柄 = []()
+static const HMODULE 模块句柄 = []()
 {
 	HMODULE 模块句柄;
 	GetModuleHandleExW(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS | GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT, (LPCWSTR)填充TiffData, &模块句柄);
 	return 模块句柄;
 }();
-bool 检修TiffData(xml_node Pixels, const char* 文件名, const char* 唯一标识符, uint8_t SizeC, uint8_t SizeZ, uint32_t SizeT, 维度顺序 DimensionOrder)
+static bool 检修TiffData(xml_node Pixels, const char* 文件名, const char* 唯一标识符, uint8_t SizeC, uint8_t SizeZ, uint32_t SizeT, 维度顺序 DimensionOrder)
 {
 	xml_node 节点;
 	const bool 需要修复 = !((节点 = Pixels.child("TiffData")) && (节点 = 节点.child("UUID")) && 节点.attribute("FileName"));
@@ -177,19 +177,19 @@ public:
 	XML文本接收器(std::string& 字符串) :字符串(字符串) {}
 };
 //调用方负责释放iChannelColors和i图像描述；如果异常无需释放iChannelColors
-void 打开核心(const void* 映射指针, const void* 尾指针, uint64_t& 最小文件尺寸, xml_document& 图像描述文档, const char*& 唯一标识符, const char*& i文件名, xml_node& Pixels, uint16_t& iSizeX, uint16_t& iSizeY, uint8_t& iSizeC, uint8_t& iSizeZ, uint32_t& iSizeT, 维度顺序& iDimensionOrder, 像素类型& iPixelType, 颜色数组& iChannelColors, std::string& i图像描述)
+static void 打开核心(const void* 映射指针, const void* 尾指针, uint64_t& 最小文件尺寸, xml_document& 图像描述文档, const char*& 唯一标识符, const char*& i文件名, xml_node& Pixels, uint16_t& iSizeX, uint16_t& iSizeY, uint8_t& iSizeC, uint8_t& iSizeZ, uint32_t& iSizeT, 维度顺序& iDimensionOrder, 像素类型& iPixelType, 颜色数组& iChannelColors, std::string& i图像描述)
 {
 	const IFD5D* const FirstIFD = ((OmeBigTiff5D文件头*)映射指针)->首IFD偏移(映射指针);
 	if (尾指针 < FirstIFD + 1)
-		throw Image5D异常(头IFD不完整);
+		throw Exception::Head_IFD_incomplete;
 	const uint64_t NoValues = FirstIFD->图像描述.NoValues;
 	const char* const iImageDescription = (char*)FirstIFD->图像描述.ASCII偏移(映射指针);
 	if (尾指针 < iImageDescription + NoValues)
-		throw Image5D异常(图像描述不完整);
+		throw Exception::The_image_description_is_incomplete;
 	xml_attribute 文件名属性;
-	const xml_parse_status XML异常 = 图像描述文档.load_buffer(iImageDescription, NoValues).status;
-	if (XML异常)
-		throw Image5D异常(图像描述解析失败, XML异常);
+	const xml_parse_result XML异常 = 图像描述文档.load_buffer(iImageDescription, NoValues);
+	if (XML异常.status)
+		throw XML异常;
 	解析图像描述(图像描述文档, 唯一标识符, 文件名属性, Pixels, iSizeX, iSizeY, iSizeC, iSizeZ, iSizeT, iDimensionOrder, iPixelType, iChannelColors);
 	i文件名 = 文件名属性.as_string();
 	if (检修TiffData(Pixels, i文件名, 唯一标识符, iSizeC, iSizeZ, iSizeT, iDimensionOrder))
@@ -207,7 +207,7 @@ OmeBigTiff5D* OmeBigTiff5D::只读打开(文件指针&& 文件)
 	const char* const 映射指针 = (char*)文件->映射指针();
 	打开核心(映射指针, 映射指针 + 文件->文件大小(), 最小文件尺寸, 图像描述文档, 唯一标识符, i文件名, Pixels, iSizeX, iSizeY, iSizeC, iSizeZ, iSizeT, iDimensionOrder, iPixelType, iChannelColors, i图像描述);
 	if (最小文件尺寸 > 文件->文件大小())
-		throw Image5D异常(像素块不完整);
+		throw Exception::The_pixel_block_is_incomplete;
 	return new OmeBigTiff5D(std::move(文件), iPixelType, iSizeX, iSizeY, uint32_t(iSizeC) * iSizeZ * iSizeT, std::move(i图像描述), iSizeC, iSizeZ, iSizeT, iDimensionOrder, std::move(iChannelColors), i文件名, Pixels, std::move(图像描述文档), 唯一标识符, (char*)((OmeBigTiff5D文件头*)映射指针)->首IFD偏移(映射指针)->像素偏移.ASCII偏移(映射指针));
 }
 OmeBigTiff5D* OmeBigTiff5D::读写打开(文件指针&& 文件)
@@ -220,7 +220,7 @@ OmeBigTiff5D* OmeBigTiff5D::读写打开(文件指针&& 文件)
 	const OmeBigTiff5D文件头* const 映射指针 = (OmeBigTiff5D文件头*)文件->映射指针();
 	return new OmeBigTiff5D(std::move(文件), iPixelType, iSizeX, iSizeY, uint32_t(iSizeC) * iSizeZ * iSizeT, std::move(i图像描述), iSizeC, iSizeZ, iSizeT, iDimensionOrder, std::move(iChannelColors), i文件名, Pixels, std::move(图像描述文档), 唯一标识符, (char*)(映射指针)->首IFD偏移(映射指针)->像素偏移.ASCII偏移(映射指针));
 }
-void 填充IFD(uint32_t SizeI, 文件偏移<IFD5D> 当前IFD偏移, const void* 映射指针, bool 必须重新生成, uint32_t SizePXY)noexcept
+static void 填充IFD(uint32_t SizeI, 文件偏移<IFD5D> 当前IFD偏移, const void* 映射指针, bool 必须重新生成, uint32_t SizePXY)noexcept
 {
 	IFD5D* 当前IFD指针 = 当前IFD偏移(映射指针);
 	if (SizeI > 1)
@@ -253,7 +253,7 @@ void 填充IFD(uint32_t SizeI, 文件偏移<IFD5D> 当前IFD偏移, const void* 
 	}
 	当前IFD指针->NextIFD = 文件偏移<IFD5D>(0);
 }
-xml_attribute 添加UUID属性(xml_node OME, char* URN)noexcept
+static xml_attribute 添加UUID属性(xml_node OME, char* URN)noexcept
 {
 	UUID uuid;
 	UuidCreate(&uuid);
@@ -265,7 +265,7 @@ xml_attribute 添加UUID属性(xml_node OME, char* URN)noexcept
 	唯一标识符.set_value(URN);
 	return 唯一标识符;
 }
-std::string 取文件名(const wchar_t* 文件路径)noexcept
+static std::string 取文件名(const wchar_t* 文件路径)noexcept
 {
 	const size_t 长度 = wcslen(文件路径) + 1;
 	std::string 文件名;
@@ -281,20 +281,13 @@ std::string 取文件名(const wchar_t* 文件路径)noexcept
 		});
 	return 文件名;
 }
-void 构造文件(const char* 图像描述, uint32_t 图像描述字节数, uint32_t SizeI, 像素类型 PixelType, uint16_t SizeX, uint16_t SizeY, LPCWSTR 文件路径, 文件偏移<R_s<char>>& 像素头偏移, 文件指针& 文件)
+static void 构造文件(const char* 图像描述, uint32_t 图像描述字节数, uint32_t SizeI, 像素类型 PixelType, uint16_t SizeX, uint16_t SizeY, LPCWSTR 文件路径, 文件偏移<R_s<char>>& 像素头偏移, 文件指针& 文件)
 {
 	文件偏移<IFD5D> IFD偏移对象(图像描述字节数 * 2 + sizeof(OmeBigTiff5D文件头));
 	像素头偏移 = IFD偏移对象 + SizeI * sizeof(IFD5D) * 2;
 	const uint32_t SizePXY = uint32_t(SizeX) * SizeY * 像素类型尺寸[(uint8_t)PixelType];
-	try
-	{
-		文件 = std::make_unique<文件映射>(文件路径, LONGLONG(像素头偏移 + LONGLONG(SizePXY) * SizeI));
-		文件->映射指针(nullptr);
-	}
-	catch (const Image5D异常& 异常)
-	{
-		throw Image5D异常(Tiff文件创建失败, 异常.Win32错误代码);
-	}
+	文件 = std::make_unique<文件映射>(文件路径, LONGLONG(像素头偏移 + LONGLONG(SizePXY) * SizeI));
+	文件->映射指针(nullptr);
 	OmeBigTiff5D文件头* const 文件头 = (OmeBigTiff5D文件头*)文件->映射指针();
 	*文件头 = OmeBigTiff5D文件头();
 	文件头->首IFD偏移 = IFD偏移对象;
@@ -306,7 +299,7 @@ void 构造文件(const char* 图像描述, uint32_t 图像描述字节数, uint
 OmeBigTiff5D* OmeBigTiff5D::覆盖创建(LPCWSTR 文件路径, 像素类型 PixelType, uint16_t SizeX, uint16_t SizeY, uint8_t SizeC, uint8_t SizeZ, uint32_t SizeT, const 颜色* iChannelColors, 维度顺序 DimensionOrder)
 {
 	if (!(PixelType < 像素类型::缺省 && SizeX && SizeY && SizeC && SizeZ && SizeT && DimensionOrder < 维度顺序::缺省))
-		throw Image5D异常(构造参数无效);
+		throw Exception::The_construction_parameter_is_invalid;
 	std::string 文本 = 取文件名(文件路径);
 	const HRSRC 资源信息 = FindResourceW(模块句柄, MAKEINTRESOURCEW(IDR_XmlTemplate), L"XML");
 	xml_document 图像描述文档;
@@ -350,7 +343,7 @@ OmeBigTiff5D* OmeBigTiff5D::覆盖创建(LPCWSTR 文件路径, 像素类型 Pixe
 	std::copy_n(iChannelColors, SizeC, 通道颜色.get());
 	return new OmeBigTiff5D(std::move(文件), PixelType, SizeX, SizeY, SizeI, std::move(文本), SizeC, SizeZ, SizeT, DimensionOrder, std::move(通道颜色), i文件名, Pixels, std::move(图像描述文档), 唯一标识符, (char*)像素头偏移(文件->映射指针()));
 }
-void 更新文件名(xml_node Pixels, const char* 新文件名)noexcept
+static void 更新文件名(xml_node Pixels, const char* 新文件名)noexcept
 {
 	for (xml_node TiffData : Pixels.children("TiffData"))
 	{
@@ -367,9 +360,9 @@ OmeBigTiff5D* OmeBigTiff5D::覆盖创建(LPCWSTR 文件路径, const char* 图�
 {
 	std::string 文本 = 取文件名(文件路径);
 	xml_document 图像描述文档; const char* 唯一标识符; xml_attribute 文件名属性; xml_node Pixels; uint16_t iSizeX, iSizeY; uint8_t iSizeC, iSizeZ; 维度顺序 iDimensionOrder; 像素类型 iPixelType; 颜色数组 iChannelColors; uint32_t iSizeT;
-	const xml_parse_status XML异常 = 图像描述文档.load_string(图像描述).status;
-	if (XML异常)
-		throw Image5D异常(图像描述解析失败, XML异常);
+	const xml_parse_result XML异常 = 图像描述文档.load_string(图像描述);
+	if (XML异常.status)
+		throw XML异常;
 	解析图像描述(图像描述文档, 唯一标识符, 文件名属性, Pixels, iSizeX, iSizeY, iSizeC, iSizeZ, iSizeT, iDimensionOrder, iPixelType, iChannelColors);
 	文件名属性.set_value(文本.c_str());
 	const char* i文件名 = 文件名属性.as_string();
@@ -391,13 +384,13 @@ void OmeBigTiff5D::读入像素(void* 缓冲区)const
 void OmeBigTiff5D::读入像素I(void* 缓冲区, uint32_t IStart, uint32_t ISize)const
 {
 	if (uint64_t(IStart) + ISize > iSizeI)
-		throw 越界异常;
+		throw Exception::Specified_dimension_out_of_bounds;
 	安全拷贝(像素头 + uint64_t(IStart) * SizePXY, uint64_t(ISize) * SizePXY, 缓冲区);
 }
-void 读写3D(维度顺序 iDimensionOrder, uint32_t TStart, uint32_t TSize, uint32_t iSizeT, uint8_t ZStart, uint8_t ZSize, uint8_t iSizeZ, uint8_t CStart, uint8_t CSize, uint8_t iSizeC, uint32_t SizePXY, uint64_t 源Size10, uint64_t 源Size210, char* 头3, char* 缓冲区, void(*拷贝)(void*, void*, size_t))
+static void 读写3D(维度顺序 iDimensionOrder, uint32_t TStart, uint32_t TSize, uint32_t iSizeT, uint8_t ZStart, uint8_t ZSize, uint8_t iSizeZ, uint8_t CStart, uint8_t CSize, uint8_t iSizeC, uint32_t SizePXY, uint64_t 源Size10, uint64_t 源Size210, char* 头3, char* 缓冲区, void(*拷贝)(void*, void*, size_t))
 {
 	if (uint32_t(TStart) + TSize > iSizeT || uint16_t(ZStart) + ZSize > iSizeZ || uint8_t(CStart) + CSize > iSizeC)
-		throw 越界异常;
+		throw Exception::Specified_dimension_out_of_bounds;
 	uint64_t 库Size10, 库Size210;
 	char* 尾3 = 缓冲区;
 	switch (iDimensionOrder)
@@ -456,14 +449,14 @@ void 读写3D(维度顺序 iDimensionOrder, uint32_t TStart, uint32_t TSize, uin
 	}
 	catch (...)
 	{
-		throw 内存异常;
+		throw Exception::Memory_copy_failed;
 	}
 }
-void 写读(void* 写, void* 读, size_t 数目)
+static inline void 写读(void* 写, void* 读, size_t 数目)
 {
 	memcpy(写, 读, 数目);
 }
-void 读写(void* 读, void* 写, size_t 数目)
+static inline void 读写(void* 读, void* 写, size_t 数目)
 {
 	memcpy(写, 读, 数目);
 }
@@ -474,21 +467,21 @@ void OmeBigTiff5D::读入像素(void* 缓冲区, uint32_t TStart, uint32_t TSize
 void OmeBigTiff5D::写出像素(const void* 缓冲区)const
 {
 	if (文件->只读)
-		throw Image5D异常(只读打开不可写出);
+		throw Exception::Readonly_open_can_not_write;
 	安全拷贝(缓冲区, SizeIPXY, 像素头);
 }
 void OmeBigTiff5D::写出像素I(const void* 缓冲区, uint32_t IStart, uint32_t ISize)const
 {
 	if (uint64_t(IStart) + ISize > iSizeI)
-		throw 越界异常;
+		throw Exception::Specified_dimension_out_of_bounds;
 	if (文件->只读)
-		throw Image5D异常(只读打开不可写出);
+		throw Exception::Readonly_open_can_not_write;
 	安全拷贝(缓冲区, uint64_t(ISize) * SizePXY, 像素头 + uint64_t(IStart) * SizePXY);
 }
 void OmeBigTiff5D::写出像素(const void* 缓冲区, uint32_t TStart, uint32_t TSize, uint8_t ZStart, uint8_t ZSize, uint8_t CStart, uint8_t CSize)const
 {
 	if (文件->只读)
-		throw Image5D异常(只读打开不可写出);
+		throw Exception::Readonly_open_can_not_write;
 	return 读写3D(iDimensionOrder, TStart, TSize, iSizeT, ZStart, ZSize, iSizeZ, CStart, CSize, iSizeC, SizePXY, 源Size10, 源Size210, 像素头, (char*)缓冲区, 读写);
 }
 void OmeBigTiff5D::像素指针(void*& 指针, size_t& 容量)const
@@ -505,7 +498,7 @@ void OmeBigTiff5D::像素指针I(uint32_t I, void*& 指针, size_t& 容量)const
 		容量 = SizeIPXY - 容量;
 	}
 	else
-		throw 越界异常;
+		throw Exception::Specified_dimension_out_of_bounds;
 }
 void OmeBigTiff5D::像素指针(uint32_t T, void*& 指针, size_t& 容量)const
 {
@@ -530,7 +523,7 @@ void OmeBigTiff5D::像素指针(uint32_t T, void*& 指针, size_t& 容量)const
 		容量 = SizeIPXY - 容量;
 	}
 	else
-		throw 越界异常;
+		throw Exception::Specified_dimension_out_of_bounds;
 }
 void OmeBigTiff5D::像素指针(uint32_t T, uint8_t Z, uint8_t C, void*& 指针, size_t& 容量)const
 {
@@ -561,9 +554,9 @@ void OmeBigTiff5D::像素指针(uint32_t T, uint8_t Z, uint8_t C, void*& 指针,
 		容量 = SizeIPXY - 容量;
 	}
 	else
-		throw 越界异常;
+		throw Exception::Specified_dimension_out_of_bounds;
 }
-void 更新图像描述并扩展文件(bool 必须重新生成, uint32_t SizeI, uint32_t SizePXY, 文件映射& 文件, const char* 图像描述, uint32_t 图像描述字节数)noexcept
+static void 更新图像描述并扩展文件(bool 必须重新生成, uint32_t SizeI, uint32_t SizePXY, 文件映射& 文件, const char* 图像描述, uint32_t 图像描述字节数)noexcept
 {
 	OmeBigTiff5D文件头* 文件头 = (OmeBigTiff5D文件头*)文件.映射指针();
 	文件偏移<IFD5D> 当前IFD偏移 = 文件头->首IFD偏移;
@@ -596,7 +589,7 @@ void 更新图像描述并扩展文件(bool 必须重新生成, uint32_t SizeI, 
 	FirstIFD->图像描述.NoValues = 图像描述字节数;
 }
 //返回通道数是否更新，无论颜色是否改变
-bool 更新通道(uint8_t SizeC, uint8_t& iSizeC, const 颜色* ChannelColors, 颜色数组& iChannelColors, xml_node Pixels)
+static bool 更新通道(uint8_t SizeC, uint8_t& iSizeC, const 颜色* ChannelColors, 颜色数组& iChannelColors, xml_node Pixels)
 {
 	if (!SizeC)
 		SizeC = iSizeC;
@@ -660,7 +653,7 @@ bool 更新通道(uint8_t SizeC, uint8_t& iSizeC, const 颜色* ChannelColors, �
 	return 通道数更新;
 }
 //这里需要的是旧的SizeI
-void 重置TiffData(xml_node Pixels, uint32_t SizeI, uint8_t SizeC, uint8_t SizeZ, uint32_t SizeT, 维度顺序 DimensionOrder)noexcept
+static void 重置TiffData(xml_node Pixels, uint32_t SizeI, uint8_t SizeC, uint8_t SizeZ, uint32_t SizeT, 维度顺序 DimensionOrder)noexcept
 {
 	xml_node* const TiffData = (xml_node*)malloc(sizeof(xml_node) * SizeI);
 	xml_node* TD指针 = TiffData;
@@ -674,7 +667,7 @@ void 重置TiffData(xml_node Pixels, uint32_t SizeI, uint8_t SizeC, uint8_t Size
 }
 template <typename T>
 	requires std::_Is_any_of_v<T, uint8_t, uint16_t, uint32_t>
-bool 修改尺寸(T& 旧尺寸, T 新尺寸, xml_attribute 属性)
+static bool 修改尺寸(T& 旧尺寸, T 新尺寸, xml_attribute 属性)
 {
 	const bool 修改 = 新尺寸 && 新尺寸 != 旧尺寸;
 	if (修改)
@@ -687,9 +680,9 @@ bool 修改尺寸(T& 旧尺寸, T 新尺寸, xml_attribute 属性)
 void OmeBigTiff5D::修改参数(像素类型 PT, uint16_t SizeX, uint16_t SizeY, uint8_t SizeC, uint8_t SizeZ, uint32_t SizeT, const 颜色* ChannelColors, 维度顺序 DO, const char* 文件名)
 {
 	if (文件->只读)
-		throw Image5D异常(只读打开不可修改);
+		throw Exception::Readonly_open_can_not_write;
 	if ((PT > 像素类型::缺省 || DO > 维度顺序::缺省))
-		throw Image5D异常(修改参数无效);
+		throw Exception::Invalid_parameter_modification;
 	const bool 像素类型改变 = PT != 像素类型::缺省 && PT != iPixelType;
 	const bool 单帧尺寸改变 = 修改尺寸(iSizeX, SizeX, Pixels.attribute("SizeX")) || 修改尺寸(iSizeY, SizeY, Pixels.attribute("SizeY")) || 像素类型改变;
 	const bool IFD数目改变 = 更新通道(SizeC, iSizeC, ChannelColors, i通道颜色, Pixels) || 修改尺寸(iSizeZ, SizeZ, Pixels.attribute("SizeZ")) || 修改尺寸(iSizeT, SizeT, Pixels.attribute("SizeT"));
@@ -787,9 +780,9 @@ void OmeBigTiff5D::文件名(const char* 新文件名)
 void OmeBigTiff5D::图像描述(std::string&& WriteIn)
 {
 	xml_document 新图像描述文档; const char* 新唯一标识符; xml_attribute 文件名属性; xml_node 新Pixels; uint16_t 新iSizeX, 新iSizeY; uint8_t 新iSizeC, 新iSizeZ; 维度顺序 新iDimensionOrder; 像素类型 新iPixelType; 颜色数组 新iChannelColors; uint32_t 新iSizeT;
-	const xml_parse_status XML异常 = 新图像描述文档.load_string(WriteIn.c_str()).status;
-	if (XML异常)
-		throw Image5D异常(图像描述解析失败, XML异常);
+	const xml_parse_result XML异常 = 新图像描述文档.load_string(WriteIn.c_str());
+	if (XML异常.status)
+		throw XML异常;
 	解析图像描述(新图像描述文档, 新唯一标识符, 文件名属性, 新Pixels, 新iSizeX, 新iSizeY, 新iSizeC, 新iSizeZ, 新iSizeT, 新iDimensionOrder, 新iPixelType, 新iChannelColors);
 	图像描述文档 = std::move(新图像描述文档), Pixels = 新Pixels, iSizeX = 新iSizeX, iSizeY = 新iSizeY, iPixelType = 新iPixelType; i通道颜色.reset(新iChannelColors.release()); iSizeP = 像素类型尺寸[uint8_t(iPixelType)];
 	if (检修TiffData(Pixels, i文件名 = 文件名属性.as_string(), 唯一标识符 = 新唯一标识符, iSizeC = 新iSizeC, iSizeZ = 新iSizeZ, iSizeT = 新iSizeT, iDimensionOrder = 新iDimensionOrder))

@@ -1,4 +1,4 @@
-classdef Image5DAPI<uint8
+classdef Image5DAPI<uint64
 	enumeration
 		%OirReader
 
@@ -54,47 +54,9 @@ classdef Image5DAPI<uint8
 		Oir_ConcatenateSizeT(42)
 		Oir_ChannelColors(43)
 	end
-	methods(Static,Access=private)
-		function [Exception,InnerException]=Status2Exception(Status)
-			import Image5D.InnerExceptionType
-			Exception=Image5D.Exceptions(Status.ExceptionType);
-			if Exception~=Image5D.Exceptions.Successful_operation
-				switch InnerExceptionType(Status.InnerException)
-					case InnerExceptionType.NoInner
-						InnerException=missing;
-					case InnerExceptionType.Image5DException
-						[IE,II]=Image5D.internal.Image5DAPI.Status2Exception(Status.ErrorCode);
-						if isequal(II,missing)
-							InnerException=IE;
-						else
-							InnerException=struct;
-							InnerException.Exception=IE;
-							InnerException.InnerException=II;
-						end
-					case InnerExceptionType.Win32Exception
-						InnerException=MATLAB.Lang.WindowsErrorCode(Status.ErrorCode);
-					case InnerExceptionType.XmlException
-						InnerException=Image5D.XmlErrorCode(Status.ErrorCode);
-				end
-			else
-				InnerException=missing;
-			end
-		end
-	end
 	methods
 		function varargout=Call(obj,varargin)
-			varargout=cell(1,nargout);
-			[Status,varargout{:}]=Image5DMex(uint8(obj),varargin{:});
-			[Exception,InnerException]=Image5D.internal.Image5DAPI.Status2Exception(Status);
-			if Exception~=Image5D.Exceptions.Successful_operation
-				if isequal(InnerException,missing)
-					Exception.Throw;
-				elseif isenum(InnerException)
-					Exception.Throw(string(InnerException),Detail=InnerException);
-				else
-					Exception.Throw(Detail=InnerException);
-				end
-			end
+			[varargout{1:nargout}]=Image5DMex(uint64(obj),varargin{:});
 		end
 	end
 end

@@ -36,7 +36,6 @@
     <ClInclude Include="Tiff属性读入器.h" />
     <ClInclude Include="Tiff标准.h" />
     <ClInclude Include="Tiff读入器.h" />
-    <ClInclude Include="动态聚合.h" />
     <ClInclude Include="安全拷贝.h" />
   </ItemGroup>
   <ItemGroup>
@@ -160,6 +159,7 @@
       <ExceptionHandling>Async</ExceptionHandling>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>
@@ -182,6 +182,7 @@
       <ExceptionHandling>Async</ExceptionHandling>
       <EnableParallelCodeGeneration>true</EnableParallelCodeGeneration>
       <EnableEnhancedInstructionSet>AdvancedVectorExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
     <Link>
       <SubSystem>

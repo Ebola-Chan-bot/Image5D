@@ -5,34 +5,34 @@ void Image5D::OmeXml基本解析(xml_node Pixels, uint8_t& iSizeC, uint8_t& iSiz
 {
 	xml_attribute 属性 = Pixels.attribute("SizeC");
 	if (!属性)
-		throw Image5D异常(缺少SizeC属性);
+		throw Exception::Missing_SizeC_attribute;
 	if (!(iSizeC = 属性.as_uint()))
-		throw Image5D异常(SizeC为0);
+		throw Exception::SizeC_is_0;
 	if (!(属性 = Pixels.attribute("SizeZ")))
-		throw Image5D异常(缺少SizeZ属性);
+		throw Exception::Missing_SizeZ_attribute;
 	if (!(iSizeZ = 属性.as_uint()))
-		throw Image5D异常(SizeZ为0);
+		throw Exception::SizeZ_is_0;
 	if (!(属性 = Pixels.attribute("SizeT")))
-		throw Image5D异常(缺少SizeT属性);
+		throw Exception::Missing_SizeT_attribute;
 	if (!(iSizeT = 属性.as_uint()))
-		throw Image5D异常(SizeT为0);
+		throw Exception::Missing_SizeT_attribute;
 	if (!(属性 = Pixels.attribute("DimensionOrder")))
-		throw Image5D异常(缺少DimensionOrder属性);
+		throw Exception::The_DimensionOrder_attribute_is_missing;
 	INT8 序号 = 寻找字符串(属性.as_string(), 维度顺序字符串);
 	if (序号 < 0)
-		throw Image5D异常(维度顺序无效);
+		throw Exception::The_dimensional_order_is_invalid;
 	iDimensionOrder = (维度顺序)序号;
 	if (!(属性 = Pixels.attribute("Type")))
-		throw Image5D异常(缺少Type属性);
+		throw Exception::Missing_the_Type_attribute;
 	序号 = 寻找字符串(属性.as_string(), 像素类型字符串);
 	if (序号 < 0)
-		throw Image5D异常(像素类型无效);
+		throw Exception::The_pixel_type_is_invalid;
 	iPixelType = (像素类型)序号;
 	std::vector<xml_node>ChannelBuffer;
 	for (xml_node 节点 : Pixels.children("Channel"))
 		ChannelBuffer.push_back(节点);
 	if (ChannelBuffer.size() != iSizeC)
-		throw Image5D异常(颜色数与SizeC不匹配);
+		throw Exception::The_color_number_does_not_match_SizeC;
 	iChannelColors.reset((颜色*)malloc(sizeof(颜色) * iSizeC));
 	for (UINT8 C = 0; C < iSizeC; ++C)
 		iChannelColors[C].整数值 = (属性 = ChannelBuffer[C].attribute("Color")) ? 属性.as_int() : -1;
