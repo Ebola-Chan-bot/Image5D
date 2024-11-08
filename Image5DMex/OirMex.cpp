@@ -46,7 +46,7 @@ Mex工具API(Oir_SizeT)
 }
 Mex工具API(Oir_SeriesInterval)
 {
-	输出[0] = 万能转码(取指针(std::move(输入[1]))->系列间隔());
+	输出[0] = MATLAB引擎->feval<Array>("milliseconds", 取指针(std::move(输入[1]))->系列间隔());
 }
 Mex工具API(Oir_DeviceColors)
 {
@@ -227,4 +227,10 @@ Mex工具API(Oir_ChannelColors)
 		透蓝绿红[3] = 当前通道++->红 * 255;
 	}
 	输出[0] = 颜色数组;
+}
+Mex工具API(Oir_CreationDateTime)
+{
+	std::string 日期时间字符串 = 取指针(std::move(输入[1]))->创建日期时间();
+	日期时间字符串[10] = ' ';	
+	输出[0] = MATLAB引擎->feval<Array>("datetime", 日期时间字符串.substr(0, 23), "TimeZone", 日期时间字符串.substr(23));
 }

@@ -13,18 +13,21 @@ namespace Image5D
 		uint8_t SizeC()const noexcept { return 索引->SizeC; }
 		uint8_t SizeZ()const noexcept { return 索引->SizeZ; }
 		uint32_t SizeT()const noexcept { return 索引->SizeT; }
-		//拍摄时间周期的毫秒数
+		//拍摄时间周期㎳
 		float 系列间隔()const noexcept { return 索引->系列间隔; }
-		//相邻Z层间距
+		//相邻Z层间距㎛
 		float Z步长()const noexcept { return 索引->Z步长; }
 		const char* Z驱动单元类型()const noexcept { return 索引->Z驱动单元类型; }
 		//数组尺寸为SizeC
 		const 设备颜色* 通道颜色()const noexcept { return i通道颜色; }
+		//返回不保证0结尾的字符串
 		void LsmimageXml(const char*& 指针, uint32_t& 长度) const noexcept
 		{
 			指针 = (char*)文件列表[0]->映射指针() + 索引->LsmimageXml偏移; 
 			长度 = 索引->LsmimageXml长度;
 		}
+		//日期时间字符串格式如"2024-04-21T08:39:32.767+08:00"
+		const char* 创建日期时间()const noexcept { return 索引->创建日期时间; }
 		//数组尺寸为SizeZ
 		const float* 激光透过率()const noexcept { return i激光透过率; }
 		//数组尺寸为SizeZ*SizeC，维度顺序先Z后C

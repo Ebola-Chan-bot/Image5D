@@ -147,6 +147,7 @@ namespace Image5D
 		Index_loading_failed,
 		Entered_an_empty_array,
 		Parsing_the_index_file_failed,
+		CreationDateTime_not_defined,
 	};
 	struct Win32异常
 	{

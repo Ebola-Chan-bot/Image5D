@@ -53,6 +53,9 @@ classdef Image5DAPI<uint64
 		%OirReader v3.1.0
 		Oir_ConcatenateSizeT(42)
 		Oir_ChannelColors(43)
+
+		%OirReader v3.2.0
+		Oir_CreationDateTime(44)
 	end
 	methods
 		function varargout=Call(obj,varargin)

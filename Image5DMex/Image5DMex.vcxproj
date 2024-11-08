@@ -203,7 +203,7 @@
   <ImportGroup Label="ExtensionTargets">
     <Import Project="..\packages\pugixml.1.14.0\build\native\pugixml.targets" Condition="Exists('..\packages\pugixml.1.14.0\build\native\pugixml.targets')" />
     <Import Project="..\packages\native.magic_enum.0.9.5\build\native\native.magic_enum.targets" Condition="Exists('..\packages\native.magic_enum.0.9.5\build\native\native.magic_enum.targets')" />
-    <Import Project="..\packages\MATLAB.MexTools.7.0.0\build\native\MATLAB.MexTools.targets" Condition="Exists('..\packages\MATLAB.MexTools.7.0.0\build\native\MATLAB.MexTools.targets')" />
+    <Import Project="..\packages\MATLAB.MexTools.7.0.2\build\native\MATLAB.MexTools.targets" Condition="Exists('..\packages\MATLAB.MexTools.7.0.2\build\native\MATLAB.MexTools.targets')" />
   </ImportGroup>
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
     <PropertyGroup>
@@ -211,6 +211,6 @@
     </PropertyGroup>
     <Error Condition="!Exists('..\packages\pugixml.1.14.0\build\native\pugixml.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\pugixml.1.14.0\build\native\pugixml.targets'))" />
     <Error Condition="!Exists('..\packages\native.magic_enum.0.9.5\build\native\native.magic_enum.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\native.magic_enum.0.9.5\build\native\native.magic_enum.targets'))" />
-    <Error Condition="!Exists('..\packages\MATLAB.MexTools.7.0.0\build\native\MATLAB.MexTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MATLAB.MexTools.7.0.0\build\native\MATLAB.MexTools.targets'))" />
+    <Error Condition="!Exists('..\packages\MATLAB.MexTools.7.0.2\build\native\MATLAB.MexTools.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\MATLAB.MexTools.7.0.2\build\native\MATLAB.MexTools.targets'))" />
   </Target>
 </Project>

@@ -141,17 +141,22 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 	if (解析结果.status != xml_parse_status::status_ok)
 		throw 解析结果;
 	新索引.LsmimageXml偏移 = 字符串 - 全局文件头;
-	xml_node 节点 = 图像属性文档.child("lsmimage:imageProperties");
-	if (!节点)
+	const xml_node 图像属性节点 = 图像属性文档.child("lsmimage:imageProperties");
+	if (!图像属性节点)
 		throw Image5D::Exception::The_image_property_is_not_defined;
-	const xml_node 采集节点 = 节点.child("commonimage:acquisition");
+	xml_node 节点 = 图像属性节点.child("commonimage:general");
+	xml_text 节点文本;
+	if (节点 && (节点 = 节点.child("base:creationDateTime")) && (节点文本 = 节点.text()))
+		strcpy_s(新索引.创建日期时间, 节点文本.get());
+	else
+		throw Image5D::Exception::CreationDateTime_not_defined;
+	const xml_node 采集节点 = 图像属性节点.child("commonimage:acquisition");
 	if (!采集节点)
 		throw Image5D::Exception::Image_acquisition_undefined;
 	const xml_node 成像参数节点 = 采集节点.child("commonimage:imagingParam");
 	if (!成像参数节点)
 		throw Image5D::Exception::Imaging_parameters_are_not_defined;
 	xml_attribute 节点属性;
-	xml_text 节点文本;
 	float Z起点;
 	if (有Z)
 	{

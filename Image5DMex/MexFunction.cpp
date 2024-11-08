@@ -18,6 +18,7 @@ Mex工具API(Oir_PmtVoltage);
 Mex工具API(Oir_ZDriveUnitType);
 Mex工具API(Oir_ConcatenateSizeT);
 Mex工具API(Oir_ChannelColors);
+Mex工具API(Oir_CreationDateTime);
 
 //OmeTiffRWer
 Mex工具API(Tiff_OpenRead);
@@ -53,64 +54,68 @@ using namespace matlab::data;
 void Mex工具::初始化()noexcept {}
 Mex工具API(Mex工具::执行)
 {
-			//这个数组的顺序一般不要轻易修改，只在后面追加，因为会影响MATLAB端的调用
-	constexpr Mex工具::API 跳转表[]={
-			// OirReader
+	//这个数组的顺序一般不要轻易修改，只在后面追加，因为会影响MATLAB端的调用
+	constexpr Mex工具::API 跳转表[] = {
+		// OirReader
 
-			Oir_CreateReader,
-			Oir_DeleteReader,
-			Oir_SizeX,
-			Oir_SizeY,
-			Oir_SizeC,
-			Oir_SizeZ,
-			Oir_SizeT,
-			Oir_SeriesInterval,
-			Oir_DeviceColors,
-			Oir_ReadPixels,
-			Oir_ReadToPointer,
+		Oir_CreateReader,
+		Oir_DeleteReader,
+		Oir_SizeX,
+		Oir_SizeY,
+		Oir_SizeC,
+		Oir_SizeZ,
+		Oir_SizeT,
+		Oir_SeriesInterval,
+		Oir_DeviceColors,
+		Oir_ReadPixels,
+		Oir_ReadToPointer,
 
-			// OmeTiffRWer
+		// OmeTiffRWer
 
-			Tiff_OpenRead,
-			Tiff_OpenRW,
-			Tiff_OpenCreate,
-			Tiff_PixelType,
-			Tiff_DimensionOrder,
-			Tiff_SizeP,
-			Tiff_SizeX,
-			Tiff_SizeY,
-			Tiff_SizeI,
-			Tiff_SizeC,
-			Tiff_SizeZ,
-			Tiff_SizeT,
-			Tiff_ChannelColors,
-			Tiff_FileName,
-			Tiff_ImageDescription,
-			Tiff_ModifyParameters,
-			Tiff_ReadPixels,
-			Tiff_ReadPixelsI,
-			Tiff_WritePixels,
-			Tiff_WritePixelsI,
-			Tiff_PixelPointer,
-			Tiff_PixelPointerI,
-			Tiff_ReadToPointer,
-			Tiff_ReadToPointerI,
-			Tiff_WriteFromPointer,
-			Tiff_WriteFromPointerI,
-			Tiff_Close,
+		Tiff_OpenRead,
+		Tiff_OpenRW,
+		Tiff_OpenCreate,
+		Tiff_PixelType,
+		Tiff_DimensionOrder,
+		Tiff_SizeP,
+		Tiff_SizeX,
+		Tiff_SizeY,
+		Tiff_SizeI,
+		Tiff_SizeC,
+		Tiff_SizeZ,
+		Tiff_SizeT,
+		Tiff_ChannelColors,
+		Tiff_FileName,
+		Tiff_ImageDescription,
+		Tiff_ModifyParameters,
+		Tiff_ReadPixels,
+		Tiff_ReadPixelsI,
+		Tiff_WritePixels,
+		Tiff_WritePixelsI,
+		Tiff_PixelPointer,
+		Tiff_PixelPointerI,
+		Tiff_ReadToPointer,
+		Tiff_ReadToPointerI,
+		Tiff_WriteFromPointer,
+		Tiff_WriteFromPointerI,
+		Tiff_Close,
 
-			//OirReader v1.6.0
+		//OirReader v1.6.0
 
-			Oir_LsmimageXml,
-			Oir_LaserTransmissivity,
-			Oir_PmtVoltage,
-			Oir_ZDriveUnitType,
+		Oir_LsmimageXml,
+		Oir_LaserTransmissivity,
+		Oir_PmtVoltage,
+		Oir_ZDriveUnitType,
 
-			//OirReader v3.1.0
+		//OirReader v3.1.0
 
-			Oir_ConcatenateSizeT,
-			Oir_ChannelColors,
-		};
+		Oir_ConcatenateSizeT,
+		Oir_ChannelColors,
+
+		//OirReader v3.2.0
+
+		Oir_CreationDateTime,
+	};
 	try
 	{
 		跳转表[万能转码<size_t>(std::move(输入[0]))](输出, 输入);
@@ -123,7 +128,7 @@ Mex工具API(Mex工具::执行)
 	{
 		EnumThrow(异常.status, 异常.description());
 	}
-	catch(const Image5D::Win32异常& 异常)
+	catch (const Image5D::Win32异常& 异常)
 	{
 		EnumThrow(异常.Image5D异常, WindowsErrorMessage(异常.Win32错误码).get());
 	}

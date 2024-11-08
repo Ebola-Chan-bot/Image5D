@@ -11,7 +11,7 @@ classdef OirReader<Image5D.CommonReader
 		SizeZ
 		%采样时点数
 		SizeT
-		%每个采样时点的间隔毫秒数
+		%每个采样时点的间隔
 		SeriesInterval
 		%图像元数据XML
 		LsmimageXml
@@ -36,6 +36,8 @@ classdef OirReader<Image5D.CommonReader
 		ChannelColors
 		%维度顺序，恒为DimenionOrder.XYCZT
 		DimensionOrder
+		%创建日期时间
+		CreationDateTime
 	end
 	methods(Static)
 		function ConcatenateByRename(HeaderPaths)
@@ -188,6 +190,9 @@ classdef OirReader<Image5D.CommonReader
 		end
 		function DO=get.DimensionOrder(~)
 			DO=Image5D.DimensionOrder.XYCZT;
+		end
+		function CDT=get.CreationDateTime(obj)
+			CDT=Image5D.internal.Image5DAPI.Oir_CreationDateTime.Call(obj.Pointer);
 		end
 		function Pixels=ReadPixels(obj,TStart,TSize,varargin)
 			%读入像素块值
