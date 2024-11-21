@@ -201,7 +201,7 @@ Mex工具API(Oir_LaserTransmissivity)
 Mex工具API(Oir_PmtVoltage)
 {
 	const Oir读入器* const 对象指针 = 取指针(std::move(输入[1]));
-	输出[0] = 万能转码(对象指针->放大电压(), { 对象指针->SizeC(),对象指针->SizeZ() });
+	输出[0] = 万能转码(对象指针->放大电压(), { 对象指针->SizeZ(),对象指针->SizeC() });
 }
 Mex工具API(Oir_ZDriveUnitType)
 {
