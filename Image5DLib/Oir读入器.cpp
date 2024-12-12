@@ -335,8 +335,16 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 	{
 		文件头 = (Oir文件头*)(*当前文件)->映射指针();
 		尾指针 = (char*)文件头 + (*当前文件)->文件大小();
-		if (reinterpret_cast<const char*>(尾指针) - reinterpret_cast<const char*>(文件头) < 文件头->索引位置)
-			[[unlikely]] continue;//文件头损坏，放弃该文件
+		if (reinterpret_cast<const char*>(尾指针) - reinterpret_cast<const char*>(文件头) < 文件头->索引位置) [[unlikely]]
+		{
+			//文件头损坏，放弃该文件。但是，需要在拼接SizeT中反映这一异常情况。
+			拼接SizeT.push_back(块指针.size() / 每周期像素块数);
+
+			//删除上个文件尾可能存在的多余的不完整周期
+			块指针.resize(拼接SizeT.back() * 每周期像素块数);
+
+			continue;
+		}
 		基块索引 = (uint64_t*)((char*)文件头 + 文件头->索引位置 + 4);
 		do
 		{
@@ -344,27 +352,37 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 				[[unlikely]] goto 绝对跳出;
 		} while (((Oir基块*)((char*)文件头 + *(基块索引++)))->类型 != Oir基块类型::帧属性);//跳过REF块
 		if ((基块索引--) + 每层基块数 > 尾指针)
-			[[unlikely]] continue;
+		{
+			//文件头损坏，放弃该文件。但是，需要在拼接SizeT中反映这一异常情况。
+			拼接SizeT.push_back(块指针.size() / 每周期像素块数);
+
+			//删除上个文件尾可能存在的多余的不完整周期
+			块指针.resize(拼接SizeT.back() * 每周期像素块数);
+
+			continue;
+		}
 		//对于拼接的OIR序列，需要检测中间突然遇到的头文件，删除上个文件尾可能存在的多余的不完整周期。头文件的特征是，倒数第二块是BMP。
 		if (((Oir基块*)((char*)文件头 + *((uint64_t*)尾指针 - 2)))->类型 == Oir基块类型::BMP) [[unlikely]]
-			{
-				//记录每个拼接的SizeT位置
-				拼接SizeT.push_back(块指针.size() / 每周期像素块数);
-				块指针.resize(拼接SizeT.back() * 每周期像素块数);
-			}
+		{
+			//记录每个拼接的SizeT位置
+			拼接SizeT.push_back(块指针.size() / 每周期像素块数);
+
+			//删除上个文件尾可能存在的多余的不完整周期
+			块指针.resize(拼接SizeT.back()* 每周期像素块数);
+		}
+		for (uint8_t a = 0; a < 每层像素块数; ++a)
+			块指针.push_back((uint16_t*)((Oir基块*)((char*)文件头 + *(基块索引 += 2)) + 1));
+		基块索引 += 3;
+		while (基块索引 + 每层基块数 < 尾指针)
+		{
 			for (uint8_t a = 0; a < 每层像素块数; ++a)
 				块指针.push_back((uint16_t*)((Oir基块*)((char*)文件头 + *(基块索引 += 2)) + 1));
-			基块索引 += 3;
-			while (基块索引 + 每层基块数 < 尾指针)
-			{
-				for (uint8_t a = 0; a < 每层像素块数; ++a)
-					块指针.push_back((uint16_t*)((Oir基块*)((char*)文件头 + *(基块索引 += 2)) + 1));
-				基块索引 += 2;
-			}
-		绝对跳出:;
+			基块索引 += 2;
+		}
+	绝对跳出:;
 	}
-	//如果未发生拼接，拼接SizeT将为空，始终比实际拼接序列数少一个
-	新索引.文件序列拼接数 = 拼接SizeT.size() + 1;
+	//如果未发生拼接，拼接SizeT将为空，始终比实际拼接序列数少一个。但如果最后一个拼接值恰等于SizeT，说明拼接后没有任何数据，应当作最后一个拼接不存在处理。
+	新索引.文件序列拼接数 = 拼接SizeT.size() + (拼接SizeT.back() < 块指针.size() / 每周期像素块数);
 	新索引.每帧分块数 = 每层像素块数 / 新索引.SizeC;
 	新索引.计算依赖字段(块指针.size());
 	const uint32_t 文件大小 = 新索引.计算文件大小();
