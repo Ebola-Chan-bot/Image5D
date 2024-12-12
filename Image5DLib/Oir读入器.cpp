@@ -335,8 +335,8 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 	{
 		文件头 = (Oir文件头*)(*当前文件)->映射指针();
 		尾指针 = (char*)文件头 + (*当前文件)->文件大小();
-		if (文件头 + 1 > 尾指针)
-			[[unlikely]] continue;
+		if (reinterpret_cast<const char*>(尾指针) - reinterpret_cast<const char*>(文件头) < 文件头->索引位置)
+			[[unlikely]] continue;//文件头损坏，放弃该文件
 		基块索引 = (uint64_t*)((char*)文件头 + 文件头->索引位置 + 4);
 		do
 		{
