@@ -72,7 +72,7 @@ classdef ChannelColor<uint32
 			% OirColors table，Oir颜色矩阵，具有["Red","Green","Blue"]三列，每行对应一个颜色的三个分量，范围[0,1]。可从OirReader.DeviceColors.Color获得。
 			%# 返回值
 			% obj(:,1)Image5D.ChannelColor，转换后的ChannelColor对象。如果输入参数指定了多个颜色，obj总是列向量，无论输入数组尺寸为何。
-			Image5D.Exceptions.Method_deprecated.Warn('此方法将在未来版本中删除。建议改用OirReader.ChannelColors属性。')
+			Image5D.Exception.Method_deprecated.Warn('此方法将在未来版本中删除。建议改用OirReader.ChannelColors属性。')
 			OirColors=uint8([ones(1,height(OirColors));OirColors{:,["Blue","Green","Red"]}']*255);
 			obj=Image5D.ChannelColor(typecast(OirColors(:),'uint32'));
 		end
@@ -134,7 +134,7 @@ classdef ChannelColor<uint32
 				case "."
 					obj=obj.(S.subs);
 				otherwise
-					Image5D.Exceptions.Unexpected_subsref_type.Throw;
+					Image5D.Exception.Unexpected_subsref_type.Throw;
 			end
 		end
 		function obj=subsasgn(obj,S,V)

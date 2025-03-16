@@ -50,7 +50,7 @@ classdef CommonReader<handle
 				case ".tif"
 					obj=Image5D.OmeTiffRWer.OpenRead(FilePath);
 				otherwise
-					Image5D.Exceptions.Unexpected_file_extension.Throw;
+					Image5D.Exception.Unexpected_file_extension.Throw;
 			end
 		end
 	end

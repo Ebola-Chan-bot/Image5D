@@ -31,7 +31,7 @@ classdef PixelType<uint8
 				case Image5D.PixelType.FLOAT
 					MT='single';
 				case Image5D.PixelType.DEFAULT
-					Image5D.Exceptions.DEFAULT_PixelType_cannot_convert_to_MATLAB_datatypes.Throw;
+					Image5D.Exception.DEFAULT_PixelType_cannot_convert_to_MATLAB_datatypes.Throw;
 				otherwise
 					MT=lower(char(obj));
 			end
