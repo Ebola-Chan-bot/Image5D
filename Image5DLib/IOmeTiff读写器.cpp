@@ -7,6 +7,7 @@ IOmeTiff读写器* IOmeTiff读写器::只读打开(LPCWSTR 文件路径)
 	映射->映射指针(nullptr);
 	try { return OmeBigTiff5D::只读打开(std::move(映射)); }
 	catch (Image5D::Exception) {}
+	catch (const xml_parse_result&) {}
 	return Tiff读入器::只读打开(std::move(映射));
 }
 

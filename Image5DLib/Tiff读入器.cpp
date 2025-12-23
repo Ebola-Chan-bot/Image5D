@@ -5,7 +5,7 @@ void Tiff读入器::像素拷贝(void* 写出头, const void* 读入头, uint32_
 {
 	if (字节反转)
 	{
-		const char* const 读入尾 = (char*)读入头 + (uint64_t)帧数 * SizeXY;
+		const char* const 读入尾 = (char*)读入头 + (uint64_t)帧数 * SizePXY;
 		写出头 = (char*)写出头 - 1;
 		while (读入头 < 读入尾)
 		{
@@ -128,7 +128,7 @@ Tiff读入器* 只读打开模板(文件指针&& 文件)
 			}
 			完成进度++;
 			break;
-		[[unlikely]]case TagID::ImageDescription:
+		[[unlikely]] case TagID::ImageDescription:
 		{
 			const char* const ImageDescription = (char*)当前标签->ASCII偏移(文件头);
 			const uint32_t 图像描述字节数 = 当前标签->NoValues;
@@ -137,6 +137,9 @@ Tiff读入器* 只读打开模板(文件指针&& 文件)
 			图像描述.assign(ImageDescription, 图像描述字节数);
 		}
 		break;
+		[[unlikely]] case TagID::Compression:
+			if (当前标签->Compression枚举 != 字节序::Compression::NoCompression)
+				throw Exception::Image_bytes_compressed_not_supported;
 		}
 		当前标签++;
 	}

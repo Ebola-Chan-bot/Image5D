@@ -42,3 +42,5 @@
 **/x64
 /*.xml
 Debug.mlx
+resources/3*
+deploymentLog.html

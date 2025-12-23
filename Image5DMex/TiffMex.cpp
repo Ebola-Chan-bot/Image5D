@@ -1,5 +1,5 @@
 #include <IOmeTiff读写器.h>
-#include<Mex工具.hpp>
+#include "magic_enum修改的Mex工具.hpp"
 using namespace Image5D;
 using namespace Mex工具;
 using namespace matlab::data;
@@ -190,7 +190,7 @@ Mex工具API(Tiff_ReadPixelsI)
 	const IOmeTiff读写器* const 对象指针 = 取指针(std::move(输入[1]));
 	const UINT32 ISize = 万能转码<UINT32>(std::move(输入[3]));
 	const std::unique_ptr<动态类型缓冲>缓冲 = 动态类型缓冲::创建(类型映射[(size_t)对象指针->PixelType()], (uint64_t)ISize * 对象指针->SizeX() * 对象指针->SizeY());
-	对象指针->读入像素(缓冲->get(), 万能转码<UINT32>(std::move(输入[2])), ISize);
+	对象指针->读入像素I(缓冲->get(), 万能转码<UINT32>(std::move(输入[2])), ISize);
 	输出[0] = 缓冲->创建数组({ 对象指针->SizeX(),对象指针->SizeY(),ISize });
 }
 Mex工具API(Tiff_WritePixels)

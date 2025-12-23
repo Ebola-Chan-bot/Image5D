@@ -1,2 +1,2 @@
 % Image5D
-% Version 3.2.3 (R2022b) 16-Mar-2025
+% Version 3.2.4 (R2022b) 23-Dec-2025

@@ -120,6 +120,7 @@ namespace Image5D
 		enum class Compression :uint16_t
 		{
 			NoCompression = R_v<uint16_t>(1),
+			LZW = R_v<uint16_t>(5),
 			PackBits = R_v<uint16_t>(32773),
 		};
 		enum class PhotometricInterpretation :uint16_t

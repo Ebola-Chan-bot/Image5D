@@ -1,5 +1,5 @@
 #include <Image5D异常.h>
-#include <Mex工具.hpp>
+#include "magic_enum修改的Mex工具.hpp"
 //OirReader
 Mex工具API(Oir_CreateReader);
 Mex工具API(Oir_DeleteReader);
