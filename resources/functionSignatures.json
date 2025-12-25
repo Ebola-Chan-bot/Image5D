@@ -145,6 +145,20 @@
 			}
 		]
 	},
+	"Image5D.DimensionOrder.PermuteOrder": {
+		"inputs": [
+			{
+				"name": "From",
+				"kind": "required",
+				"purpose": "源维度顺序"
+			},
+			{
+				"name": "To",
+				"kind": "required",
+				"purpose": "目标维度顺序"
+			}
+		]
+	},
 	"Image5D.OirReader": {
 		"inputs": [
 			{
