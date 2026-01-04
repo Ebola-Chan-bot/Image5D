@@ -1,6 +1,5 @@
 #include "Oir读入器.h"
-#include <algorithm>
-#include<unordered_map>
+import std;
 using namespace Image5D;
 enum class Oir基块类型 :uint32_t
 {
@@ -199,32 +198,32 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 	uint8_t 通道组个数 = 0;
 	for (xml_node 节点 : 节点.children("commonphase:group"))
 	{
-		通道组个数++;
-		xml_node 通道;
-		if (!(通道 = 节点.child("commonphase:channel")))
-			throw Image5D::Exception::Phase_channel_not_defined;
-		if (!(节点属性 = 通道.attribute("enable")))
-			throw Image5D::Exception::Channels_enable_undefined;
-		if (!节点属性.as_bool())
-			continue;
-		通道设备向量.emplace_back();
-		通道设备& 通道设备对象 = 通道设备向量.back();
-		if (节点属性 = 通道.attribute("id"))
-			通道设备对象.通道ID = 节点属性.value();
-		else
-			throw Image5D::Exception::Channel_ID_not_defined;
-		if (节点属性 = 通道.attribute("order"))
-			通道设备对象.顺序 = 节点属性.as_uint();
-		else
-			throw Image5D::Exception::The_channel_order_is_undefined;
-		if (节点属性 = 通道.attribute("detectorId"))
-			通道设备对象.探测器ID = 节点属性.value();
-		else
-			throw Image5D::Exception::Detector_ID_not_defined;
-		if ((节点 = 通道.child("commonphase:deviceName")) && (节点文本 = 节点.text()))
-			通道设备对象.设备名称 = 节点文本.get();
-		else
-			throw Image5D::Exception::Channel_device_name_not_defined;
+		for (xml_node const 通道 : 节点.children("commonphase:channel"))
+		{
+			通道组个数++;
+			if (!(节点属性 = 通道.attribute("enable")))
+				throw Image5D::Exception::Channels_enable_undefined;
+			if (!节点属性.as_bool())
+				continue;
+			通道设备向量.emplace_back();
+			通道设备& 通道设备对象 = 通道设备向量.back();
+			if (节点属性 = 通道.attribute("id"))
+				通道设备对象.通道ID = 节点属性.value();
+			else
+				throw Image5D::Exception::Channel_ID_not_defined;
+			if (节点属性 = 通道.attribute("order"))
+				通道设备对象.顺序 = 节点属性.as_uint();
+			else
+				throw Image5D::Exception::The_channel_order_is_undefined;
+			if (节点属性 = 通道.attribute("detectorId"))
+				通道设备对象.探测器ID = 节点属性.value();
+			else
+				throw Image5D::Exception::Detector_ID_not_defined;
+			if ((节点 = 通道.child("commonphase:deviceName")) && (节点文本 = 节点.text()))
+				通道设备对象.设备名称 = 节点文本.get();
+			else
+				throw Image5D::Exception::Channel_device_name_not_defined;
+		}
 	}
 	if (通道设备向量.empty())
 		throw Image5D::Exception::The_channel_is_not_defined;

@@ -13,7 +13,7 @@ namespace Image5D
 	};
 	class Oir索引
 	{
-		static constexpr uint8_t 库版本号 = 3;
+		static constexpr uint8_t 库版本号 = 4;
 
 		//隐藏字段
 
