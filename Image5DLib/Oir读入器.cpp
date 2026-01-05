@@ -87,7 +87,15 @@ void 深度参数生成(const std::vector<Z设置<T>>&设置向量, float 深度
 void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 {
 	索引文件.reset();
-	索引文件 = std::make_unique<文件映射>(字符缓冲, 1ll); //这里必须1ll，否则重载不明确
+	try
+	{
+		索引文件 = std::make_unique<文件映射>(字符缓冲, 1ll); //这里必须1ll，否则重载不明确
+	}
+	catch(Image5D::Win32异常& e)
+	{
+		e.Image5D异常 = Image5D::Exception::Unable_to_create_index_file;
+		throw e;
+	}
 	文件列表类::const_iterator 当前文件 = 文件列表.cbegin();
 	const Oir文件头* 文件头 = (Oir文件头*)(*当前文件)->映射指针();
 	const char* const 全局文件头 = (char*)文件头;
