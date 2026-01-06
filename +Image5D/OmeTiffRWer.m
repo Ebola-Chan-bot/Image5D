@@ -287,7 +287,7 @@ classdef OmeTiffRWer<Image5D.CommonReader
 			% ```
 			%# 示例
 			% ```
-			% Pixels=obj.ReadPixelsT(0,obj.SizeT,0,obj.SizeZ,0,obj.SizeC);
+			% Pixels=obj.ReadPixels(0,obj.SizeT,0,obj.SizeZ,0,obj.SizeC);
 			% %读入全部像素值。注意，指定维度参数的顺序永远为TZC，无论图像实际的维度顺序为何。
 			%
 			% imshow(Pixels(:,:,1,1,1)',[]);
