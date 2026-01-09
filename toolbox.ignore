@@ -26,6 +26,8 @@ resources/project
 **/*.prj
 **/*.prj.bak
 .git*
+.gitattributes
+.gitignore
 **/.svn/**/*
 **/.buildtool/**/*
 **/*.asv
