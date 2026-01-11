@@ -438,26 +438,29 @@ void Oir读入器::创建新索引(const wchar_t* 字符缓冲)
 	};
 	std::unordered_map<std::string, 电压设置>探测器电压;
 	std::vector<Z设置<float>>激光设置;
-	const xml_node 亮度调整参数节点 = 成像参数节点.child("lsmparam:brightnessAdjustmentParam");
-	if (亮度调整参数节点 && (节点 = 亮度调整参数节点.child("lsmparam:enable")) && (节点文本 = 节点.text()) && 节点文本.as_bool())
+	if (有Z)
 	{
-		for (xml_node 节点 : 亮度调整参数节点.children("lsmparam:phaseBrightnessAdjustment"))
-			if ((节点属性 = 节点.attribute("zDriveUnitType")) && !strcmp(节点属性.value(), 索引->Z驱动单元类型))
-				for (const xml_node Z亮度节点 : 节点.children("lsmparam:zBrightnessAdjustment"))
-				{
-					if (!((节点 = Z亮度节点.child("lsmparam:relativeCoordinate")) && (节点文本 = 节点.text())))
-						throw Image5D::Exception::Z_brightness_is_missing_relative_coordinates;
-					const float 深度 = 节点文本.as_float();
-					for (xml_node 节点 : Z亮度节点.children("lsmparam:pmtParam"))
-						if ((节点属性 = 节点.attribute("detectorId")) && (节点 = 节点.child("lsmparam:voltage")) && (节点文本 = 节点.text()))
-							探测器电压[节点属性.value()].分层设置.push_back({ 深度,(uint16_t)节点文本.as_uint() });
+		const xml_node 亮度调整参数节点 = 成像参数节点.child("lsmparam:brightnessAdjustmentParam");
+		if (亮度调整参数节点 && (节点 = 亮度调整参数节点.child("lsmparam:enable")) && (节点文本 = 节点.text()) && 节点文本.as_bool())
+		{
+			for (xml_node 节点 : 亮度调整参数节点.children("lsmparam:phaseBrightnessAdjustment"))
+				if ((节点属性 = 节点.attribute("zDriveUnitType")) && !strcmp(节点属性.value(), 索引->Z驱动单元类型))
+					for (const xml_node Z亮度节点 : 节点.children("lsmparam:zBrightnessAdjustment"))
+					{
+						if (!((节点 = Z亮度节点.child("lsmparam:relativeCoordinate")) && (节点文本 = 节点.text())))
+							throw Image5D::Exception::Z_brightness_is_missing_relative_coordinates;
+						const float 深度 = 节点文本.as_float();
+						for (xml_node 节点 : Z亮度节点.children("lsmparam:pmtParam"))
+							if ((节点属性 = 节点.attribute("detectorId")) && (节点 = 节点.child("lsmparam:voltage")) && (节点文本 = 节点.text()))
+								探测器电压[节点属性.value()].分层设置.push_back({ 深度,(uint16_t)节点文本.as_uint() });
+							else
+								throw Image5D::Exception::The_Z_PMT_Settings_are_incomplete;
+						if ((节点 = Z亮度节点.child("lsmparam:laserParam")) && (节点 = 节点.child("commonparam:transmissivity")) && (节点文本 = 节点.text()))
+							激光设置.push_back({ 深度,节点文本.as_float() });
 						else
-							throw Image5D::Exception::The_Z_PMT_Settings_are_incomplete;
-					if ((节点 = Z亮度节点.child("lsmparam:laserParam")) && (节点 = 节点.child("commonparam:transmissivity")) && (节点文本 = 节点.text()))
-						激光设置.push_back({ 深度,节点文本.as_float() });
-					else
-						throw Image5D::Exception::Z_Laser_setup_is_incomplete;
-				}
+							throw Image5D::Exception::Z_Laser_setup_is_incomplete;
+					}
+		}
 	}
 	for (xml_node 节点 : 成像参数节点.children("lsmparam:pmt"))
 	{

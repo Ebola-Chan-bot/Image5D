@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <lsmimage:imageProperties xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:base="http://www.olympus.co.jp/hpf/model/base" xmlns:commonimage="http://www.olympus.co.jp/hpf/model/commonimage" xmlns:commonparam="http://www.olympus.co.jp/hpf/model/commonparam" xmlns:commonphase="http://www.olympus.co.jp/hpf/model/commonphase" xmlns:fvBi="http://www.olympus.co.jp/fluoview/model/fv_bi" xmlns:fvCommonimage="http://www.olympus.co.jp/fluoview/model/fv_commonimage" xmlns:fvCommonparam="http://www.olympus.co.jp/fluoview/model/fv_commonparam" xmlns:fvCommonphase="http://www.olympus.co.jp/fluoview/model/fv_commonphase" xmlns:fvLsmimage="http://www.olympus.co.jp/fluoview/model/fv_lsmimage" xmlns:fvLsmparam="http://www.olympus.co.jp/fluoview/model/fv_lsmparam" xmlns:lsmimage="http://www.olympus.co.jp/hpf/model/lsmimage" xmlns:lsmparam="http://www.olympus.co.jp/hpf/model/lsmparam" xmlns:opticalelement="http://www.olympus.co.jp/hpf/model/opticalelement" xmlns:roi="http://www.olympus.co.jp/hpf/model/roi" xmlns:root="http://www.olympus.co.jp/hpf/model/root" version="1.1.0.0">
   <commonimage:general>
-    <base:creationDateTime>2025-12-24T19:23:48.413+08:00</base:creationDateTime>
+    <base:creationDateTime>2025-12-25T21:39:09.243+08:00</base:creationDateTime>
   </commonimage:general>
   <commonimage:system>
     <base:systemName>FVMPE-RS</base:systemName>
@@ -21,18 +21,18 @@
     </commonimage:laser>
   </commonimage:lsm>
   <commonimage:imageInfo>
-    <commonimage:phase id="7da123fb-b5e7-4935-920a-98d715ba5831" name="Phase 1">
-      <commonphase:group id="31ea730b-7d99-4ca6-990f-4848ac25e45c" name="Group 1">
-        <commonphase:channel id="5b6db57d-8712-4206-838e-d690903b58e4" order="2">
+    <commonimage:phase id="3c7770d9-6fa6-44bf-a9a9-e11d137d6e2e" name="Phase 1">
+      <commonphase:group id="9040bcb6-b765-496b-bbb2-387fd85ccdcc" name="Group 3">
+        <commonphase:channel id="519eab9c-5b0e-4c7e-8f0c-fa16608dd891" order="1">
           <root:productData xsi:type="fvCommonphase:FvChannelInfo">
             <fvCommonphase:filterName>BA495-540</fvCommonphase:filterName>
           </root:productData>
-          <commonphase:name>CH2</commonphase:name>
+          <commonphase:name>CH1</commonphase:name>
           <commonphase:opticalResolution/>
           <commonphase:length>
             <commonparam:x>0.994368911043582</commonparam:x>
             <commonparam:y>0.994368911043582</commonparam:y>
-            <commonparam:z>245.0</commonparam:z>
+            <commonparam:z>250.0</commonparam:z>
           </commonphase:length>
           <commonphase:pixelUnit>
             <commonphase:x>MICRO_METER</commonphase:x>
@@ -47,14 +47,16 @@
           </commonphase:imageDefinition>
           <commonphase:laserDataId>INSIGHT DS-OL_65792Imaging_main_phase_1</commonphase:laserDataId>
         </commonphase:channel>
-        <commonphase:channel id="fab1a1f5-681d-428d-883b-de4ae9561ccd" order="3">
+      </commonphase:group>
+      <commonphase:group id="c5515229-b554-4b0c-94da-fe71979802e7" name="Group 1">
+        <commonphase:channel id="18ea243e-33f5-4986-aecb-04f1157572a0" order="2">
           <root:productData xsi:type="fvCommonphase:FvChannelInfo"/>
-          <commonphase:name>CH3</commonphase:name>
+          <commonphase:name>CH2</commonphase:name>
           <commonphase:opticalResolution/>
           <commonphase:length>
             <commonparam:x>0.994368911043582</commonparam:x>
             <commonparam:y>0.994368911043582</commonparam:y>
-            <commonparam:z>245.0</commonparam:z>
+            <commonparam:z>250.0</commonparam:z>
           </commonphase:length>
           <commonphase:pixelUnit>
             <commonphase:x>MICRO_METER</commonphase:x>
@@ -69,14 +71,16 @@
           </commonphase:imageDefinition>
           <commonphase:laserDataId xsi:nil="true"/>
         </commonphase:channel>
-        <commonphase:channel id="4f9ca82b-9fe1-4fe4-9b11-688d54363113" order="4">
+      </commonphase:group>
+      <commonphase:group id="4e0b79a4-7e85-4a93-9d66-0c4086379266" name="Group 2">
+        <commonphase:channel id="a53f1711-49d9-4434-bb44-cdf17b8405b6" order="3">
           <root:productData xsi:type="fvCommonphase:FvChannelInfo"/>
-          <commonphase:name>CH4</commonphase:name>
+          <commonphase:name>CH3</commonphase:name>
           <commonphase:opticalResolution/>
           <commonphase:length>
             <commonparam:x>0.994368911043582</commonparam:x>
             <commonparam:y>0.994368911043582</commonparam:y>
-            <commonparam:z>245.0</commonparam:z>
+            <commonparam:z>250.0</commonparam:z>
           </commonphase:length>
           <commonphase:pixelUnit>
             <commonphase:x>MICRO_METER</commonphase:x>
@@ -104,7 +108,7 @@
     <root:productData xsi:type="fvLsmimage:FvLsmAcquisition">
       <fvCommonimage:stimulationParam mode="REPEAT">
         <root:productData xsi:type="fvCommonparam:FvLSMStimulationParam">
-          <fvCommonparam:referencePhaseId>7da123fb-b5e7-4935-920a-98d715ba5831</fvCommonparam:referencePhaseId>
+          <fvCommonparam:referencePhaseId>3c7770d9-6fa6-44bf-a9a9-e11d137d6e2e</fvCommonparam:referencePhaseId>
           <fvCommonparam:pmtProtection>true</fvCommonparam:pmtProtection>
         </root:productData>
         <commonparam:region>
@@ -273,8 +277,8 @@
         <opticalelement:afContinuousForPlastic>false</opticalelement:afContinuousForPlastic>
       </commonimage:objectiveLens>
       <commonimage:zPosition>
-        <commonparam:zStagePosition>9129.84</commonparam:zStagePosition>
-        <commonparam:zPiezoPosition>0.0</commonparam:zPiezoPosition>
+        <commonparam:zStagePosition>6864.21</commonparam:zStagePosition>
+        <commonparam:zPiezoPosition>250.0</commonparam:zPiezoPosition>
       </commonimage:zPosition>
       <commonimage:pixelCalibration>
         <commonparam:x>1.0</commonparam:x>
@@ -290,21 +294,21 @@
     <commonimage:imagingParam xsi:type="lsmparam:LSMImagingParam">
       <root:productData xsi:type="fvLsmparam:FvLsmImagingParam">
         <fvCommonparam:synchronizationParam>
-          <fvCommonparam:baseMethod>LSM_IMAGING</fvCommonparam:baseMethod>
+          <fvCommonparam:baseMethod>LSM_STIMULATION</fvCommonparam:baseMethod>
           <fvCommonparam:restInStimulation>false</fvCommonparam:restInStimulation>
           <fvCommonparam:synchronizedAcquisitionParamList xsi:type="fvCommonparam:ImagingSynchronizedAcquisitionParam">
             <fvCommonparam:type>LSM_IMAGING</fvCommonparam:type>
-            <fvCommonparam:syncWaitTime/>
+            <fvCommonparam:syncWaitTime>
+              <commonparam:time>0.0</commonparam:time>
+            </fvCommonparam:syncWaitTime>
             <fvCommonparam:enabled>true</fvCommonparam:enabled>
-            <fvCommonparam:preFrameCount>1</fvCommonparam:preFrameCount>
-            <fvCommonparam:imagingFrameCount>131069</fvCommonparam:imagingFrameCount>
+            <fvCommonparam:preFrameCount>0</fvCommonparam:preFrameCount>
+            <fvCommonparam:imagingFrameCount>65535</fvCommonparam:imagingFrameCount>
             <fvCommonparam:restTime>0.0</fvCommonparam:restTime>
           </fvCommonparam:synchronizedAcquisitionParamList>
           <fvCommonparam:synchronizedAcquisitionParamList xsi:type="fvCommonparam:StimulationSynchronizedAcquisitionParam">
             <fvCommonparam:type>LSM_STIMULATION</fvCommonparam:type>
-            <fvCommonparam:syncWaitTime>
-              <commonparam:frame>1</commonparam:frame>
-            </fvCommonparam:syncWaitTime>
+            <fvCommonparam:syncWaitTime/>
             <fvCommonparam:enabled>true</fvCommonparam:enabled>
             <fvCommonparam:stimulationFrameCount>2</fvCommonparam:stimulationFrameCount>
           </fvCommonparam:synchronizedAcquisitionParamList>
@@ -358,16 +362,16 @@
           <roi:transmissivity>0</roi:transmissivity>
         </roi:ROI>
       </commonparam:region>
-      <commonparam:axis xsi:type="commonparam:ZAxisParam" enable="true" paramEnable="false">
+      <commonparam:axis xsi:type="commonparam:ZAxisParam" enable="false" paramEnable="false">
         <commonparam:axis>ZSTACK</commonparam:axis>
         <commonparam:startPosition>200.0</commonparam:startPosition>
-        <commonparam:endPosition>335.0</commonparam:endPosition>
-        <commonparam:step>135.0</commonparam:step>
-        <commonparam:maxSize>2</commonparam:maxSize>
+        <commonparam:endPosition>220.0</commonparam:endPosition>
+        <commonparam:step>0.1</commonparam:step>
+        <commonparam:maxSize>201</commonparam:maxSize>
         <commonparam:paramName>Start End</commonparam:paramName>
-        <commonparam:basePosition>200.0</commonparam:basePosition>
+        <commonparam:basePosition>205.0</commonparam:basePosition>
       </commonparam:axis>
-      <commonparam:axis xsi:type="commonparam:ZAxisParam" enable="true" paramEnable="false">
+      <commonparam:axis xsi:type="commonparam:ZAxisParam" enable="false" paramEnable="false">
         <commonparam:axis>ZSTACK</commonparam:axis>
         <commonparam:startPosition>200.0</commonparam:startPosition>
         <commonparam:endPosition>220.0</commonparam:endPosition>
@@ -376,15 +380,15 @@
         <commonparam:paramName>Range</commonparam:paramName>
         <commonparam:basePosition>200.0</commonparam:basePosition>
       </commonparam:axis>
-      <commonparam:axis xsi:type="fvCommonparam:PiezoZAxisParam" enable="true" paramEnable="true">
+      <commonparam:axis xsi:type="fvCommonparam:PiezoZAxisParam" enable="false" paramEnable="true">
         <commonparam:axis>ZSTACK</commonparam:axis>
         <commonparam:startPosition>0.0</commonparam:startPosition>
-        <commonparam:endPosition>245.0</commonparam:endPosition>
-        <commonparam:step>245.0</commonparam:step>
+        <commonparam:endPosition>250.0</commonparam:endPosition>
+        <commonparam:step>250.0</commonparam:step>
         <commonparam:maxSize>2</commonparam:maxSize>
         <commonparam:paramName>Piezo</commonparam:paramName>
         <commonparam:basePosition>0.0</commonparam:basePosition>
-        <fvCommonparam:motorBasePosition>9129.84</fvCommonparam:motorBasePosition>
+        <fvCommonparam:motorBasePosition>9417.91</fvCommonparam:motorBasePosition>
       </commonparam:axis>
       <commonparam:axis enable="true">
         <commonparam:axis>TIMELAPSE</commonparam:axis>
@@ -403,8 +407,8 @@
       <commonparam:zDriveUnitType>Piezo</commonparam:zDriveUnitType>
       <lsmparam:mainLaser xsi:type="commonparam:MPELaserParam" laserDataId="INSIGHT DS-OL_65792Imaging_main_phase_1">
         <commonparam:power>100.0</commonparam:power>
-        <commonparam:transmissivity>2.0</commonparam:transmissivity>
-        <commonparam:optionalTransmissivity>2.0</commonparam:optionalTransmissivity>
+        <commonparam:transmissivity>20.0</commonparam:transmissivity>
+        <commonparam:optionalTransmissivity>20.0</commonparam:optionalTransmissivity>
         <commonparam:alignment>
           <commonparam:activeAutoAlignment>false</commonparam:activeAutoAlignment>
           <commonparam:shiftXOffset>0</commonparam:shiftXOffset>
@@ -423,28 +427,23 @@
         <lsmparam:rotation>0.0</lsmparam:rotation>
         <lsmparam:zoom>1.0</lsmparam:zoom>
       </lsmparam:area>
-      <lsmparam:pmt channelId="5b6db57d-8712-4206-838e-d690903b58e4" detectorId="__FV30-AGAPD_D_4__">
-        <lsmparam:voltage>350</lsmparam:voltage>
-        <lsmparam:offset>0</lsmparam:offset>
-        <lsmparam:gain>1.0</lsmparam:gain>
-      </lsmparam:pmt>
-      <lsmparam:pmt channelId="fab1a1f5-681d-428d-883b-de4ae9561ccd" detectorId="__FV30-ANALOG_D_1__">
+      <lsmparam:pmt channelId="18ea243e-33f5-4986-aecb-04f1157572a0" detectorId="__FV30-ANALOG_D_1__">
         <lsmparam:voltage>0</lsmparam:voltage>
         <lsmparam:offset>0</lsmparam:offset>
         <lsmparam:gain>1.0</lsmparam:gain>
       </lsmparam:pmt>
-      <lsmparam:pmt channelId="cee86890-9d30-4859-b7f9-5ac15f329dd1" detectorId="__FV30-AGAPD_D_3__">
-        <lsmparam:voltage>500</lsmparam:voltage>
+      <lsmparam:pmt channelId="a53f1711-49d9-4434-bb44-cdf17b8405b6" detectorId="__FV30-ANALOG_D_2__">
+        <lsmparam:voltage>0</lsmparam:voltage>
         <lsmparam:offset>0</lsmparam:offset>
         <lsmparam:gain>1.0</lsmparam:gain>
       </lsmparam:pmt>
-      <lsmparam:pmt channelId="4f9ca82b-9fe1-4fe4-9b11-688d54363113" detectorId="__FV30-ANALOG_D_2__">
-        <lsmparam:voltage>0</lsmparam:voltage>
+      <lsmparam:pmt channelId="519eab9c-5b0e-4c7e-8f0c-fa16608dd891" detectorId="__FV30-AGAPD_D_4__">
+        <lsmparam:voltage>400</lsmparam:voltage>
         <lsmparam:offset>0</lsmparam:offset>
         <lsmparam:gain>1.0</lsmparam:gain>
       </lsmparam:pmt>
       <lsmparam:method>
-        <lsmparam:sequentialType>Line</lsmparam:sequentialType>
+        <lsmparam:sequentialType>None</lsmparam:sequentialType>
         <lsmparam:integration>
           <commonparam:type>None</commonparam:type>
           <commonparam:count>2</commonparam:count>
@@ -455,56 +454,12 @@
       </lsmparam:pmtCommon>
       <lsmparam:brightnessAdjustmentParam>
         <lsmparam:enable>true</lsmparam:enable>
-        <lsmparam:phaseBrightnessAdjustment phaseId="7da123fb-b5e7-4935-920a-98d715ba5831" zDriveUnitType="Motor">
+        <lsmparam:phaseBrightnessAdjustment phaseId="3c7770d9-6fa6-44bf-a9a9-e11d137d6e2e" zDriveUnitType="Piezo">
           <lsmparam:zBrightnessAdjustment>
-            <lsmparam:id>61dcdc5f-f671-4ff5-ac7b-151d0f5b09e5</lsmparam:id>
+            <lsmparam:id>a27e46e7-90a2-4dd9-a7b8-104c44c57c2e</lsmparam:id>
             <lsmparam:relativeCoordinate>0.0</lsmparam:relativeCoordinate>
-            <lsmparam:pmtParam detectorId="__FV30-AGAPD_D_4__">
-              <lsmparam:voltage>460</lsmparam:voltage>
-              <lsmparam:offset>0</lsmparam:offset>
-              <lsmparam:gain>1.0</lsmparam:gain>
-            </lsmparam:pmtParam>
-            <lsmparam:laserParam xsi:type="commonparam:MPELaserParam" laserDataId="INSIGHT DS-OL_65792Imaging_main_phase_1">
-              <commonparam:power>100.0</commonparam:power>
-              <commonparam:transmissivity>10.0</commonparam:transmissivity>
-              <commonparam:optionalTransmissivity>10.0</commonparam:optionalTransmissivity>
-              <commonparam:alignment>
-                <commonparam:activeAutoAlignment>false</commonparam:activeAutoAlignment>
-                <commonparam:shiftXOffset>0</commonparam:shiftXOffset>
-                <commonparam:shiftYOffset>0</commonparam:shiftYOffset>
-                <commonparam:tiltXOffset>0</commonparam:tiltXOffset>
-                <commonparam:tiltYOffset>0</commonparam:tiltYOffset>
-              </commonparam:alignment>
-            </lsmparam:laserParam>
-          </lsmparam:zBrightnessAdjustment>
-          <lsmparam:zBrightnessAdjustment>
-            <lsmparam:id>0af915aa-00df-462b-a858-e43b2d02947b</lsmparam:id>
-            <lsmparam:relativeCoordinate>135.0</lsmparam:relativeCoordinate>
-            <lsmparam:pmtParam detectorId="__FV30-AGAPD_D_4__">
-              <lsmparam:voltage>460</lsmparam:voltage>
-              <lsmparam:offset>0</lsmparam:offset>
-              <lsmparam:gain>1.0</lsmparam:gain>
-            </lsmparam:pmtParam>
-            <lsmparam:laserParam xsi:type="commonparam:MPELaserParam" laserDataId="INSIGHT DS-OL_65792Imaging_main_phase_1">
-              <commonparam:power>100.0</commonparam:power>
-              <commonparam:transmissivity>15.0</commonparam:transmissivity>
-              <commonparam:optionalTransmissivity>15.0</commonparam:optionalTransmissivity>
-              <commonparam:alignment>
-                <commonparam:activeAutoAlignment>false</commonparam:activeAutoAlignment>
-                <commonparam:shiftXOffset>0</commonparam:shiftXOffset>
-                <commonparam:shiftYOffset>0</commonparam:shiftYOffset>
-                <commonparam:tiltXOffset>0</commonparam:tiltXOffset>
-                <commonparam:tiltYOffset>0</commonparam:tiltYOffset>
-              </commonparam:alignment>
-            </lsmparam:laserParam>
-          </lsmparam:zBrightnessAdjustment>
-        </lsmparam:phaseBrightnessAdjustment>
-        <lsmparam:phaseBrightnessAdjustment phaseId="7da123fb-b5e7-4935-920a-98d715ba5831" zDriveUnitType="Piezo">
-          <lsmparam:zBrightnessAdjustment>
-            <lsmparam:id>3af8e507-800d-4041-b130-472176d04c2b</lsmparam:id>
-            <lsmparam:relativeCoordinate>0.0</lsmparam:relativeCoordinate>
-            <lsmparam:pmtParam detectorId="__FV30-AGAPD_D_4__">
-              <lsmparam:voltage>350</lsmparam:voltage>
+            <lsmparam:pmtParam detectorId="__FV30-ANALOG_D_1__">
+              <lsmparam:voltage>0</lsmparam:voltage>
               <lsmparam:offset>0</lsmparam:offset>
               <lsmparam:gain>1.0</lsmparam:gain>
             </lsmparam:pmtParam>
@@ -513,38 +468,12 @@
               <lsmparam:offset>0</lsmparam:offset>
               <lsmparam:gain>1.0</lsmparam:gain>
             </lsmparam:pmtParam>
-            <lsmparam:pmtParam detectorId="__FV30-ANALOG_D_1__">
-              <lsmparam:voltage>0</lsmparam:voltage>
-              <lsmparam:offset>0</lsmparam:offset>
-              <lsmparam:gain>1.0</lsmparam:gain>
-            </lsmparam:pmtParam>
-            <lsmparam:pmtParam detectorId="__FV30-AGAPD_D_3__">
-              <lsmparam:voltage>500</lsmparam:voltage>
-              <lsmparam:offset>0</lsmparam:offset>
-              <lsmparam:gain>1.0</lsmparam:gain>
-            </lsmparam:pmtParam>
-            <lsmparam:laserParam xsi:type="commonparam:MPELaserParam" laserDataId="INSIGHT DS-OL_65792Imaging_main_phase_1">
-              <commonparam:power>100.0</commonparam:power>
-              <commonparam:transmissivity>2.0</commonparam:transmissivity>
-              <commonparam:optionalTransmissivity>2.0</commonparam:optionalTransmissivity>
-              <commonparam:alignment>
-                <commonparam:activeAutoAlignment>false</commonparam:activeAutoAlignment>
-                <commonparam:shiftXOffset>0</commonparam:shiftXOffset>
-                <commonparam:shiftYOffset>0</commonparam:shiftYOffset>
-                <commonparam:tiltXOffset>0</commonparam:tiltXOffset>
-                <commonparam:tiltYOffset>0</commonparam:tiltYOffset>
-                <commonparam:shiftXPosition>9062</commonparam:shiftXPosition>
-                <commonparam:shiftYPosition>7974</commonparam:shiftYPosition>
-                <commonparam:tiltXPosition>17604</commonparam:tiltXPosition>
-                <commonparam:tiltYPosition>17793</commonparam:tiltYPosition>
-              </commonparam:alignment>
-            </lsmparam:laserParam>
           </lsmparam:zBrightnessAdjustment>
           <lsmparam:zBrightnessAdjustment>
-            <lsmparam:id>958b16f9-ba14-4418-8a7d-e2acfd4e6f46</lsmparam:id>
-            <lsmparam:relativeCoordinate>245.0</lsmparam:relativeCoordinate>
-            <lsmparam:pmtParam detectorId="__FV30-AGAPD_D_4__">
-              <lsmparam:voltage>350</lsmparam:voltage>
+            <lsmparam:id>bf6c262b-a6d5-430f-8b76-adbf13aaf770</lsmparam:id>
+            <lsmparam:relativeCoordinate>250.0</lsmparam:relativeCoordinate>
+            <lsmparam:pmtParam detectorId="__FV30-ANALOG_D_1__">
+              <lsmparam:voltage>0</lsmparam:voltage>
               <lsmparam:offset>0</lsmparam:offset>
               <lsmparam:gain>1.0</lsmparam:gain>
             </lsmparam:pmtParam>
@@ -553,37 +482,11 @@
               <lsmparam:offset>0</lsmparam:offset>
               <lsmparam:gain>1.0</lsmparam:gain>
             </lsmparam:pmtParam>
-            <lsmparam:pmtParam detectorId="__FV30-ANALOG_D_1__">
-              <lsmparam:voltage>0</lsmparam:voltage>
-              <lsmparam:offset>0</lsmparam:offset>
-              <lsmparam:gain>1.0</lsmparam:gain>
-            </lsmparam:pmtParam>
-            <lsmparam:pmtParam detectorId="__FV30-AGAPD_D_3__">
-              <lsmparam:voltage>500</lsmparam:voltage>
-              <lsmparam:offset>0</lsmparam:offset>
-              <lsmparam:gain>1.0</lsmparam:gain>
-            </lsmparam:pmtParam>
-            <lsmparam:laserParam xsi:type="commonparam:MPELaserParam" laserDataId="INSIGHT DS-OL_65792Imaging_main_phase_1">
-              <commonparam:power>100.0</commonparam:power>
-              <commonparam:transmissivity>16.0</commonparam:transmissivity>
-              <commonparam:optionalTransmissivity>16.0</commonparam:optionalTransmissivity>
-              <commonparam:alignment>
-                <commonparam:activeAutoAlignment>false</commonparam:activeAutoAlignment>
-                <commonparam:shiftXOffset>0</commonparam:shiftXOffset>
-                <commonparam:shiftYOffset>0</commonparam:shiftYOffset>
-                <commonparam:tiltXOffset>0</commonparam:tiltXOffset>
-                <commonparam:tiltYOffset>0</commonparam:tiltYOffset>
-                <commonparam:shiftXPosition>9062</commonparam:shiftXPosition>
-                <commonparam:shiftYPosition>7974</commonparam:shiftYPosition>
-                <commonparam:tiltXPosition>17604</commonparam:tiltXPosition>
-                <commonparam:tiltYPosition>17793</commonparam:tiltYPosition>
-              </commonparam:alignment>
-            </lsmparam:laserParam>
           </lsmparam:zBrightnessAdjustment>
         </lsmparam:phaseBrightnessAdjustment>
       </lsmparam:brightnessAdjustmentParam>
     </commonimage:imagingParam>
-    <commonimage:phase xsi:type="lsmimage:LSMPhase" id="7da123fb-b5e7-4935-920a-98d715ba5831">
+    <commonimage:phase xsi:type="lsmimage:LSMPhase" id="3c7770d9-6fa6-44bf-a9a9-e11d137d6e2e">
       <root:productData xsi:type="fvLsmimage:FvLsmPhase">
         <fvLsmimage:lightpath>
           <fvLsmimage:pinholePosition/>
@@ -593,46 +496,15 @@
         </fvLsmimage:lightpath>
       </root:productData>
       <commonphase:name>Phase 1</commonphase:name>
-      <commonphase:group id="31ea730b-7d99-4ca6-990f-4848ac25e45c">
+      <commonphase:group id="c5515229-b554-4b0c-94da-fe71979802e7">
         <commonphase:name>Group 1</commonphase:name>
-        <commonphase:channel xsi:type="lsmimage:NormalChannel" id="5b6db57d-8712-4206-838e-d690903b58e4" order="2" enable="true" detectorId="__FV30-AGAPD_D_4__">
+        <commonphase:channel xsi:type="lsmimage:NormalChannel" id="18ea243e-33f5-4986-aecb-04f1157572a0" order="2" enable="true" detectorId="__FV30-ANALOG_D_1__">
           <commonphase:name>CH2</commonphase:name>
           <commonphase:opticalResolution/>
           <commonphase:length>
             <commonparam:x>0.994368911043582</commonparam:x>
             <commonparam:y>0.994368911043582</commonparam:y>
-            <commonparam:z>245.0</commonparam:z>
-          </commonphase:length>
-          <commonphase:pixelUnit>
-            <commonphase:x>MICRO_METER</commonphase:x>
-            <commonphase:y>MICRO_METER</commonphase:y>
-            <commonphase:z>MICRO_METER</commonphase:z>
-          </commonphase:pixelUnit>
-          <commonphase:deviceName>RNDD4G</commonphase:deviceName>
-          <lsmimage:laserDataId>INSIGHT DS-OL_65792Imaging_main_phase_1</lsmimage:laserDataId>
-        </commonphase:channel>
-        <commonphase:channel xsi:type="lsmimage:NormalChannel" id="4f9ca82b-9fe1-4fe4-9b11-688d54363113" order="4" enable="true" detectorId="__FV30-ANALOG_D_2__">
-          <commonphase:name>CH4</commonphase:name>
-          <commonphase:opticalResolution/>
-          <commonphase:length>
-            <commonparam:x>0.994368911043582</commonparam:x>
-            <commonparam:y>0.994368911043582</commonparam:y>
-            <commonparam:z>245.0</commonparam:z>
-          </commonphase:length>
-          <commonphase:pixelUnit>
-            <commonphase:x>MICRO_METER</commonphase:x>
-            <commonphase:y>MICRO_METER</commonphase:y>
-            <commonphase:z>MICRO_METER</commonphase:z>
-          </commonphase:pixelUnit>
-          <commonphase:deviceName>CD2</commonphase:deviceName>
-        </commonphase:channel>
-        <commonphase:channel xsi:type="lsmimage:NormalChannel" id="fab1a1f5-681d-428d-883b-de4ae9561ccd" order="3" enable="true" detectorId="__FV30-ANALOG_D_1__">
-          <commonphase:name>CH3</commonphase:name>
-          <commonphase:opticalResolution/>
-          <commonphase:length>
-            <commonparam:x>0.994368911043582</commonparam:x>
-            <commonparam:y>0.994368911043582</commonparam:y>
-            <commonparam:z>245.0</commonparam:z>
+            <commonparam:z>250.0</commonparam:z>
           </commonphase:length>
           <commonphase:pixelUnit>
             <commonphase:x>MICRO_METER</commonphase:x>
@@ -641,20 +513,41 @@
           </commonphase:pixelUnit>
           <commonphase:deviceName>CD1</commonphase:deviceName>
         </commonphase:channel>
-        <commonphase:channel xsi:type="lsmimage:NormalChannel" id="cee86890-9d30-4859-b7f9-5ac15f329dd1" order="1" enable="false" detectorId="__FV30-AGAPD_D_3__">
-          <commonphase:name>CH1</commonphase:name>
+      </commonphase:group>
+      <commonphase:group id="4e0b79a4-7e85-4a93-9d66-0c4086379266">
+        <commonphase:name>Group 2</commonphase:name>
+        <commonphase:channel xsi:type="lsmimage:NormalChannel" id="a53f1711-49d9-4434-bb44-cdf17b8405b6" order="3" enable="true" detectorId="__FV30-ANALOG_D_2__">
+          <commonphase:name>CH3</commonphase:name>
           <commonphase:opticalResolution/>
           <commonphase:length>
             <commonparam:x>0.994368911043582</commonparam:x>
             <commonparam:y>0.994368911043582</commonparam:y>
-            <commonparam:z>245.0</commonparam:z>
+            <commonparam:z>250.0</commonparam:z>
           </commonphase:length>
           <commonphase:pixelUnit>
             <commonphase:x>MICRO_METER</commonphase:x>
             <commonphase:y>MICRO_METER</commonphase:y>
             <commonphase:z>MICRO_METER</commonphase:z>
           </commonphase:pixelUnit>
-          <commonphase:deviceName>RNDD3G</commonphase:deviceName>
+          <commonphase:deviceName>CD2</commonphase:deviceName>
+        </commonphase:channel>
+      </commonphase:group>
+      <commonphase:group id="9040bcb6-b765-496b-bbb2-387fd85ccdcc">
+        <commonphase:name>Group 3</commonphase:name>
+        <commonphase:channel xsi:type="lsmimage:NormalChannel" id="519eab9c-5b0e-4c7e-8f0c-fa16608dd891" order="1" enable="true" detectorId="__FV30-AGAPD_D_4__">
+          <commonphase:name>CH1</commonphase:name>
+          <commonphase:opticalResolution/>
+          <commonphase:length>
+            <commonparam:x>0.994368911043582</commonparam:x>
+            <commonparam:y>0.994368911043582</commonparam:y>
+            <commonparam:z>250.0</commonparam:z>
+          </commonphase:length>
+          <commonphase:pixelUnit>
+            <commonphase:x>MICRO_METER</commonphase:x>
+            <commonphase:y>MICRO_METER</commonphase:y>
+            <commonphase:z>MICRO_METER</commonphase:z>
+          </commonphase:pixelUnit>
+          <commonphase:deviceName>RNDD4G</commonphase:deviceName>
           <lsmimage:laserDataId>INSIGHT DS-OL_65792Imaging_main_phase_1</lsmimage:laserDataId>
         </commonphase:channel>
       </commonphase:group>
@@ -787,7 +680,7 @@
             <commonparam:pixelSpeed>0.002</commonparam:pixelSpeed>
             <commonparam:lineSpeed>2.122</commonparam:lineSpeed>
             <commonparam:frameSpeed>1088.586</commonparam:frameSpeed>
-            <commonparam:seriesInterval>2238.71</commonparam:seriesInterval>
+            <commonparam:seriesInterval>1088.586</commonparam:seriesInterval>
           </commonparam:speedInformation>
           <lsmparam:focus>0</lsmparam:focus>
         </lsmparam:speed>
@@ -801,12 +694,12 @@
         </lsmparam:imageSize>
         <lsmparam:speed>
           <commonparam:speed>0.067</commonparam:speed>
-          <commonparam:roundtrip>true</commonparam:roundtrip>
+          <commonparam:roundtrip>false</commonparam:roundtrip>
           <commonparam:speedInformation>
             <commonparam:pixelSpeed>6.7E-5</commonparam:pixelSpeed>
-            <commonparam:lineSpeed>0.06337135614702154</commonparam:lineSpeed>
-            <commonparam:frameSpeed>33.33333333333333</commonparam:frameSpeed>
-            <commonparam:seriesInterval>125.7287705956907</commonparam:seriesInterval>
+            <commonparam:lineSpeed>0.1267427122940431</commonparam:lineSpeed>
+            <commonparam:frameSpeed>65.77946768060836</commonparam:frameSpeed>
+            <commonparam:seriesInterval>65.77946768060836</commonparam:seriesInterval>
           </commonparam:speedInformation>
           <lsmparam:focus>0</lsmparam:focus>
         </lsmparam:speed>
