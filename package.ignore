@@ -20,7 +20,7 @@
 %% Recommended Exclusions (remove lines to re-include files):
 
 % Exclude source control files
-.git*
+**/.git*
 **/*.svn
 
 % Toolbox files and project files
